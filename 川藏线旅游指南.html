@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>川藏线旅游指南 - 探索世界屋脊的壮美风光</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://webapi.amap.com/loader.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)), url('https://s.coze.cn/image/LxUc_QSV4H0/');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .map-container {
+            height: 400px;
+            width: 100%;
+        }
+        
+        .gallery-img {
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            max-height: 500px;
+        }
+        
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+        }
+        
+        .timeline-line {
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loader" class="fixed inset-0 bg-white z-50 flex items-center justify-center transition-opacity duration-300">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-blue-600 flex items-center">
+                <i class="fas fa-mountain mr-2"></i>川藏线
+            </a>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link text-gray-700 hover:text-blue-600">路线概览</a>
+                <a href="#attractions" class="nav-link text-gray-700 hover:text-blue-600">沿途景点</a>
+                <a href="#guide" class="nav-link text-gray-700 hover:text-blue-600">旅行攻略</a>
+                <a href="#food" class="nav-link text-gray-700 hover:text-blue-600">美食推荐</a>
+                <a href="#tips" class="nav-link text-gray-700 hover:text-blue-600">注意事项</a>
+                <a href="#gallery" class="nav-link text-gray-700 hover:text-blue-600">风景欣赏</a>
+            </div>
+            
+            <button id="mobileMenuButton" class="md:hidden text-gray-700 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobileMenu" class="mobile-menu md:hidden bg-white shadow-md">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="#overview" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">路线概览</a>
+                <a href="#attractions" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">沿途景点</a>
+                <a href="#guide" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">旅行攻略</a>
+                <a href="#food" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">美食推荐</a>
+                <a href="#tips" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">注意事项</a>
+                <a href="#gallery" class="py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded px-3">风景欣赏</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页Banner -->
+    <section class="hero-bg h-96 flex items-center justify-center text-white">
+        <div class="text-center px-4">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">探索川藏线的壮美风光</h1>
+            <p class="text-xl md:text-2xl mb-6">从成都到拉萨，穿越横断山脉，感受世界屋脊的魅力</p>
+            <a href="#overview" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                开始探索 <i class="fas fa-arrow-down ml-2"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- 路线概览 -->
+    <section id="overview" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">路线概览</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-blue-50 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-800">川藏南线 (G318)</h3>
+                    <p class="text-gray-700 mb-4">被誉为"此生必驾"的绝美景观大道，集惊、险、绝、美、雄、壮于一身。不仅有高山峡谷惊险刺激、草原湖泊宁静美丽、冰川雪峰雄伟壮观，更有独特多元的人文风情。</p>
+                    <div class="flex items-center mb-4">
+                        <div class="timeline-dot"></div>
+                        <p class="ml-3 text-gray-700">成都/重庆—泸定—康定—雅江—理塘—稻城—巴塘—西藏芒康—左贡—林芝—拉萨</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div id="southRouteMap" class="map-container"></div>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 rounded-xl p-6 card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-green-800">川藏北线 (G317)</h3>
+                    <p class="text-gray-700 mb-4">被誉为"藏地人文大道"，不仅有原始壮丽的自然风光，沿途高原湖泊、雪山、温泉密布；更是一片具有丰厚沉积的文化沃土，历史厚重，民族风情悠久灿烂。</p>
+                    <div class="flex items-center mb-4">
+                        <div class="timeline-dot"></div>
+                        <p class="ml-3 text-gray-700">成都—马尔康—金川—壤塘—甘孜—德格—西藏江达—昌都—那曲—拉萨</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div id="northRouteMap" class="map-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 沿途景点 -->
+    <section id="attractions" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">沿途景点推荐</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/0SkZZY885yc/" alt="格聂神山" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">格聂神山</h3>
+                        <p class="text-gray-600">沙鲁里山最高峰，被称为"横断之心"，周围山峰、原始森林、草原、湖泊、温泉等环绕。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/SWtT2Qbn_pA/" alt="稻城亚丁" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">稻城亚丁</h3>
+                        <p class="text-gray-600">被誉为"中国香格里拉之魂""蓝色星球上最后一片净土"，主体景观为仙乃日、央迈勇、夏诺多吉三座雪山。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/yaY45b06Lo8/" alt="然乌湖" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">然乌湖</h3>
+                        <p class="text-gray-600">川藏线上最美的湖泊之一，湖水清澈见底，周围环绕着雪山和森林。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/Am1E5TzkFx8/" alt="布达拉宫" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">布达拉宫</h3>
+                        <p class="text-gray-600">"世界屋脊"上的明珠，西藏人民信仰的象征。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/yE9m11BHnjo/" alt="羊卓雍措" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">羊卓雍措</h3>
+                        <p class="text-gray-600">西藏三大圣湖之一，湖水湛蓝如宝石。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl overflow-hidden shadow-md card-hover">
+                    <img src="https://s.coze.cn/image/CKPLQ5tWSo4/" alt="新都桥" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gray-800">新都桥</h3>
+                        <p class="text-gray-600">被誉为"摄影家的天堂"，金色的草原、连绵的山峦，光影变幻莫测。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 旅行攻略 -->
+    <section id="guide" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">旅行攻略</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-blue-50 rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-800">最佳旅行时间</h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold mb-2 text-gray-700">4-5月（春赏花期）</h4>
+                        <p class="text-gray-600">林芝桃花节、高山杜鹃盛开，气温适宜。</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-lg font-semibold mb-2 text-gray-700">9-10月（秋景季）</h4>
+                        <p class="text-gray-600">稻城秋色、雪山倒影，避开7-8月雨季泥石流高发期。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 rounded-xl p-6">
+                    <h3 class="text-2xl font-bold mb-4 text-green-800">经典行程规划（10天）</h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-2 px-4 text-left text-gray-700">日期</th>
+                                    <th class="py-2 px-4 text-left text-gray-700">路线</th>
+                                    <th class="py-2 px-4 text-left text-gray-700">必玩景点</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="py-2 px-4 text-gray-600">D1</td>
+                                    <td class="py-2 px-4 text-gray-600">成都-康定-新都桥</td>
+                                    <td class="py-2 px-4 text-gray-600">折多山、木格措</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 text-gray-600">D2</td>
+                                    <td class="py-2 px-4 text-gray-600">新都桥-理塘-稻城</td>
+                                    <td class="py-2 px-4 text-gray-600">天路十八弯、毛垭大草原</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 text-gray-600">D3</td>
+                                    <td class="py-2 px-4 text-gray-600">稻城亚丁一日游</td>
+                                    <td class="py-2 px-4 text-gray-600">仙乃日、央迈勇、夏诺多吉</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 text-gray-600">D4</td>
+                                    <td class="py-2 px-4 text-gray-600">稻城-理塘-巴塘</td>
+                                    <td class="py-2 px-4 text-gray-600">姊妹湖、海子山</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 text-gray-600">D5</td>
+                                    <td class="py-2 px-4 text-gray-600">巴塘-芒康-左贡</td>
+                                    <td class="py-2 px-4 text-gray-600">金沙江大桥、东达山</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 text-gray-600">D6</td>
+                                    <td class="py-2 px-4 text-gray-600">左贡-八宿-然乌湖</td>
+                                    <td class="py-2 px-4 text-gray-600">怒江72拐、然乌湖</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 text-gray-600">D7</td>
+                                    <td class="py-2 px-4 text-gray-600">然乌湖-米堆冰川-波密</td>
+                                    <td class="py-2 px-4 text-gray-600">米堆冰川、古乡湖</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 text-gray-600">D8</td>
+                                    <td class="py-2 px-4 text-gray-600">波密-鲁朗-林芝</td>
+                                    <td class="py-2 px-4 text-gray-600">鲁朗林海、色季拉山</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2 px-4 text-gray-600">D9</td>
+                                    <td class="py-2 px-4 text-gray-600">林芝-拉萨</td>
+                                    <td class="py-2 px-4 text-gray-600">巴松措、尼洋河</td>
+                                </tr>
+                                <tr class="bg-gray-50">
+                                    <td class="py-2 px-4 text-gray-600">D10</td>
+                                    <td class="py-2 px-4 text-gray-600">拉萨一日游</td>
+                                    <td class="py-2 px-4 text-gray-600">布达拉宫、大昭寺</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 rounded-xl p-6">
+                <h3 class="text-2xl font-bold mb-4 text-yellow-800">住宿建议</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                        <span>提前预订住宿，可通过多个预订平台进行比较。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                        <span>选择新开的酒店确保住宿条件和卫生较好。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                        <span>如需体验当地风情，可选择民宿。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                        <span>尽量选择在海拔3000米以下的地方住宿，减少高原反应。</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 美食推荐 -->
+    <section id="food" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">美食推荐</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-800">四川段美食</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center text-blue-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">成都</h4>
+                                <p class="text-gray-600">火锅、担担面、钟水饺、龙抄手</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center text-blue-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">雅安</h4>
+                                <p class="text-gray-600">姜锅魁、清溪贡椒鱼</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 rounded-full w-10 h-10 flex items-center justify-center text-blue-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">康定</h4>
+                                <p class="text-gray-600">碳烤藏仔鸡、牦牛肉汤锅</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <h3 class="text-2xl font-bold mb-4 text-green-800">西藏段美食</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center text-green-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">理塘</h4>
+                                <p class="text-gray-600">牦牛肉、酥油茶、青稞饼</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center text-green-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">芒康</h4>
+                                <p class="text-gray-600">盐井正宗一口面、宜希藕王养生汤</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-100 rounded-full w-10 h-10 flex items-center justify-center text-green-600 mr-3">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">拉萨</h4>
+                                <p class="text-gray-600">藏面、甜茶、酸奶饭</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 注意事项 -->
+    <section id="tips" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">注意事项</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-red-50 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-bold mb-4 text-red-700">高原反应预防</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>提前半个月服用红景天。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>保持良好的睡眠和饮食，避免过度劳累。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>初入高原多休息，多喝水多吃水果，禁烟酒。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-2"></i>
+                            <span>携带便携式瓶装氧气、散列痛、常用感冒药。</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-yellow-50 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-bold mb-4 text-yellow-700">路况与驾驶安全</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                            <span>选择越野车，车况良好并备足油料。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                            <span>雨季（7-9月）注意塌方和泥石流，避免夜间行车。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                            <span>冬季和春季注意暗冰，弯道减速鸣笛，不超车。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                            <span>避让牦牛和散养的家畜，不要随意搭载陌生人。</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-blue-50 rounded-xl p-6 card-hover">
+                    <h3 class="text-xl font-bold mb-4 text-blue-700">装备准备</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                            <span><strong>衣物：</strong>防寒衣物、防晒霜、墨镜、遮阳帽、雨具。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                            <span><strong>药品：</strong>感冒药、肠胃药、晕车药、创可贴、消毒药水。</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-2"></i>
+                            <span><strong>证件：</strong>身份证、驾驶证、行驶证、边防证（如需去边境地区）。</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 风景欣赏 -->
+    <section id="gallery" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">风景欣赏</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/s8_jcZ9lU48/" alt="川藏线然乌湖" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '川藏线然乌湖')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">川藏线然乌湖</h3>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/xrIVlhe8b5Q/" alt="川藏线天路72拐" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '川藏线天路72拐')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">川藏线天路72拐</h3>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/NMrjdwQUffU/" alt="稻城亚丁牛奶海" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '稻城亚丁牛奶海')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">稻城亚丁牛奶海</h3>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/W49SPnX64gw/" alt="布达拉宫" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '布达拉宫')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">布达拉宫</h3>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/nVakc8QB0FI/" alt="格聂神山" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '格聂神山')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">格聂神山</h3>
+                    </div>
+                </div>
+                
+                <div class="relative overflow-hidden rounded-xl shadow-md gallery-img">
+                    <img src="https://s.coze.cn/image/z3div1OftfM/" alt="羊卓雍措" class="w-full h-64 object-cover cursor-pointer" onclick="openModal(this.src, '羊卓雍措')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex items-end p-4">
+                        <h3 class="text-white font-semibold">羊卓雍措</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 图片模态框 -->
+    <div id="imageModal" class="modal fixed inset-0 bg-black/75 z-50 flex items-center justify-center opacity-0 invisible">
+        <div class="modal-content bg-white rounded-lg max-w-4xl w-full mx-4 transform translate-y-10">
+            <div class="p-4 flex justify-between items-center border-b">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-800"></h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4">
+                <img id="modalImage" src="" alt="" class="w-full h-auto max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <a href="#" class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-mountain mr-2"></i>川藏线
+                    </a>
+                    <p class="text-gray-400 mt-2">探索世界屋脊的壮美风光</p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#overview" class="text-gray-300 hover:text-white">路线概览</a>
+                    <a href="#attractions" class="text-gray-300 hover:text-white">沿途景点</a>
+                    <a href="#guide" class="text-gray-300 hover:text-white">旅行攻略</a>
+                    <a href="#food" class="text-gray-300 hover:text-white">美食推荐</a>
+                    <a href="#tips" class="text-gray-300 hover:text-white">注意事项</a>
+                    <a href="#gallery" class="text-gray-300 hover:text-white">风景欣赏</a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>© 2024 川藏线旅游指南. 页面内容均由 AI 生成，仅供参考</p>
+                <p class="mt-2">created by <a href="https://space.coze.cn" class="text-blue-400 hover:text-blue-300">coze space</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 隐藏加载动画
+            setTimeout(function() {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(function() {
+                    document.getElementById('loader').style.display = 'none';
+                }, 300);
+            }, 500);
+            
+            // 移动端菜单切换
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+                
+                // 切换图标
+                const icon = this.querySelector('i');
+                if (mobileMenu.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // 如果是移动端菜单，点击后关闭菜单
+                        if (mobileMenu.classList.contains('active')) {
+                            mobileMenu.classList.remove('active');
+                            mobileMenuButton.querySelector('i').classList.remove('fa-times');
+                            mobileMenuButton.querySelector('i').classList.add('fa-bars');
+                        }
+                    }
+                });
+            });
+            
+            // 导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 50) {
+                    nav.classList.add('shadow-lg');
+                } else {
+                    nav.classList.remove('shadow-lg');
+                }
+            });
+            
+            // 初始化地图
+            initMaps();
+        });
+        
+        // 初始化地图
+        function initMaps() {
+            // 川藏南线地图
+            AMapLoader.load({
+                key: "d17c17f8f712c81a7e4241aff4faa7b0",
+                plugins: ["AMap.Scale", "AMap.ToolBar"]
+            }).then((AMap) => {
+                const southMap = new AMap.Map("southRouteMap", {
+                    zoom: 6,
+                    center: [101.9716, 30.0508],
+                    viewMode: "2D"
+                });
+                
+                // 添加标记点
+                const southMarkers = [
+                    {position: [104.0657, 30.6595], title: "成都"},
+                    {position: [102.2332, 29.9128], title: "泸定"},
+                    {position: [101.9641, 30.0553], title: "康定"},
+                    {position: [101.0144, 30.0315], title: "雅江"},
+                    {position: [100.2699, 29.9943], title: "理塘"},
+                    {position: [99.1105, 29.0375], title: "稻城"},
+                    {position: [99.1092, 30.0036], title: "巴塘"},
+                    {position: [98.5945, 29.6855], title: "芒康"},
+                    {position: [97.8412, 29.6668], title: "左贡"},
+                    {position: [94.3615, 29.6548], title: "林芝"},
+                    {position: [91.1865, 29.6548], title: "拉萨"}
+                ];
+                
+                southMarkers.forEach(marker => {
+                    new AMap.Marker({
+                        position: marker.position,
+                        title: marker.title,
+                        map: southMap
+                    });
+                });
+                
+                // 添加路线
+                const southPath = southMarkers.map(marker => marker.position);
+                new AMap.Polyline({
+                    path: southPath,
+                    strokeColor: "#3b82f6",
+                    strokeWeight: 4,
+                    map: southMap
+                });
+                
+                // 添加控件
+                southMap.addControl(new AMap.Scale());
+                southMap.addControl(new AMap.ToolBar());
+            }).catch(e => {
+                console.error("地图加载失败:", e);
+            });
+            
+            // 川藏北线地图
+            AMapLoader.load({
+                key: "d17c17f8f712c81a7e4241aff4faa7b0",
+                plugins: ["AMap.Scale", "AMap.ToolBar"]
+            }).then((AMap) => {
+                const northMap = new AMap.Map("northRouteMap", {
+                    zoom: 6,
+                    center: [100.7606, 32.0614],
+                    viewMode: "2D"
+                });
+                
+                // 添加标记点
+                const northMarkers = [
+                    {position: [104.0657, 30.6595], title: "成都"},
+                    {position: [102.2214, 31.8994], title: "马尔康"},
+                    {position: [102.3647, 31.4763], title: "金川"},
+                    {position: [100.9785, 32.2655], title: "壤塘"},
+                    {position: [99.9927, 31.6228], title: "甘孜"},
+                    {position: [98.5809, 31.8067], title: "德格"},
+                    {position: [98.2119, 31.4994], title: "江达"},
+                    {position: [97.1721, 31.1406], title: "昌都"},
+                    {position: [92.0512, 31.4763], title: "那曲"},
+                    {position: [91.1865, 29.6548], title: "拉萨"}
+                ];
+                
+                northMarkers.forEach(marker => {
+                    new AMap.Marker({
+                        position: marker.position,
+                        title: marker.title,
+                        map: northMap
+                    });
+                });
+                
+                // 添加路线
+                const northPath = northMarkers.map(marker => marker.position);
+                new AMap.Polyline({
+                    path: northPath,
+                    strokeColor: "#10b981",
+                    strokeWeight: 4,
+                    map: northMap
+                });
+                
+                // 添加控件
+                northMap.addControl(new AMap.Scale());
+                northMap.addControl(new AMap.ToolBar());
+            }).catch(e => {
+                console.error("地图加载失败:", e);
+            });
+        }
+        
+        // 打开图片模态框
+        function openModal(src, title) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            modalImage.src = src;
+            modalImage.alt = title;
+            modalTitle.textContent = title;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭图片模态框
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // 点击模态框外部关闭
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
