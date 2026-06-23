@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我是怎么用 AI，把一个自媒体创意变成 124 张自动生成的卡片的2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Georgia", "方正书宋", "Noto Serif SC", serif;
+    background: #faf9f6;
+    color: #2a2624;
+    line-height: 1.9;
+    font-size: 18px;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 28px 100px;
+  }
+
+  /* ── Header ── */
+  .article-title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #1a1714;
+    margin-bottom: 16px;
+  }
+
+  .article-meta {
+    font-size: 14px;
+    color: #999;
+    font-family: sans-serif;
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e8e4dc;
+  }
+
+  /* ── 章节标题 ── */
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1714;
+    margin: 56px 0 18px;
+    padding-left: 14px;
+    border-left: 4px solid #a0825a;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #3a3530;
+    margin: 36px 0 12px;
+  }
+
+  /* ── 正文段落 ── */
+  p {
+    margin-bottom: 20px;
+    color: #2a2624;
+  }
+
+  /* ── 引用块 ── */
+  blockquote {
+    background: #f3f0e8;
+    border-left: 4px solid #c8a87a;
+    border-radius: 0 8px 8px 0;
+    padding: 18px 22px;
+    margin: 28px 0;
+    font-size: 16px;
+    color: #5a5248;
+    font-style: italic;
+    line-height: 1.8;
+  }
+
+  blockquote strong {
+    color: #3a3530;
+    font-style: normal;
+  }
+
+  /* ── 代码块（对话示例） ── */
+  .dialog-box {
+    background: #f7f5f0;
+    border: 1px solid #e0dbd2;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 28px 0;
+    font-family: "Helvetica Neue", "PingFang SC", sans-serif;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .dialog-box .user {
+    color: #1a6bb5;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .dialog-box .ai {
+    color: #5a7a3a;
+    font-weight: 600;
+    margin-bottom: 4px;
+    margin-top: 14px;
+  }
+
+  .dialog-box .content {
+    color: #3a3530;
+    padding-left: 8px;
+    border-left: 2px solid #ddd;
+    margin-bottom: 4px;
+  }
+
+  /* ── 图片展示 ── */
+  .card-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 36px 0;
+  }
+
+  .card-gallery img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+    transition: transform 0.2s;
+  }
+
+  .card-gallery img:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-gallery-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin: 36px 0;
+  }
+
+  .card-gallery-2col img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  }
+
+  .img-caption {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    font-family: sans-serif;
+    margin-top: -20px;
+    margin-bottom: 32px;
+  }
+
+  /* ── 步骤流程 ── */
+  .steps {
+    background: #fff;
+    border: 1px solid #e8e4dc;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 28px 0;
+  }
+
+  .steps .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .steps .step-item:last-child { margin-bottom: 0; }
+
+  .steps .step-num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    background: #a0825a;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: sans-serif;
+    margin-top: 2px;
+  }
+
+  .steps .step-text {
+    color: #2a2624;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  /* ── 标注框 ── */
+  .highlight-box {
+    background: linear-gradient(135deg, #fdf6ee 0%, #f5f0e8 100%);
+    border: 1px solid #d8c9b0;
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 32px 0;
+  }
+
+  .highlight-box .label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #a0825a;
+    font-family: sans-serif;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .highlight-box p {
+    color: #3a3530;
+    font-size: 16px;
+    margin-bottom: 0;
+  }
+
+  /* ── 问题-解决 timeline ── */
+  .problem-list {
+    margin: 24px 0;
+  }
+
+  .problem-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #ede8df;
+  }
+
+  .problem-item .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .problem-item .text strong {
+    display: block;
+    font-size: 15px;
+    color: #1a1714;
+    margin-bottom: 4px;
+  }
+
+  .problem-item .text span {
+    font-size: 14px;
+    color: #6a6460;
+    font-family: sans-serif;
+    line-height: 1.7;
+  }
+
+  /* ── 结尾金句 ── */
+  .ending-quote {
+    text-align: center;
+    padding: 48px 20px;
+    background: linear-gradient(135deg, #2a2624 0%, #3d3530 100%);
+    border-radius: 16px;
+    margin: 60px 0 20px;
+  }
+
+  .ending-quote p {
+    color: #d8c9b0;
+    font-size: 20px;
+    line-height: 2;
+    margin-bottom: 0;
+  }
+
+  .ending-quote .sig {
+    color: #a0825a;
+    font-size: 14px;
+    font-family: sans-serif;
+    margin-top: 18px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── 分隔线 ── */
+  hr {
+    border: none;
+    border-top: 1px solid #e8e4dc;
+    margin: 40px 0;
+  }
+
+  /* ── tag list ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 40px;
+  }
+
+  .tags span {
+    background: #f0ece4;
+    color: #6a6460;
+    font-size: 13px;
+    font-family: sans-serif;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── inline code ── */
+  code {
+    background: #f0ece4;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: "Menlo", "Consolas", monospace;
+    font-size: 14px;
+    color: #8a5a2a;
+  }
+
+  /* ── 数字亮点 ── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+
+  .stat-box {
+    background: #fff;
+    border: 1px solid #e8e4dc;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-box .num {
+    font-size: 36px;
+    font-weight: 700;
+    color: #a0825a;
+    line-height: 1;
+    margin-bottom: 6px;
+    font-family: sans-serif;
+  }
+
+  .stat-box .label {
+    font-size: 13px;
+    color: #999;
+    font-family: sans-serif;
+  }
+
+  @media (max-width: 600px) {
+    .card-gallery { grid-template-columns: repeat(2, 1fr); }
+    .stat-row { grid-template-columns: repeat(2, 1fr); }
+    .card-gallery-2col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ══════════════════════ 标题 ══════════════════════ -->
+  <h1 class="article-title">我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的</h1>
+  <div class="article-meta">沙溪摘录 · 2026年6月 · 一个普通人的 AI 实践记录</div>
+
+  <!-- ══════════════════════ 第一章：起点 ══════════════════════ -->
+  <h2>一、一切从一个简单的想法开始</h2>
+
+  <p>我做了一个抖音文摘账号，叫「沙溪摘录」。</p>
+
+  <p>想法很简单：把那些散落在各处的好句子、好段落，做成干净好看的图片卡片，每天发一条。既是给自己留个念想，也希望能给看到的人一点触动。</p>
+
+  <p>规划好内容方向后，我碰到了第一个现实问题——</p>
+
+  <blockquote>
+    我手里攒了一百多条摘录，如果每张卡片都手动设计排版，少说要花几十个小时。我既不会设计，也没学过 Python，更没有专业工具。<br><br>
+    <strong>但我有 AI，还有一点不愿认输的心。</strong>
+  </blockquote>
+
+  <p>于是我决定：让 AI 来帮我做这件事。</p>
+
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="num">124</div>
+      <div class="label">张卡片</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">248</div>
+      <div class="label">个文件（png + txt）</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">0</div>
+      <div class="label">失败</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ 第二章：AI选择 ══════════════════════ -->
+  <h2>二、选 AI 这件事，我走了不少弯路</h2>
+
+  <p>决定用 AI 做这件事之后，我首先面临的问题是：<strong>用哪个？</strong></p>
+
+  <p>这个问题比我想象的要麻烦得多。</p>
+
+  <p>我陆续试过好几款 AI 工具：有的只能聊天、没法帮我跑代码；有的能写代码，但每次对话结束就忘了上下文，下一次聊像从头开始；有的响应很慢，有的界面很难用。更重要的是——我需要一个能<strong>真正操作本地文件、执行脚本、帮我跑起来</strong>的助手，而不是一个只给我粘一段代码、让我自己去研究怎么跑的工具。</p>
+
+  <div class="problem-list">
+    <div class="problem-item">
+      <div class="icon">🔍</div>
+      <div class="text">
+        <strong>试过只能聊天的 AI</strong>
+        <span>给出的代码需要自己配环境、自己调试，遇到报错没有人帮你看，每次都卡在环境和运行上。</span>
+      </div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">🔍</div>
+      <div class="text">
+        <strong>试过没有记忆的 AI</strong>
+        <span>每次新开对话，之前沟通好的需求、改过的参数、沉淀的规则全部归零，要重新交代一遍，效率极低。</span>
+      </div>
+    </div>
+    <div class="problem-item">
+      <div class="icon">✅</div>
+      <div class="text">
+        <strong>最终选定：WorkBuddy</strong>
+        <span>能直接操作本地文件系统，帮我跑 Python 脚本，看到输出报错立刻定位修复；有项目记忆，每次打开都记得我们之前做了什么、改了哪些规则；对话自然，不需要每次重新交代背景。这才是我真正需要的那种"能干活"的 AI。</span>
+      </div>
+    </div>
+  </div>
+
+  <blockquote>
+    选 AI 工具这件事，我的建议是：<strong>不要只看它能不能"说"，要看它能不能"做"。</strong><br><br>
+    对我这个没有技术背景的普通用户来说，AI 能不能直接帮我跑起来、能不能记住项目进展、能不能跟着我一起调试——这才是最关键的。
+  </blockquote>
+
+  <!-- ══════════════════════ 第三章：第一步 ══════════════════════ -->
+  <h2>三、第一步：描述需求，看看能走多远</h2>
+
+  <p>我完全不懂 Python，也没有编程经验。但我知道自己想要什么——</p>
+
+  <div class="dialog-box">
+    <div class="user">👤 我：</div>
+    <div class="content">我想做一个抖音账号，每天发一张金句卡片。图片是竖版的，1080x1920。要有白色圆角卡片，卡片上方有标签名，正文居中显示，下方有一行点睛的结尾语。你能帮我生成吗？</div>
+    <div class="ai">🤖 AI：</div>
+    <div class="content">可以。我来用 Python + Pillow 库实现。先明确几个参数：背景色、字体、字号、行间距……</div>
+  </div>
+
+  <p>就这样，一来一回之间，一段我完全看不懂的 Python 脚本出现了。</p>
+
+  <p>我按照 AI 的指引，在本地跑起来——<strong>第一张卡片生成了</strong>。虽然排版还有很多问题，但那一刻真的有一种奇妙的感觉：我什么代码都没写，但我的想法变成了一张真实的图片。</p>
+
+  <!-- ══════════════════════ 第三章：卡片效果展示 ══════════════════════ -->
+  <h2>四、最终成品长什么样</h2>
+
+  <p>经过反复打磨，最终的卡片是这个样子的。每张卡片都是 1080×1920 竖版，纯 Python 代码生成，没有任何手工设计：</p>
+
+  <div class="card-gallery">
+    <img src="card01.png" alt="卡片示例1：欲买桂花同载酒">
+    <img src="card02.png" alt="卡片示例2：功不唐捐">
+    <img src="card07.png" alt="卡片示例7：我在草地上看书">
+  </div>
+  <div class="img-caption">↑ 三张不同风格的成品卡片（均为程序自动生成）</div>
+
+  <div class="card-gallery">
+    <img src="card30.png" alt="卡片示例30：张三举报">
+    <img src="card60.png" alt="卡片示例60：人的放纵是本能">
+    <img src="card90.png" alt="卡片示例90：职场潜规则">
+  </div>
+  <div class="img-caption">↑ 从古典诗词到现实感悟，每条内容都有对应卡片和解读文档</div>
+
+  <div class="highlight-box">
+    <div class="label">💡 技术栈一览</div>
+    <p>Python + Pillow（图片生成） · 楷体/黑体/宋体中文字体渲染 · 自动字号缩放（62→56→50→44px） · 1080×1920 竖版（抖音标准）· 每张图附配套解读 TXT 文档</p>
+  </div>
+
+  <!-- ══════════════════════ 第四章：踩坑记录 ══════════════════════ -->
+  <h2>五、这条路上，我踩了哪些坑</h2>
+
+  <p>我要诚实地说——这个过程并不顺利。每往前走一步，就会冒出新的问题。</p>
+
+  <p>但这些问题，反而是整段经历里最有价值的部分。</p>
+
+  <div class="problem-list">
+
+    <div class="problem-item">
+      <div class="icon">🪲</div>
+      <div class="text">
+        <strong>问题一：文字上下不居中，看起来总是偏上</strong>
+        <span>卡片里的文字块贴着卡片顶边，下方留了大片空白。我描述了问题，AI 找到了根因：计算总文字高度时少计入了结尾语的高度。修复后，文字严格垂直居中。</span>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="icon">🪲</div>
+      <div class="text">
+        <strong>问题二：很多行只有一个句号或逗号</strong>
+        <span>图片里出现了大量只有"。"或"，"的孤立行，非常难看。根因是换行函数在标点处额外切行。最终解法：彻底删除按标点断行的逻辑，改为只按行宽断行，在预览文件里用 <code>/</code> 手动标记换行位置。</span>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="icon">🪲</div>
+      <div class="text">
+        <strong>问题三：生成的结尾语不是我改过的那个版本</strong>
+        <span>我在预览文件里修改了结尾语，重新生成后发现卡片用的还是旧版本。原因是脚本读的不是预览文件，而是原始数据文件。调整数据来源后，严格按预览文件生成。</span>
+      </div>
+    </div>
+
+    <div class="problem-item">
+      <div class="icon">🪲</div>
+      <div class="text">
+        <strong>问题四：124 个解读文档，全是一个模板套出来的</strong>
+        <span>最初生成的配套文档，每一篇都是"深度理解 / 故事场景 / 情感共鸣"三段套路，完全不贴合具体卡片内容。我提出要「逐条定制化」——AI 为 124 条内容分别手写了不同角度、不同维度的解读，彻底告别同质化。</span>
+      </div>
+    </div>
+
+  </div>
+
+  <blockquote>
+    每一次遇到问题，我都没有选择放弃或绕过。<br>
+    我会仔细描述"哪里不对、我想要什么效果"，然后和 AI 一起找根因、验方案。<br><br>
+    <strong>这个过程本身，就是学习。</strong>
+  </blockquote>
+
+  <!-- ══════════════════════ 第五章：工作流 ══════════════════════ -->
+  <h2>六、最终沉淀出的工作流</h2>
+
+  <p>经过反复打磨，我们建立了一套可复用、可持续运转的工作流。这套流程在项目里有一个文件记录着：<code>要求.txt</code>，版本已经到了 v4.2。</p>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-text">从「搜集文摘.txt」原始素材文件中，运行脚本自动生成「待确认_预览.txt」，包含每条内容的标签名、正文断句、结尾语草稿。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-text">我打开预览文件，亲手修改不满意的标签名、调整断句位置（用 <code>/</code> 标记）、改写结尾语，直到满意为止。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-text">告诉 AI「预览已确认」，运行 <code>gen_from_preview.py</code>，严格按照我修改后的预览文件生成卡片，不做任何额外改动。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-text">同步生成每张卡片的配套解读文档（多角度、定制化），可以直接用于抖音文字描述或评论区置顶。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-text">审核满意，直接发布。一次生成，日日可用。</div>
+    </div>
+  </div>
+
+  <p>这套流程有一个核心设计理念：<strong>人负责审美和内容，AI 负责渲染和批量输出。</strong></p>
+
+  <p>我不需要懂代码，但我需要清楚地知道自己想要什么，并且能把它说清楚。</p>
+
+  <!-- ══════════════════════ 第六章：解读文档 ══════════════════════ -->
+  <h2>七、超出预期的部分：定制化解读文档</h2>
+
+  <p>每张图片，都有一个同名的 TXT 文件。</p>
+
+  <p>一开始，这 124 个文档让我很失望——AI 对每一条都套了同一套三段式模板，换汤不换药。我直接说了：</p>
+
+  <div class="dialog-box">
+    <div class="user">👤 我：</div>
+    <div class="content">我看了你给我生成的解读类的 txt，那 128 个 txt 同质化严重，基本是个模子刻出来的……我希望的是你对应每个卡片的内容，生成定制化的解读类文档，可以不局限于这三点，你帮我多拓展，从多个维度解读图片的内容，帮我多写点角度，我来做选择。</div>
+  </div>
+
+  <p>AI 重写了整个生成脚本，为 124 条内容逐条手写解读。这一次，每条内容根据自身特点选择不同的解读角度：</p>
+
+  <div class="highlight-box">
+    <div class="label">📖 角度举例</div>
+    <p>
+      · 「欲买桂花同载酒」→ 【延伸解读】人与时间的永恒错位 + 【情感共鸣】此刻你手里握着的才是最珍贵的 + 【反向思考】回不去，也未必是坏事<br><br>
+      · 「职场潜规则马字诀」→ 【延伸解读】七个马字背后的权力逻辑（一段深度解析）<br><br>
+      · 「张三举报作弊被孤立」→ 【延伸解读】学校教育 vs 社会教育的两套规则
+    </p>
+  </div>
+
+  <p>这些文档，是每天发布时最好用的文案素材。</p>
+
+  <!-- ══════════════════════ 第七章：我从中学到了什么 ══════════════════════ -->
+  <h2>八、我真正学到的是什么</h2>
+
+  <p>做完这个项目，我反复想一个问题：在整个过程中，AI 做了什么？我又做了什么？</p>
+
+  <p><strong>AI 做了这些：</strong>写代码、调参数、修 bug、生成内容、批量处理。</p>
+
+  <p><strong>我做了这些：</strong>提出想法、描述问题、定义标准、审核结果、坚持打磨。</p>
+
+  <blockquote>
+    我没有因为"看不懂代码"就止步——因为我不需要看懂代码，我只需要能清晰描述自己想要什么，以及什么地方还不够好。<br><br>
+    <strong>这才是普通人用 AI 最核心的能力：把模糊的想法变成清晰的描述。</strong>
+  </blockquote>
+
+  <p>每一次问题的出现，都是一次更深理解的机会。孤立标点行是怎么来的？为什么生成的结尾不是我改的那个版本？为什么 124 个解读文档都一个模样？</p>
+
+  <p>我每次都把问题搞清楚，而不是绕过去。这个习惯，让整个项目最终沉淀出一套真正可用的工作流，而不是一堆临时凑合的代码。</p>
+
+  <!-- ══════════════════════ 第八章：给你的建议 ══════════════════════ -->
+  <h2>九、如果你也想做类似的事</h2>
+
+  <p>我不是技术人员。我用 AI 做这件事，不是因为我懂技术，而是因为我愿意持续去问、去试、去改。</p>
+
+  <p>如果你也有类似的想法，这里有几条我觉得真正有用的建议：</p>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">①</div>
+      <div class="step-text"><strong>先想清楚你想要什么。</strong>不是"帮我做个好看的图片"，而是"图片尺寸 1080x1920，白色圆角卡片，标签在卡片上方，正文居中，底部留白 1/5"。越具体，越好用。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">②</div>
+      <div class="step-text"><strong>遇到问题，描述症状，不要猜原因。</strong>把你看到的现象说清楚（"很多行只有一个句号"），AI 来找根因。你不需要懂原理，但要能说清楚"哪里不对"。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">③</div>
+      <div class="step-text"><strong>不要接受"差不多能用"。</strong>最初 AI 给的解读文档我完全不满意，但我说出来了，AI 就重写了。你的标准，就是 AI 的目标。</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">④</div>
+      <div class="step-text"><strong>让成果积累起来。</strong>工作流、规范文件、卡片样式——这些都是可以复用的资产。每次打磨，都让下一次更轻松。</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ 结尾 ══════════════════════ -->
+  <div class="ending-quote">
+    <p>
+      普通人和 AI 之间，<br>
+      没有技术门槛，<br>
+      只有是否愿意持续探索的意志。
+    </p>
+    <p class="sig">——「沙溪摘录」 · 沙溪</p>
+  </div>
+
+  <p style="color:#999; font-size:14px; font-family:sans-serif; text-align:center; margin-top:32px;">
+    本文记录了从零开始用 AI 构建自动化图文生成工作流的完整历程。<br>
+    如果对你有帮助，欢迎点赞或在评论区分享你的实践。
+  </p>
+
+  <div class="tags">
+    <span># AI工具</span>
+    <span># 自媒体</span>
+    <span># Python</span>
+    <span># 效率工具</span>
+    <span># 普通人学AI</span>
+    <span># 内容创作</span>
+    <span># 抖音运营</span>
+    <span># 学以致用</span>
+  </div>
+
+</div>
+</body>
+</html>
