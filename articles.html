@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
     <title>文章列表 - 安即是佛</title>
@@ -166,7 +166,7 @@
         }
     </style>
 </head>
-<body class="is-preload">
+<body class="">
 
     <!-- Header -->
     <header id="article-header">
@@ -199,7 +199,12 @@
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
 
+        <!-- Inline articles data (enables local file:// access) -->
     <script>
+    var __articlesData = [{"id":"20260623","date":"2026-06-23","dateSort":"20260623","title":"我是怎么用 AI，把一个自媒体创意变成 124 张自动生成的卡片的","folder":"20260623AI图文自动生成探索历程","path":"子页文章/20260623AI图文自动生成探索历程/article.html","thumbnail":"子页文章/20260623AI图文自动生成探索历程/card01.png"},{"id":"20260622","date":"2026-06-22","dateSort":"20260622","title":"我是怎么用 AI，把一个自媒体创意变成 124 张自动生成的卡片的2","folder":"20260622AI图文自动生成探索历程 - 副本","path":"子页文章/20260622AI图文自动生成探索历程 - 副本/article.html","thumbnail":"子页文章/20260622AI图文自动生成探索历程 - 副本/card01.png"}];
+    </script>
+
+<script>
     (function() {
         var container = document.getElementById('articles-container');
 
@@ -239,16 +244,29 @@
             return div.innerHTML;
         }
 
-        // Fetch articles.json
-        fetch('articles.json?t=' + Date.now())
-            .then(function(r) { return r.json(); })
-            .then(function(data) { renderArticles(data); })
-            .catch(function(err) {
-                container.innerHTML = '<div class="empty-state"><i class="icon solid fa-exclamation-triangle" style="color:#c00;"></i><p>文章加载失败，请稍后重试</p></div>';
-                console.error('Failed to load articles:', err);
-            });
+        // Use inline data first (local file://), fallback to fetch (GitHub Pages)
+        if (typeof __articlesData !== "undefined" && __articlesData) {
+            renderArticles(__articlesData);
+        } else {
+            fetch('articles.json?t=' + Date.now())
+                .then(function(r) { return r.json(); })
+                .then(function(data) { renderArticles(data); })
+                .catch(function(err) {
+                    container.innerHTML = '<div class="empty-state"><i class="icon solid fa-exclamation-triangle" style="color:#c00;"></i><p>文章加载失败，请稍后重试</p></div>';
+                    console.error('Failed to load articles:', err);
+                });
+        }
     })();
     </script>
+
+<script>
+// Fallback: ensure is-preload is removed even if jQuery fails on file://
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.body.classList.remove('is-preload');
+    }, 100);
+});
+</script>
 
 </body>
 </html>

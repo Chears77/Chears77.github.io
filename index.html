@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
-	<body class="is-preload">
+	<body class="">
 
 		<!-- Header -->
 			<header id="header">
@@ -419,6 +419,15 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+
+<script>
+// Fallback: ensure is-preload is removed even if jQuery fails on file://
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        document.body.classList.remove('is-preload');
+    }, 100);
+});
+</script>
 
 	</body>
 </html>

@@ -1,8 +1,16 @@
-﻿const fs = require("fs");
+const fs = require("fs");
 const path = require("path");
 
-const articlesDir = "子页文章";
+// ── 始终基于脚本自身所在目录 ──
+const rootDir = __dirname;
+
+const articlesDir = path.join(rootDir, "子页文章");
 const result = [];
+
+if (!fs.existsSync(articlesDir)) {
+  console.error("Error: 未找到 '子页文章' 文件夹，请确认脚本在 Chears77.github.io 目录下运行");
+  process.exit(1);
+}
 
 const entries = fs.readdirSync(articlesDir, { withFileTypes: true });
 for (const entry of entries) {
@@ -36,5 +44,23 @@ for (const entry of entries) {
 }
 
 result.sort((a, b) => b.dateSort.localeCompare(a.dateSort));
-fs.writeFileSync("articles.json", JSON.stringify(result, null, 2), "utf-8");
-console.log("Generated articles.json with " + result.length + " articles");
+
+// ── 写入 articles.json ──
+fs.writeFileSync(path.join(rootDir, "articles.json"), JSON.stringify(result, null, 2), "utf-8");
+console.log("✓ Generated articles.json with " + result.length + " articles");
+
+// ── 嵌入数据到 articles.html ──
+const articlesHtmlPath = path.join(rootDir, "articles.html");
+let articlesHtml = fs.readFileSync(articlesHtmlPath, "utf-8");
+
+const dataJson = JSON.stringify(result);
+const dataRegex = /var __articlesData = \[[\s\S]*?\];/;
+const newDataLine = "var __articlesData = " + dataJson + ";";
+
+if (dataRegex.test(articlesHtml)) {
+  articlesHtml = articlesHtml.replace(dataRegex, newDataLine);
+  fs.writeFileSync(articlesHtmlPath, articlesHtml, "utf-8");
+  console.log("✓ Updated articles.html with inline data");
+} else {
+  console.log("Warning: __articlesData placeholder not found in articles.html");
+}
