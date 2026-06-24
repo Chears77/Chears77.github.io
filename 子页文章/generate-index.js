@@ -1,14 +1,14 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 const path = require("path");
 
-// ── 始终基于脚本自身所在目录 ──
+// 脚本位于 子页文章/ 中，文章子文件夹就在同目录下
 const rootDir = __dirname;
 
-const articlesDir = path.join(rootDir, "子页文章");
+const articlesDir = rootDir;
 const result = [];
 
 if (!fs.existsSync(articlesDir)) {
-  console.error("Error: 未找到 '子页文章' 文件夹，请确认脚本在 Chears77.github.io 目录下运行");
+  console.error("Error: 未找到文章目录，请确认脚本在 子页文章 目录下运行");
   process.exit(1);
 }
 
@@ -20,8 +20,11 @@ for (const entry of entries) {
   if (!match) continue;
   const dateStr = match[1];
   const topic = match[2].trim();
-  const articlePath = path.join(folderPath, "article.html");
-  if (!fs.existsSync(articlePath)) continue;
+  // Find any .html file in the folder (not just article.html)
+  const htmlFiles = fs.readdirSync(folderPath).filter(f => f.endsWith(".html"));
+  if (htmlFiles.length === 0) continue;
+  const articleFile = htmlFiles[0];
+  const articlePath = path.join(folderPath, articleFile);
   const html = fs.readFileSync(articlePath, "utf-8");
   const titleMatch = html.match(/<title>([^<]+)<\/title>/);
   const title = titleMatch ? titleMatch[1].trim() : topic;
@@ -29,7 +32,7 @@ for (const entry of entries) {
   const files = fs.readdirSync(folderPath);
   const imgFile = files.find(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f));
   if (imgFile) {
-    thumbnail = path.join("子页文章", entry.name, imgFile).replace(/\\/g, "/");
+    thumbnail = "./" + entry.name + "/" + imgFile;
   }
   const displayDate = dateStr.substring(0,4) + "-" + dateStr.substring(4,6) + "-" + dateStr.substring(6,8);
   result.push({
@@ -38,18 +41,18 @@ for (const entry of entries) {
     dateSort: dateStr,
     title: title,
     folder: entry.name,
-    path: path.join("子页文章", entry.name, "article.html").replace(/\\/g, "/"),
+    path: "./" + entry.name + "/" + articleFile,
     thumbnail: thumbnail
   });
 }
 
 result.sort((a, b) => b.dateSort.localeCompare(a.dateSort));
 
-// ── 写入 articles.json ──
+// 写入 articles.json（同目录）
 fs.writeFileSync(path.join(rootDir, "articles.json"), JSON.stringify(result, null, 2), "utf-8");
 console.log("✓ Generated articles.json with " + result.length + " articles");
 
-// ── 嵌入数据到 articles.html ──
+// 嵌入数据到 articles.html（同目录）
 const articlesHtmlPath = path.join(rootDir, "articles.html");
 let articlesHtml = fs.readFileSync(articlesHtmlPath, "utf-8");
 
@@ -64,3 +67,4 @@ if (dataRegex.test(articlesHtml)) {
 } else {
   console.log("Warning: __articlesData placeholder not found in articles.html");
 }
+
