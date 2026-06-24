@@ -1,0 +1,324 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>飞小狗 🐕</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    display:flex;flex-direction:column;align-items:center;
+    background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+    min-height:100vh;padding:10px;font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+    color:#fff;user-select:none;-webkit-user-select:none;
+}
+.game-container{
+    background:rgba(255,255,255,0.06);
+    border-radius:16px;padding:16px;
+    backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);
+    max-width:420px;width:100%;
+}
+.score-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:0 4px 12px 4px;font-size:15px;
+}
+.score-bar span{color:rgba(255,255,255,0.6);}
+.score-bar .num{color:#ffd700;font-weight:700;font-size:18px;}
+canvas{
+    display:block;margin:0 auto;
+    border-radius:10px;
+    width:100%;max-width:388px;height:auto;
+    touch-action:none;cursor:pointer;
+}
+.controls{
+    display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;
+}
+.btn{
+    padding:8px 20px;border:none;border-radius:8px;
+    font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+    font-family:inherit;text-decoration:none;
+}
+.btn-primary{background:#e94560;color:#fff;}
+.btn-primary:hover{background:#ff6b81;transform:translateY(-1px);}
+.btn-secondary{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);}
+.btn-secondary:hover{background:rgba(255,255,255,0.2);}
+.tip{font-size:12px;color:rgba(255,255,255,0.4);margin-top:10px;text-align:center;}
+.game-over-overlay{
+    display:none;position:fixed;inset:0;z-index:10;
+    background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+    justify-content:center;align-items:center;
+}
+.game-over-overlay.show{display:flex;}
+.game-over-box{
+    background:linear-gradient(135deg,#1a1a2e,#16213e);
+    padding:32px 40px;border-radius:16px;text-align:center;
+    border:1px solid rgba(255,255,255,0.1);
+    animation:fadeIn .3s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.game-over-box h2{font-size:24px;margin-bottom:8px;}
+.game-over-box .final-score{font-size:36px;color:#ffd700;font-weight:700;margin:8px 0 4px;}
+.game-over-box .best-score{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:16px;}
+.game-over-box .btns{display:flex;gap:12px;justify-content:center;}
+</style>
+</head>
+<body>
+
+<div class="game-container">
+    <div class="score-bar">
+        <div><span class="num" id="score">0</span></div>
+        <div>最高 <span class="num" id="highScore">0</span></div>
+    </div>
+    <canvas id="gameCanvas" width="388" height="520"></canvas>
+    <div class="controls">
+        <button class="btn btn-primary" id="restartBtn">🔄 重新开始</button>
+        <a href="../index.html" class="btn btn-secondary">🏠 回到主页</a>
+    </div>
+    <div class="tip">点击屏幕 / 按空格键 让小狗飞行，躲避管道</div>
+</div>
+
+<div class="game-over-overlay" id="gameOverOverlay">
+    <div class="game-over-box">
+        <h2>😵 游戏结束</h2>
+        <div class="final-score" id="finalScore">0</div>
+        <div class="best-score" id="bestScoreText">最高纪录：0</div>
+        <div class="btns">
+            <button class="btn btn-primary" id="restartOverlayBtn">🔄 再来一局</button>
+            <a href="../index.html" class="btn btn-secondary">🏠 主页</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    const canvas=document.getElementById('gameCanvas');
+    const ctx=canvas.getContext('2d');
+    const scoreEl=document.getElementById('score');
+    const highScoreEl=document.getElementById('highScore');
+    const finalScoreEl=document.getElementById('finalScore');
+    const bestScoreText=document.getElementById('bestScoreText');
+    const gameOverOverlay=document.getElementById('gameOverOverlay');
+
+    const W=388,H=520;
+    let bird, pipes, score, highScore, running, gameLoop, frameCount, gravity, flapPower;
+
+    // Dog head image
+    const dogImg=new Image();
+    dogImg.src='../images/head.jpg';
+
+    highScore=parseInt(localStorage.getItem('flappyHighScore'))||0;
+    highScoreEl.textContent=highScore;
+
+    function init(){
+        bird={x:80,y:H/2,vy:0,size:22};
+        pipes=[];
+        score=0;
+        frameCount=0;
+        gravity=0.35;
+        flapPower=-6.5;
+        scoreEl.textContent='0';
+        gameOverOverlay.classList.remove('show');
+        running=true;
+    }
+
+    function flap(){
+        if(!running)return;
+        bird.vy=flapPower;
+    }
+
+    function addPipe(){
+        const gap=155;
+        const minTop=60;
+        const maxTop=H-gap-60;
+        const top=Math.floor(Math.random()*(maxTop-minTop+1))+minTop;
+        pipes.push({x:W,top:top,bottom:top+gap,width:45,scored:false});
+    }
+
+    function update(){
+        if(!running)return;
+        frameCount++;
+
+        // Add pipes
+        if(frameCount%110===0)addPipe();
+
+        // Bird physics
+        bird.vy+=gravity;
+        bird.y+=bird.vy;
+
+        // Pipes
+        for(let i=pipes.length-1;i>=0;i--){
+            const p=pipes[i];
+            p.x-=2.2;
+
+            // Scoring
+            if(!p.scored&&p.x+p.width<bird.x){
+                p.scored=true;
+                score++;
+                scoreEl.textContent=score;
+                if(score>highScore){
+                    highScore=score;
+                    localStorage.setItem('flappyHighScore',highScore);
+                    highScoreEl.textContent=highScore;
+                }
+            }
+
+            // Remove off-screen
+            if(p.x+p.width<0)pipes.splice(i,1);
+        }
+
+        // Collision
+        const bs=bird.size;
+        // Ground / ceiling
+        if(bird.y+bs>H||bird.y-bs<0){gameOver();return;}
+
+        // Pipe collision
+        for(const p of pipes){
+            if(bird.x+bs>p.x&&bird.x-bs<p.x+p.width){
+                if(bird.y-bs<p.top||bird.y+bs>p.bottom){gameOver();return;}
+            }
+        }
+
+        draw();
+    }
+
+    function draw(){
+        ctx.clearRect(0,0,W,H);
+
+        // Sky gradient
+        const sky=ctx.createLinearGradient(0,0,0,H);
+        sky.addColorStop(0,'#4dc9f6');
+        sky.addColorStop(0.5,'#87CEEB');
+        sky.addColorStop(1,'#b8e6b8');
+        ctx.fillStyle=sky;
+        ctx.fillRect(0,0,W,H);
+
+        // Clouds
+        ctx.fillStyle='rgba(255,255,255,0.3)';
+        for(let i=0;i<3;i++){
+            const cx=(frameCount*0.5+i*150)%(W+100)-50;
+            const cy=60+i*80;
+            ctx.beginPath();ctx.ellipse(cx,cy,40,20,0,0,Math.PI*2);ctx.fill();
+            ctx.beginPath();ctx.ellipse(cx+25,cy-8,30,18,0,0,Math.PI*2);ctx.fill();
+        }
+
+        // Ground
+        ctx.fillStyle='#8B4513';
+        ctx.fillRect(0,H-20,W,20);
+        ctx.fillStyle='#654321';
+        ctx.fillRect(0,H-18,W,3);
+
+        // Draw grass tufts
+        ctx.strokeStyle='#2d8a2d';
+        ctx.lineWidth=2;
+        for(let i=0;i<W;i+=15){
+            const gh=6+Math.sin(i*0.3+frameCount*0.05)*3;
+            ctx.beginPath();ctx.moveTo(i,H-20);ctx.lineTo(i-2,H-20-gh);ctx.stroke();
+            ctx.beginPath();ctx.moveTo(i,H-20);ctx.lineTo(i+2,H-20-gh);ctx.stroke();
+        }
+
+        // Pipes
+        for(const p of pipes){
+            const grad=ctx.createLinearGradient(p.x,0,p.x+p.width,0);
+            grad.addColorStop(0,'#2ecc71');
+            grad.addColorStop(0.3,'#27ae60');
+            grad.addColorStop(0.7,'#27ae60');
+            grad.addColorStop(1,'#1e8449');
+            ctx.fillStyle=grad;
+            // Top pipe
+            ctx.fillRect(p.x,0,p.width,p.top);
+            // Pipe cap
+            ctx.fillStyle='#1e8449';
+            ctx.fillRect(p.x-4,p.top-20,p.width+8,20);
+            ctx.fillStyle=grad;
+            ctx.fillRect(p.x,p.top-16,p.width,12);
+            // Bottom pipe
+            ctx.fillStyle=grad;
+            ctx.fillRect(p.x,p.bottom,p.width,H-p.bottom-20);
+            ctx.fillStyle='#1e8449';
+            ctx.fillRect(p.x-4,p.bottom,p.width+8,20);
+            ctx.fillStyle=grad;
+            ctx.fillRect(p.x,p.bottom+4,p.width,12);
+            // Highlights
+            ctx.fillStyle='rgba(255,255,255,0.15)';
+            ctx.fillRect(p.x+6,0,8,p.top);
+            ctx.fillRect(p.x+6,p.bottom,8,H-p.bottom-20);
+        }
+
+        // Bird - draw dog head
+        ctx.save();
+        // Rotation based on velocity
+        const angle=Math.min(Math.max(bird.vy*0.05,-0.5),0.5);
+        ctx.translate(bird.x,bird.y);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.arc(0,0,bird.size,0,Math.PI*2);
+        ctx.clip();
+        ctx.drawImage(dogImg,-bird.size,-bird.size,bird.size*2,bird.size*2);
+        ctx.restore();
+
+        // Glow effect
+        ctx.beginPath();
+        ctx.arc(bird.x,bird.y,bird.size+3,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,215,0,0.3)';
+        ctx.lineWidth=2;
+        ctx.stroke();
+
+        // Ready text
+        if(frameCount<60&&running){
+            ctx.fillStyle='rgba(255,255,255,0.8)';
+            ctx.font='bold 22px "Microsoft YaHei"';
+            ctx.textAlign='center';
+            ctx.fillText('点击开始',W/2,H/2-60);
+            ctx.font='14px "Microsoft YaHei"';
+            ctx.fillStyle='rgba(255,255,255,0.5)';
+            ctx.fillText('点击屏幕让小狗起飞',W/2,H/2-30);
+        }
+    }
+
+    function gameOver(){
+        running=false;
+        clearInterval(gameLoop);
+        finalScoreEl.textContent=score;
+        bestScoreText.textContent='最高纪录：'+highScore;
+        gameOverOverlay.classList.add('show');
+    }
+
+    // Input
+    function handleInput(e){
+        if(e)e.preventDefault();
+        if(!running){
+            if(gameOverOverlay.classList.contains('show'))return;
+            // First tap to start
+            return;
+        }
+        flap();
+    }
+
+    canvas.addEventListener('click',handleInput);
+    canvas.addEventListener('touchstart',e=>{e.preventDefault();handleInput(e);});
+
+    document.addEventListener('keydown',e=>{
+        if(e.code==='Space'||e.key===' '){
+            e.preventDefault();
+            handleInput(e);
+        }
+    });
+
+    // Restart
+    function restartGame(){
+        clearInterval(gameLoop);
+        init();
+        gameLoop=setInterval(update,1000/60);
+    }
+    document.getElementById('restartBtn').addEventListener('click',restartGame);
+    document.getElementById('restartOverlayBtn').addEventListener('click',restartGame);
+
+    // Start - wait for first interaction
+    init();
+    gameLoop=setInterval(update,1000/60);
+    running=true;
+})();
+</script>
+</body>
+</html>
+

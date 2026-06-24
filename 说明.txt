@@ -2,7 +2,7 @@
 1. 在 `Chears77.github.io` 文件夹内部空白处，右键打开 `Git Bash Here`
 2. 一起输入或者分部输入
 git add .
-git commit -m "修改情况"
+git commit -m "更新页面内容，补充文章配置"
 git push
 
 

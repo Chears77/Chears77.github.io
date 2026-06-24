@@ -1,0 +1,83 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <title>图片 - 安即是佛</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+    <style>
+        #gallery-header {
+            padding: 1.2em 0 0.8em;
+            text-align: center;
+            background: linear-gradient(135deg, #2a2624 0%, #1a1714 100%);
+            color: #fff;
+            position: relative;
+        }
+        #gallery-header h1 { font-size: 1.4em; font-weight: 700; margin-bottom: 0.1em; }
+        #gallery-header p { font-size: 0.9em; color: #bbb; }
+        #gallery-header .back-link {
+            position: absolute; top: 1em; right: 1.5em;
+            color: #a0825a; text-decoration: none; font-size: 0.85em; transition: color 0.2s;
+        }
+        #gallery-header .back-link:hover { color: #c8a87a; }
+
+        .gallery-wrapper {
+            max-width: 900px; margin: 0 auto; padding: 3em 2em 4em;
+            column-count: 3; column-gap: 1.2em;
+        }
+        .gallery-item {
+            break-inside: avoid; margin-bottom: 1.2em;
+            border-radius: 10px; overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+        .gallery-item:hover { transform: scale(1.02); }
+        .gallery-item img { width: 100%; display: block; }
+
+        #gallery-footer { text-align: center; padding: 2em; color: #999; font-size: 0.85em; border-top: 1px solid #eee; }
+
+        @media screen and (max-width: 736px) {
+            .gallery-wrapper { column-count: 2; padding: 1.5em 1em 3em; }
+            #gallery-header h1 { font-size: 1.8em; }
+        }
+        @media screen and (max-width: 480px) {
+            .gallery-wrapper { column-count: 1; }
+        }
+    </style>
+</head>
+<body class="">
+    <header id="gallery-header">
+        <a href="../index.html" class="back-link">← 返回首页</a>
+        <h1>🖼️ 图片</h1>
+        <p>生活中的美好瞬间</p>
+    </header>
+    <div class="gallery-wrapper">
+        <div class="gallery-item"><img src="../images/pic01.jpg" alt="pic01" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/pic02.jpg" alt="pic02" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/pic03.jpg" alt="pic03" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/pic04.jpg" alt="pic04" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/pic05.jpg" alt="pic05" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/head.jpg" alt="head" loading="lazy" /></div>
+        <div class="gallery-item"><img src="../images/screen.jpg" alt="screen" loading="lazy" /></div>
+    </div>
+    <footer id="gallery-footer">
+        <ul class="icons">
+            <li><a href="../index.html" class="icon solid fa-home"><span class="label">首页</span></a></li>
+        </ul>
+        <p class="copyright">&copy; 安即是佛. Credits: <a href="http://html5up.net">HTML5 UP</a></p>
+    </footer>
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../assets/js/browser.min.js"></script>
+    <script src="../assets/js/breakpoints.min.js"></script>
+    <script src="../assets/js/util.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+    window.addEventListener('load', function() {
+        setTimeout(function() { document.body.classList.remove('is-preload'); }, 100);
+    });
+    </script>
+</body>
+</html>
+
