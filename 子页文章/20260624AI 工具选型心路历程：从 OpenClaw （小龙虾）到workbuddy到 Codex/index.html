@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex，一个工程人的踩坑实录</title>
+    <style>
+
+/* ===== 基础重置 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+                 Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    background-color: #ffffff;
+    line-height: 1.6;
+}
+
+/* ===== 文章容器 ===== */
+.article-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ===== 文章头部 ===== */
+.article-header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 48px;
+}
+.article-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
+}
+
+/* ===== 内容排版 ===== */
+.article-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 48px 0 20px;
+    color: #1a1a1a;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e8e8e8;
+}
+.article-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 36px 0 16px;
+    color: #1a1a1a;
+}
+.article-content h4 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 28px 0 14px;
+    color: #2c2c2c;
+}
+.article-content h5, .article-content h6 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: #2c2c2c;
+}
+
+.article-content p {
+    font-size: 17px;
+    line-height: 1.85;
+    margin: 16px 0;
+    color: #1a1a1a;
+}
+
+.article-content strong {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.article-content em {
+    font-style: italic;
+    color: #4a4a4a;
+}
+
+.article-content a {
+    color: #2c5aa0;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+.article-content a:hover {
+    border-bottom-color: #2c5aa0;
+}
+
+/* ===== 引用块 ===== */
+.article-content blockquote {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border-left: 4px solid #2c5aa0;
+    background: #f8f9fa;
+    border-radius: 0 8px 8px 0;
+    color: #4a4a4a;
+}
+.article-content blockquote p {
+    margin: 8px 0;
+    color: #4a4a4a;
+}
+
+/* ===== 代码 ===== */
+.article-content code {
+    padding: 2px 6px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono",
+                 "Menlo", "Courier New", monospace;
+    font-size: 0.88em;
+    color: #c7254e;
+}
+.article-content pre {
+    margin: 24px 0;
+    padding: 20px 24px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid #e8e8e8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.article-content pre code {
+    padding: 0;
+    background: none;
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 0;
+}
+
+/* ===== 图片 ===== */
+.article-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 32px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s;
+}
+.article-content img:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== 列表 ===== */
+.article-content ul, .article-content ol {
+    margin: 16px 0;
+    padding-left: 28px;
+    color: #1a1a1a;
+}
+.article-content li {
+    margin: 8px 0;
+    line-height: 1.8;
+    font-size: 17px;
+}
+.article-content li p {
+    margin: 4px 0;
+}
+
+/* ===== 表格 ===== */
+.article-content table {
+    width: 100%;
+    margin: 24px 0;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+.article-content th {
+    background: #f8f9fa;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border: 1px solid #e8e8e8;
+}
+.article-content td {
+    padding: 10px 16px;
+    border: 1px solid #e8e8e8;
+}
+.article-content tr:nth-child(even) td {
+    background: #fafbfc;
+}
+
+/* ===== 分隔线 ===== */
+.article-content hr {
+    margin: 40px 0;
+    border: none;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+    .article-container {
+        padding: 20px 16px 60px;
+    }
+    .article-header {
+        padding: 32px 0 24px;
+        margin-bottom: 32px;
+    }
+    .article-title {
+        font-size: 26px;
+    }
+    .article-content h2 {
+        font-size: 22px;
+        margin: 32px 0 16px;
+    }
+    .article-content h3 {
+        font-size: 19px;
+    }
+    .article-content p {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+    .article-content pre {
+        padding: 16px;
+    }
+    .article-content pre code {
+        font-size: 13px;
+    }
+    .article-content img {
+        margin: 24px auto;
+    }
+    .article-content table {
+        font-size: 13px;
+        display: block;
+        overflow-x: auto;
+    }
+    .article-content th, .article-content td {
+        padding: 8px 10px;
+    }
+}
+
+/* ===== 打印优化 ===== */
+@media print {
+    body { background: white; }
+    .article-container { max-width: 100%; padding: 0; }
+    img { max-width: 100% !important; box-shadow: none; }
+}
+
+    </style>
+</head>
+<body>
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex，一个工程人的踩坑实录</h1>
+        </header>
+        <div class="article-content">
+            <blockquote>
+<p><strong>前言</strong>：作为一名需要经常处理招标信息、采集公开数据的工程从业者，我一直在寻找能真正帮我提效的 AI 工具。过去几个月，我先后尝试了 OpenClaw、WorkBuddy 和 Codex（Codex CLI），踩了不少坑，也积累了一些真实体验。本文将毫无保留地分享出来，希望能帮后来者少走弯路。</p>
+</blockquote><hr/><h2>一、起点：为什么我要用 AI 工具？</h2><p>　　我的日常工作之一是需要每天登录军队采购网，检索四川+工程的采购信息，获取项目名称、地点、金额、报名时间等数据，整理成 Excel 表格。这种重复性的数据采集工作，如果能交给 AI 自动完成，将极大解放生产力。</p><p>　　于是，我开始了 AI 工具的选型之旅。</p><hr/><h2>二、OpenClaw：配置繁琐，功能单一</h2><p>　　最初尝试的是 OpenClaw—— 一个需要连接大模型的开源方案。</p><h3>踩坑点</h3><ul start="0">
+<li>
+<p><strong>配置极其繁琐</strong>：需要自己配置大模型连接、部署环境、调试参数，对非技术用户非常不友好</p>
+</li>
+<li>
+<p><strong>本地模型性能差</strong>：如果用本地部署的模型，个人电脑性能远不如豆包等云端服务，反应速度慢</p>
+</li>
+<li>
+<p><strong>第三方模型成本高</strong>：连接第三方大模型费用不低，且难以控制本地软件和 skill 功能</p>
+</li>
+<li>
+<p><strong>功能单一</strong>：实现能力有限，难以满足复杂任务需求</p>
+</li>
+</ul><h3>结论</h3><p>　　OpenClaw 更适合技术能力强的开发者在特定场景下深度定制使用，对普通工程人来说门槛太高。</p><hr/><h2>三、WorkBuddy：能用，但不够好</h2><p>　　在国内的 WorkBuddy 上架后，我第一时间尝试了这款集成度更高的工具。</p><h3>优点</h3><ul start="0">
+<li>
+<p><strong>开箱即用</strong>：不需要配置，注册即可使用</p>
+</li>
+<li>
+<p><strong>积分制收费</strong>：总体还算合理</p>
+</li>
+<li>
+<p><strong>支持图片识别</strong>：可以识别和处理图片内容</p>
+</li>
+<li>
+<p><strong>国内使用方便</strong>：无需翻墙，网络稳定</p>
+</li>
+</ul><h3>缺点</h3><ul start="0">
+<li>
+<p><strong>浏览器控制能力弱</strong>：在执行网页操作时明显不够灵活</p>
+</li>
+<li>
+<p><strong>本地电脑控制不足</strong>：桌面操控能力有限</p>
+</li>
+<li>
+<p><strong>执行效率低、数据质量差</strong>：在同一次对比测试中，WorkBuddy 采集的军队采购网数据千疮百孔，基本无法使用</p>
+</li>
+<li>
+<p><strong>模型选择不透明</strong>：随机选择模型，难以确保每次都用最合适的模型</p>
+</li>
+</ul><h3>结论</h3><p>　　WorkBuddy 适合简单的图文处理任务，但在复杂的数据采集和自动化流程中表现不佳。</p><hr/><h2>四、Codex：真正的生产力利器</h2><p>　　最终，我选择了 Codex（Codex CLI），一款由 OpenAI 主导开发的终端编码助手。</p><h3>配置门槛</h3><ul start="0">
+<li>
+<p><strong>下载困难</strong>：国外 GitHub 直接下载基本下不动，国内源也经常中断</p>
+</li>
+<li>
+<p><strong>推荐方式</strong>：通过微软商店（Microsoft Store）获取最简单</p>
+</li>
+<li>
+<p><strong>模型配置</strong>：官方默认连接 ChatGPT（国内无法使用），需要搭配梯子或国内 API</p>
+</li>
+</ul><h3>最终方案</h3><p>　　我选择了 DeepSeek 模型 + Codex 的组合，体验出乎意料地好。</p><h3>核心优势</h3><ul start="0">
+<li>
+<p><strong>反应速度快</strong>：DeepSeek 的响应非常迅速，对话流畅</p>
+</li>
+<li>
+<p><strong>浏览器操控能力强</strong>：可以精准控制浏览器完成复杂的网页操作</p>
+</li>
+<li>
+<p><strong>桌面控制能力出色</strong>：能够有效操控本地电脑</p>
+</li>
+<li>
+<p><strong>智能程度高</strong>：对复杂任务的理解和执行能力很强</p>
+</li>
+<li>
+<p><strong>生成的 Excel 质量高</strong>：数据格式规范、内容完整</p>
+</li>
+</ul><h3>不足之处</h3><ul start="0">
+<li>
+<p><strong>暂不支持图片识别</strong>：这是目前最大的短板，而 WorkBuddy 能做到</p>
+</li>
+<li>
+<p><strong>初始配置略麻烦</strong>：需要准备模型 API 和相应的网络环境</p>
+</li>
+</ul><hr/><h2>五、实测对比：军队采购网数据采集</h2><p>　　为了让选择更有说服力，我做了一次同任务对比测试。</p><h3>任务描述</h3><blockquote>
+<p>采集军队采购网（plap.mil.cn）前一天发布的四川工程项目信息，包含项目名称、发布时间、项目预算（控制价）、建设内容、建设地点、报名时间段、开标（比价）时间等，生成 Excel 表格。</p>
+</blockquote><h3>Codex 表现</h3><p><img alt="这是codex的成果" src="images/这是codex的成果-20260624202521-ho1hsfh.png"/></p><ul start="0">
+<li>
+<p><strong>完成速度</strong>：非常快，整个流程一气呵成</p>
+</li>
+<li>
+<p><strong>数据精准度</strong>：较高，能准确提取关键信息</p>
+</li>
+<li>
+<p><strong>表格质量</strong>：生成的 Excel 格式规范、内容完整，基本满足要求</p>
+</li>
+<li>
+<p><strong>迭代优化</strong>：能够根据反馈快速调整策略，从简单列表升级到包含预算、建设内容、报名时间等详细字段的精细化表格</p>
+</li>
+</ul><h3>WorkBuddy 表现</h3><p><img alt="这是workbuddy的成果" src="images/这是workbuddy的成果-20260624202513-vfqqyk2.png"/></p><ul start="0">
+<li>
+<p><strong>完成速度</strong>：反应较慢</p>
+</li>
+<li>
+<p><strong>数据质量</strong>：千疮百孔，基本无法使用</p>
+</li>
+<li>
+<p><strong>执行结果</strong>：无法生成符合要求的 Excel</p>
+</li>
+</ul><h3>原因分析</h3><p>　　两个工具的差距如此之大，除了工具本身的能力差异外，模型选择可能也是关键因素。WorkBuddy 也支持 DeepSeek 模型，但当时它使用的是随机选择模型，不知道具体用了什么大模型，导致输出数据质量很差。后续应该在相同模型条件下进行对比，才能更客观地评估工具本身的能力。</p><hr/><h2>六、综合对比总结</h2><table>
+<thead><tr>
+<th>维度</th>
+<th>OpenCL</th>
+<th>WorkBuddy</th>
+<th>Codex</th>
+</tr>
+</thead><tbody><tr>
+<td>配置难度</td>
+<td>极高</td>
+<td>低</td>
+<td>中</td>
+</tr>
+<tr>
+<td>浏览器控制</td>
+<td>弱</td>
+<td>中</td>
+<td>强</td>
+</tr>
+<tr>
+<td>桌面控制</td>
+<td>弱</td>
+<td>弱</td>
+<td>强</td>
+</tr>
+<tr>
+<td>图片识别</td>
+<td>不支持</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>执行速度</td>
+<td>慢</td>
+<td>中</td>
+<td>快</td>
+</tr>
+<tr>
+<td>数据质量</td>
+<td>-</td>
+<td>差</td>
+<td>好</td>
+</tr>
+<tr>
+<td>国内使用</td>
+<td>需配置</td>
+<td>方便</td>
+<td>需梯子/API</td>
+</tr>
+<tr>
+<td>费用</td>
+<td>自付模型费</td>
+<td>积分制</td>
+<td>自付模型费</td>
+</tr>
+</tbody>
+</table><hr/><h2>七、给后来者的建议</h2><h3>1. 按需选型</h3><ul start="0">
+<li>
+<p><strong>技术开发者</strong>：想要深度定制，可以考虑 OpenCL 或其开源替代方案</p>
+</li>
+<li>
+<p><strong>图文处理为主</strong>：对浏览器/桌面控制要求不高，WorkBuddy 是不错的选择</p>
+</li>
+<li>
+<p><strong>工程从业者</strong>：需要进行数据采集、自动化处理，优先推荐 Codex + DeepSeek 组合</p>
+</li>
+</ul><h3>2. 注意模型选择</h3><blockquote>
+<p>工具再强，模型选不对也白搭。同样的任务，不同模型效果可能天差地别。建议始终明确指定模型，不要让工具随机选择。</p>
+</blockquote><h3>3. 搭配使用或许是当前最优解</h3><p>　　目前我采取的策略是两者搭配使用：</p><ul start="0">
+<li>
+<p>Codex：主力工具，处理文字密集型任务（数据采集、文件生成、代码开发等）</p>
+</li>
+<li>
+<p>WorkBuddy：辅助工具，处理需要图片识别的任务</p>
+</li>
+</ul><h3>4. 未来的期待</h3><p>　　希望 Codex 尽快支持图片识别，也希望 WorkBuddy 提升复杂任务执行能力。好的工具应该是互相促进的，受益的最终是我们这些终端用户。</p><hr/><blockquote>
+<p><strong>最后的话</strong>：AI 工具日新月异，今天的选择不代表明天的最优解。保持关注，持续尝试，才能找到最适合自己的工具组合。</p>
+</blockquote>
+        </div>
+    </article>
+</body>
+</html>

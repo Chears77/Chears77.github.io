@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20260627我在成都，想帮老人出一本自己的书</title>
+    <style>
+
+/* ===== 基础重置 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+                 Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    background-color: #ffffff;
+    line-height: 1.6;
+}
+
+/* ===== 文章容器 ===== */
+.article-container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ===== 文章头部 ===== */
+.article-header {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 48px;
+}
+.article-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #1a1a1a;
+    letter-spacing: 0.02em;
+}
+
+/* ===== 内容排版 ===== */
+.article-content h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 48px 0 20px;
+    color: #1a1a1a;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e8e8e8;
+}
+.article-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 36px 0 16px;
+    color: #1a1a1a;
+}
+.article-content h4 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 28px 0 14px;
+    color: #2c2c2c;
+}
+.article-content h5, .article-content h6 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: #2c2c2c;
+}
+
+.article-content p {
+    font-size: 17px;
+    line-height: 1.85;
+    margin: 16px 0;
+    color: #1a1a1a;
+}
+
+.article-content strong {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.article-content em {
+    font-style: italic;
+    color: #4a4a4a;
+}
+
+.article-content a {
+    color: #2c5aa0;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+.article-content a:hover {
+    border-bottom-color: #2c5aa0;
+}
+
+/* ===== 引用块 ===== */
+.article-content blockquote {
+    margin: 24px 0;
+    padding: 16px 20px;
+    border-left: 4px solid #2c5aa0;
+    background: #f8f9fa;
+    border-radius: 0 8px 8px 0;
+    color: #4a4a4a;
+}
+.article-content blockquote p {
+    margin: 8px 0;
+    color: #4a4a4a;
+}
+
+/* ===== 代码 ===== */
+.article-content code {
+    padding: 2px 6px;
+    background: #f5f5f5;
+    border-radius: 4px;
+    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono",
+                 "Menlo", "Courier New", monospace;
+    font-size: 0.88em;
+    color: #c7254e;
+}
+.article-content pre {
+    margin: 24px 0;
+    padding: 20px 24px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid #e8e8e8;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+.article-content pre code {
+    padding: 0;
+    background: none;
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 0;
+}
+
+/* ===== 图片 ===== */
+.article-content img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 32px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s;
+}
+.article-content img:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== 列表 ===== */
+.article-content ul, .article-content ol {
+    margin: 16px 0;
+    padding-left: 28px;
+    color: #1a1a1a;
+}
+.article-content li {
+    margin: 8px 0;
+    line-height: 1.8;
+    font-size: 17px;
+}
+.article-content li p {
+    margin: 4px 0;
+}
+
+/* ===== 表格 ===== */
+.article-content table {
+    width: 100%;
+    margin: 24px 0;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+.article-content th {
+    background: #f8f9fa;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 16px;
+    border: 1px solid #e8e8e8;
+}
+.article-content td {
+    padding: 10px 16px;
+    border: 1px solid #e8e8e8;
+}
+.article-content tr:nth-child(even) td {
+    background: #fafbfc;
+}
+
+/* ===== 分隔线 ===== */
+.article-content hr {
+    margin: 40px 0;
+    border: none;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+    .article-container {
+        padding: 20px 16px 60px;
+    }
+    .article-header {
+        padding: 32px 0 24px;
+        margin-bottom: 32px;
+    }
+    .article-title {
+        font-size: 26px;
+    }
+    .article-content h2 {
+        font-size: 22px;
+        margin: 32px 0 16px;
+    }
+    .article-content h3 {
+        font-size: 19px;
+    }
+    .article-content p {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+    .article-content pre {
+        padding: 16px;
+    }
+    .article-content pre code {
+        font-size: 13px;
+    }
+    .article-content img {
+        margin: 24px auto;
+    }
+    .article-content table {
+        font-size: 13px;
+        display: block;
+        overflow-x: auto;
+    }
+    .article-content th, .article-content td {
+        padding: 8px 10px;
+    }
+}
+
+/* ===== 打印优化 ===== */
+@media print {
+    body { background: white; }
+    .article-container { max-width: 100%; padding: 0; }
+    img { max-width: 100% !important; box-shadow: none; }
+}
+
+    </style>
+</head>
+<body>
+    <article class="article-container">
+        <header class="article-header">
+            <h1 class="article-title">20260627我在成都，想帮老人出一本自己的书</h1>
+        </header>
+        <div class="article-content">
+            <p>　　最近一直刷到银发经济的内容。说实话，以前对这个词没什么感觉，觉得跟自己关系不大。</p><p>　　但小红书上有几个博主让我印象很深。其中一个人发的是他爷爷的口述日记，老人七十多了，子女帮他把这辈子经历的事整理出来发在网上，居然有十几万人关注。每篇下面都有很多人留言说"想起了自己的爷爷""这些故事不记下来太可惜了"。</p><p>　　我是在成都工作的，平时上班不算忙，一直想找个有意义的副业来做。看多了银发经济的东西之后，慢慢对一个方向特别感兴趣——帮老人出书。</p><p>　　不是那种正式出版发行的那种，太远了。就是很朴素的一件事：和老人聊聊天，听他们讲年轻时候的事，用录音记下来，然后整理成一本属于他自己的小书。</p><p>　　我觉得这件事的价值不在书本身。</p><p>　　很多老人其实很孤独。儿女忙，朋友越来越少，心里攒了一辈子的故事没人听。你坐下来认真听他讲两个小时，对他来说<strong>那种被倾听的感觉</strong>，可能比最后拿到那本书更重要。</p><p>　　对子女来说也是。很多人其实不太了解自己父母年轻时候经历过什么。如果你能把父亲年轻时候怎么从农村考到城里、母亲怎么一个人带大三个孩子的故事写成文字，这可能是<strong>比任何礼物都珍贵的东西</strong>。</p><p>　　还有一个我自己挺在意的点。很多老手艺、老习俗、方言里的一些表达，正在随着这一代人消失。如果能通过<strong>记录老人的口述</strong>留下一点什么，哪怕只是很小的片段，也是有意义的。</p><p>　　我现在想认真尝试这件事。人在成都，时间比较自由，想从身边开始，先帮一位老人免费做一本。</p><p>　　发这篇文章也是想碰碰运气：</p><p>　　想找第一个"客户"。 如果你家里有老人，你觉得他的故事值得被记下来，可以找我聊聊。第一个我不收费，就当练手，也当交个朋友。只需要你能带我和老人聊几次，剩下的我来做。</p><p>　　也想认识对这个方向感兴趣的同行。 不管你是做养老的、做社区的、做内容的，或者和我一样只是觉得银发经济有意思、想找点事做，都可以认识一下。成都这么大，兴许能碰出点什么来。</p><p>　　不着急，慢慢来。</p>
+        </div>
+    </article>
+</body>
+</html>
