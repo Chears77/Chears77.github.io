@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>川藏线旅游指南 - 安即是佛</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../../assets/css/main.css" />
+	<link rel="stylesheet" href="../../assets/css/common.css" />
+	<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+</head>
+<body class="">
+<nav id="top-nav">
+	<a href="../index-xiangmu.html">项目</a>
+	<a href="../../index.html">首页</a>
+	<a href="../../文章/articles.html">文章</a>
+	<a href="../../图片/index.html">图片</a>
+	<a href="../../游戏/index.html">游戏</a>
+</nav>
+
+<section class="page-hero">
+	<h1>川藏线旅游指南</h1>
+	<p class="hero-sub">完整的前端旅游信息页 · 6 大板块覆盖路线、景点、攻略、美食、注意事项、风景画廊</p>
+	<span class="tag tag-white">已上线</span>
+	<span class="tag tag-white">Tailwind CSS</span>
+	<span class="tag tag-white">高德地图 API</span>
+	<span class="tag tag-white">GitHub Pages</span>
+</section>
+
+<div class="detail-wrapper">
+
+	<div class="section-block">
+		<h2>项目概述</h2>
+		<p>一个完整的川藏线旅游指南单页网站，使用 Tailwind CSS 构建响应式布局，集成高德地图 API 展示 G318 川藏南线和 G317 川藏北线两条路线。包含路线概览、沿途景点（格聂神山、稻城亚丁、然乌湖等 6 大景点）、10 天经典行程、沿途美食推荐、高原旅行注意事项和风景图片画廊六个功能板块。</p>
+		<p>页面已部署在 GitHub Pages 上，可以直接访问。<a href="https://chears77.github.io/%E5%B7%9D%E8%97%8F%E7%BA%BF/%E5%B7%9D%E8%97%8F%E7%BA%BF%E6%97%85%E6%B8%B8%E6%8C%87%E5%8D%97.html" target="_blank" class="preview-link">→ 在线预览</a></p>
+	</div>
+
+	<div class="section-block">
+		<h2>想法起源</h2>
+		<p>一直想做一个完整的旅游页面练手。川藏线是经典的自驾路线，信息丰富、视觉素材多，很适合做成一个展示性的网站。而且这类旅游指南页面在实际中有真实的使用场景——很多人出发前都会搜攻略，一个制作精良的页面容易被收藏和转发。</p>
+		<p>正好也想试试 Tailwind CSS 的手感，以及高德地图 API 在前端项目中的集成方式。</p>
+	</div>
+
+	<div class="section-block">
+		<h2>AI 协作过程</h2>
+		<h3>第一轮：框架搭建</h3>
+		<div class="dialog-box">
+			<div class="q">我：帮我做一个川藏线旅游指南的网页，用 Tailwind CSS，要支持手机上也能看</div>
+			<div class="a">AI：可以用 Tailwind 的响应式网格系统，配合粘性导航和汉堡菜单做移动端适配。建议分为路线概览、景点、攻略、美食、注意事项、图片廊六大板块，每个板块用不同底色区分。</div>
+		</div>
+
+		<h3>第二轮：地图集成</h3>
+		<div class="dialog-box">
+			<div class="q">我：路线图能不能用高德地图展示？G318 和 G317 两条线都要标出来</div>
+			<div class="a">AI：引入高德地图 JS API，用折线绘制两条路线，G318 用蓝色、G317 用橙色。沿途关键城市加标记点，点击可弹出城市信息。需要注意 API Key 的申请和 JS 加载顺序。</div>
+		</div>
+
+		<h3>第三轮：交互增强</h3>
+		<p>AI 帮助实现了图片画廊的点击放大（lightbox 模态框）、卡片 hover 上浮效果、页面加载动画，以及移动端的汉堡菜单。整个页面的交互体验打磨到了一般商业网站的水平。</p>
+
+		<h3>第四轮：内容填充</h3>
+		<p>AI 根据川藏线的实际地理信息，生成了 10 天行程规划、沿途美食推荐（四川段 + 西藏段 8 个城市）、高原反应预防贴士、装备清单等实用内容。</p>
+	</div>
+
+	<div class="section-block">
+		<h2>产出成果</h2>
+		<ul>
+			<li><strong>单文件 HTML 页面</strong>（约 600+ 行）：集成了 CSS、JS 和地图 API，直接可用</li>
+			<li><strong>响应式布局</strong>：桌面端和移动端均有良好体验</li>
+			<li><strong>高德地图集成</strong>：两条路线可视化，关键城市标记</li>
+			<li><strong>6 大内容板块</strong>：路线、景点、攻略、美食、注意事项、图片廊</li>
+			<li><strong>GitHub Pages 部署</strong>：在线可访问，零维护成本</li>
+		</ul>
+	</div>
+
+	<div class="section-block">
+		<h2>最新进度</h2>
+		<p>页面已上线稳定运行，随时可访问。后续计划：加入更多景点的详细信息、添加用户评论功能、优化移动端地图交互体验。</p>
+	</div>
+
+	<div class="back-link"><a href="../index-xiangmu.html">← 返回项目列表</a></div>
+</div>
+
+<footer id="footer" style="margin-top: 0;">
+	<p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/jquery.scrolly.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
+</body>
+</html>

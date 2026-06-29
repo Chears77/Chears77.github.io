@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>军队采购网公告采集 - 安即是佛</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="../../assets/css/main.css" />
+	<link rel="stylesheet" href="../../assets/css/common.css" />
+	<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+</head>
+<body class="">
+<nav id="top-nav">
+	<a href="../index-xiangmu.html">项目</a>
+	<a href="../../index.html">首页</a>
+	<a href="../../文章/articles.html">文章</a>
+	<a href="../../图片/index.html">图片</a>
+	<a href="../../游戏/index.html">游戏</a>
+</nav>
+
+<section class="page-hero">
+	<h1>军队采购网公告采集系统</h1>
+	<p class="hero-sub">自动化抓取 + 结构化解析 + HTML 报告，每日更新</p>
+	<span class="tag tag-white">运行中</span>
+	<span class="tag tag-white">Python</span>
+	<span class="tag tag-white">Web API</span>
+	<span class="tag tag-white">自动化</span>
+</section>
+
+<div class="detail-wrapper">
+
+	<div class="section-block">
+		<h2>项目概述</h2>
+		<p>这是一个全自动运行的政府采购公告采集系统。每天定时访问军队采购网 API，抓取四川地区的工程类招标公告，解析结构化数据（公告标题、发布时间、预算金额、省市区等），生成可搜索、可排序的 HTML 报告，并以 noticeId 去重，支持历史数据累积。</p>
+		<p><strong>核心价值：</strong>让原本需要手动刷网页、逐条复制粘贴的工作，变成每天早上打开一份报告就能看到所有新公告。对于需要关注政府采购机会的企业或个人，这是从「被动搜索」到「主动推送」的质变。</p>
+		<p><a href="report.html" target="_blank" class="report-link">→ 查看实时报告</a></p>
+	</div>
+
+	<div class="section-block">
+		<h2>想法起源</h2>
+		<p>最初只是想监控军队采购网上的工程类公告，看看有没有适合自己的机会。手动操作发现几个痛点：</p>
+		<ul>
+			<li>网站没有订阅功能，必须每天手动访问</li>
+			<li>搜索结果不支持导出，无法批量分析</li>
+			<li>公告格式不统一，有的只写了标题没有详细参数</li>
+		</ul>
+		<p>于是想到：能不能让 AI 帮我写一个脚本，每天自动去抓？</p>
+	</div>
+
+	<div class="section-block">
+		<h2>AI 协作过程</h2>
+		<h3>第一轮：确定技术方案</h3>
+		<p>向 AI 描述需求：「需要监控军队采购网工程类的四川地区公告，每天自动抓取新数据，生成报告。」AI 分析了网站的接口结构，发现了隐藏的 REST API 端点，建议用 API 方式而非页面爬虫，大幅降低了实现难度。</p>
+
+		<h3>第二轮：解决数据解析</h3>
+		<div class="dialog-box">
+			<div class="q">我：返回的 JSON 数据里面有一些字段看不懂，比如 purchaseNature 和 areaName 的关系</div>
+			<div class="a">AI：purchaseNature=2 表示工程类，areaName 是地区描述。需要写一个正则来从文本中提取省/市/区县，部分公告的地址格式不统一，建议加一个容错逻辑……同时用 noticeId 做唯一键去重，避免重复入库。</div>
+		</div>
+
+		<h3>第三轮：报告美化</h3>
+		<div class="dialog-box">
+			<div class="q">我：数据有了但看起来乱，能不能生成像样一点的报告？</div>
+			<div class="a">AI：可以生成一个 HTML 报告，带搜索框、排序功能、分色标注、历史累积。用纯 HTML+CSS+JS，不需要服务器，双击就能打开。搜索结果还可以高亮显示。</div>
+		</div>
+
+		<h3>第四轮：自动化运行</h3>
+		<p>AI 帮忙设置了 WorkBuddy 的定时自动化任务，每天 9:00 自动运行脚本，无需人工干预。一旦有新的工程类公告出现，报告会自动更新。</p>
+	</div>
+
+	<div class="section-block">
+		<h2>产出成果</h2>
+		<ul>
+			<li><strong>爬虫脚本</strong>（main.py）：调用 REST API，正则解析地址，JSON 数据持久化</li>
+			<li><strong>HTML 报告</strong>（<a href="report.html" target="_blank">report.html → 查看完整报告</a>）：支持关键词搜索、按时间/地区排序、新公告高亮</li>
+			<li><strong>数据文件</strong>（announcements.json）：以 noticeId 去重，累积历史数据</li>
+			<li><strong>自动化任务</strong>：每天 9:00 自动运行，完全无需人工介入</li>
+		</ul>
+	</div>
+
+	<div class="section-block">
+		<h2>最新进度</h2>
+		<p>系统已稳定运行，每天自动采集四川地区工程类公告。截至目前已累积多条有效公告数据。<a href="report.html" target="_blank" class="report-link">→ 查看实时报告</a></p>
+		<p>下一步计划：增加更多采购类型（货物类、服务类）的监控，以及扩展到更多省份。</p>
+	</div>
+
+	<div class="back-link"><a href="../index-xiangmu.html">← 返回项目列表</a></div>
+</div>
+
+<footer id="footer" style="margin-top: 0;">
+	<p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/jquery.scrolly.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <title>文章列表 - 安即是佛</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="../assets/css/common.css" />
+    <noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+    <style>
+        .article-card-list { max-width: 900px; margin: 0 auto; }
+        .article-card-list .article-card {
+            display: flex; gap: 1em; background: #fff; border-radius: 6px; overflow: hidden;
+            border: solid 1px rgba(144,144,144,0.15); margin-bottom: 0.8em;
+            transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+            text-decoration: none; color: inherit;
+        }
+        .article-card-list .article-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .article-card-list .card-thumb { flex: 0 0 55px; min-height: 55px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 1.5em; overflow: hidden; }
+        .article-card-list .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .article-card-list .card-body { flex: 1; padding: 0.8em 1em; display: flex; flex-direction: column; justify-content: center; }
+        .article-card-list .card-date { font-size: 0.72em; color: #4696e5; font-weight: 500; margin-bottom: 0.3em; }
+        .article-card-list .card-title { font-size: 0.95em; font-weight: 500; color: #555; line-height: 1.4; margin-bottom: 0.3em; }
+        .article-card-list .read-more { font-size: 0.8em; color: #4696e5; font-weight: 500; }
+        .loading-state, .empty-state { text-align: center; padding: 4em 2em; color: #999; }
+        .loading-state i, .empty-state i { font-size: 2em; margin-bottom: 0.5em; display: block; }
+        @media screen and (max-width: 736px) {
+            .article-card-list .article-card { flex-direction: column; }
+            .article-card-list .card-thumb { flex: 0 0 80px; min-height: 80px; }
+            .article-card-list .card-body { padding: 0.8em 1em; }
+        }
+    </style>
+</head>
+<body class="">
+
+<nav id="top-nav">
+    <a href="../项目/index-xiangmu.html">项目</a>
+    <a href="../index.html">首页</a>
+    <a href="../图片/index.html">图片</a>
+    <a href="../游戏/index.html">游戏</a>
+</nav>
+
+<section class="page-hero">
+    <h1>文章</h1>
+    <p class="hero-sub">记录思考，沉淀认知</p>
+</section>
+
+<section class="page-section">
+    <div class="article-card-list" id="articles-container">
+        <div class="loading-state"><i class="icon solid fa-spinner fa-pulse"></i>加载文章中...</div>
+    </div>
+</section>
+
+<footer id="footer">
+    <p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/jquery.scrolly.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
+
+<script>
+var __articlesData = [{"id":"20260627","date":"2026-06-27","dateSort":"20260627","title":"20260627工作比较闲，一直想搞点副业。","folder":"20260627工作比较闲，一直想搞点副业","path":"./20260627工作比较闲，一直想搞点副业/index.html","thumbnail":""},{"id":"20260627","date":"2026-06-27","dateSort":"20260627","title":"20260627我在成都，想帮老人出一本自己的书","folder":"20260627我在成都，想帮老人出一本自己的书","path":"./20260627我在成都，想帮老人出一本自己的书/index.html","thumbnail":""},{"id":"20260626","date":"2026-06-26","dateSort":"20260626","title":"20260626我是怎么用 AI + 智能手表 + 体检报告，给自己搭建了一个\"私人医生\"的（AI管理身体健康）","folder":"20260626我是怎么用 AI + 智能手表 + 体检报告，给自己搭建了一个私人医生的（AI管理身体健康）","path":"./20260626我是怎么用 AI + 智能手表 + 体检报告，给自己搭建了一个私人医生的（AI管理身体健康）/index.html","thumbnail":""},{"id":"20260624","date":"2026-06-24","dateSort":"20260624","title":"20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex，一个工程人的踩坑实录","folder":"20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex","path":"./20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex/index.html","thumbnail":""},{"id":"20260624","date":"2026-06-24","dateSort":"20260624","title":"桌面AI自动化工具实测踩坑对比心得","folder":"20260624AI工具选择心路历程","path":"./20260624AI工具选择心路历程/桌面AI自动化工具实测踩坑对比心得.html","thumbnail":""},{"id":"20260623","date":"2026-06-23","dateSort":"20260623","title":"我是怎么用 AI，把一个自媒体创意变成 124 张自动生成的卡片的","folder":"20260623AI图文自动生成探索历程","path":"./20260623AI图文自动生成探索历程/article.html","thumbnail":"./20260623AI图文自动生成探索历程/card01.png"},{"id":"20260622","date":"2026-06-22","dateSort":"20260622","title":"20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的","folder":"20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的","path":"./20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的/index.html","thumbnail":""},{"id":"20260622","date":"2026-06-22","dateSort":"20260622","title":"20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的我发现了AI自媒体的终极用法：让AI自己写文章，记录我和AI一起解决问题的全过程","folder":"20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的我发现了AI自媒体的终极用法","path":"./20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的我发现了AI自媒体的终极用法/index.html","thumbnail":""},{"id":"20260615","date":"2026-06-15","dateSort":"20260615","title":"20260615军队采购网爬虫获取采购信息","folder":"20260615军队采购网爬虫获取采购信息","path":"./20260615军队采购网爬虫获取采购信息/index.html","thumbnail":""},{"id":"20260615","date":"2026-06-15","dateSort":"20260615","title":"20260615总结制作网页过程，发布知乎，方便别人学习踩坑","folder":"20260615总结制作网页过程，发布知乎，方便别人学习踩坑","path":"./20260615总结制作网页过程，发布知乎，方便别人学习踩坑/index.html","thumbnail":""},{"id":"20260615","date":"2026-06-15","dateSort":"20260615","title":"20260615用github搭建个人主页（踩坑后的总结）","folder":"20260615用github搭建个人主页","path":"./20260615用github搭建个人主页/index.html","thumbnail":""},{"id":"20260610","date":"2026-06-10","dateSort":"20260610","title":"20260610Windows 系统 OpenClaw（龙虾）超详细完整安装配置手册（适配锐龙 5）","folder":"20260610Windows 系统 OpenClaw（龙虾）超详细完整安装配置手册（适配锐龙 5","path":"./20260610Windows 系统 OpenClaw（龙虾）超详细完整安装配置手册（适配锐龙 5/index.html","thumbnail":""},{"id":"20250623","date":"2025-06-23","dateSort":"20250623","title":"20250623我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的","folder":"20250623我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的","path":"./20250623我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的/index.html","thumbnail":""}];
+</script>
+
+<script>
+(function() {
+    var container = document.getElementById('articles-container');
+    function renderArticles(articles) {
+        if (!articles || articles.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="icon solid fa-book-open"></i><p>暂无文章，敬请期待</p></div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < articles.length; i++) {
+            var a = articles[i];
+            var thumbHtml = '';
+            if (a.thumbnail) {
+                thumbHtml = '<img src="' + encodeURI(a.thumbnail) + '" alt="' + a.title + '" loading="lazy" onerror="this.remove()" />';
+            } else {
+                thumbHtml = '<i class="icon solid fa-file-alt"></i>';
+            }
+            html += '<a href="' + encodeURI(a.path) + '" class="article-card" target="_blank">' +
+                '<div class="card-thumb">' + thumbHtml + '</div>' +
+                '<div class="card-body">' +
+                    '<div class="card-date"><i class="icon solid fa-calendar-alt" style="margin-right:0.3em;"></i>' + a.date + '</div>' +
+                    '<div class="card-title">' + escapeHtml(a.title) + '</div>' +
+                    '<span class="read-more">阅读全文 <i class="icon solid fa-arrow-right"></i></span>' +
+                '</div>' +
+            '</a>';
+        }
+        container.innerHTML = html;
+    }
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(text));
+        return div.innerHTML;
+    }
+    if (typeof __articlesData !== "undefined" && __articlesData) {
+        renderArticles(__articlesData);
+    } else {
+        fetch('./articles.json?t=' + Date.now())
+            .then(function(r) { return r.json(); })
+            .then(function(data) { renderArticles(data); })
+            .catch(function(err) {
+                container.innerHTML = '<div class="empty-state"><i class="icon solid fa-exclamation-triangle" style="color:#c00;"></i><p>文章加载失败，请稍后重试</p></div>';
+            });
+    }
+})();
+</script>
+
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
+</body>
+</html>

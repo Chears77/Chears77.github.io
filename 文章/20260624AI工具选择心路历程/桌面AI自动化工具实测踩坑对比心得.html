@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <title>桌面AI自动化工具实测踩坑对比心得 - 安即是佛</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/common.css" />
+    <noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+</head>
+<body class="">
+
+<nav id="top-nav">
+    <a href="../../项目/index-xiangmu.html">项目</a>
+    <a href="../../index.html">首页</a>
+    <a href="../articles.html">文章</a>
+    <a href="../../图片/index.html">图片</a>
+    <a href="../../游戏/index.html">游戏</a>
+</nav>
+
+<section class="page-hero">
+    <h1>桌面AI自动化工具实测踩坑对比心得</h1>
+    <p class="hero-sub"></p>
+</section>
+
+<section class="page-section">
+    <div class="article-detail">
+        <h2>桌面AI自动化工具踩坑实测心得：OpenClaw、WorkBuddy、Codex横向对比</h2>
+
+        <h3>前言</h3>
+        <p>近两年AI本地智能体热度很高，网上大量教程吹捧OpenClaw（龙虾）可以一句话操控电脑、自动完成办公采集、批量处理文件。我抱着实现招投标信息自动采集的需求，完整走完「OpenClaw踩坑→国产WorkBuddy试水→海外Codex适配」全流程，把三款工具的底层短板、使用门槛、真实业务表现全部实测记录下来，给同样需要电脑自动化、网页数据采集的朋友避坑参考。</p>
+
+        <h3>一、最初选择OpenClaw：预期拉满，现实全是硬伤</h3>
+        <h4>1. 配置繁琐，新手劝退</h4>
+        <p>OpenClaw是开源命令行框架，全程依赖PowerShell、JSON配置文件操作，整套部署流程坑点密集：</p>
+        <p>1. 前置依赖繁多，Node、Python、Git缺一少一直接报错；</p>
+        <p>2. 核心openclaw.json配置容错极低：参数写错、编码不是UTF-8、路径斜杠格式错误、tools.profile填写非法值都会直接网关启动失败；</p>
+        <p>3. 开机自启、模型切换、Ollama本地模型对接全部需要命令行操作，普通办公用户没有代码基础，排查一次报错就要耗费几十分钟。</p>
+
+        <h4>2. 底层架构天生矛盾，16G轻薄本无法发挥价值</h4>
+        <p>OpenClaw想要完整操控本地浏览器、文件系统，必须依靠Function Call工具调用，但分两条路都有致命缺陷：</p>
+        <p>① 本地Ollama大模型路线：我的设备是R5 4600U轻薄本，仅2G共享核显，哪怕最小1.5B/3B模型，推理速度极慢，执行采集任务直接会话超时卡死，长时间CPU满载、电脑发烫，无法稳定跑自动化任务；</p>
+        <p>② 云端硅基/DeepSeek API路线：云端大模型部署在互联网服务器，没有本地硬件权限，只能输出文字、脚本，不能直接操控桌面、浏览器。让它新建文件夹、批量采集网页只会文字模拟，无法真实执行；想完成采集只能AI生成脚本、手动复制终端运行，等于多绕一层，失去“AI自动干活”的核心意义。</p>
+
+        <h4>3. 功能单一，日常办公性价比极低</h4>
+        <p>网上演示的连贯自动化（打开网页→采集数据→生成Excel）全部是高配台式机+本地大模型环境才能实现。普通轻薄本搭配云端API，OpenClaw只剩下一个内置终端，单纯脚本运行完全可以用系统自带PowerShell平替；聊天流畅度远不如网页豆包，没有专属图像识别能力，网页表格、截图数据无法解析。</p>
+        <p>综合体验：折腾数天配置，核心自动化需求依旧无法一键完成，投入时间和回报严重不匹配，最终放弃OpenClaw，寻找集成度更高的成品工具。</p>
+
+        <h3>二、两款替代工具实测：WorkBuddy VS Codex（同一招投标采集业务对照）</h3>
+        <p>测试标准任务：自动访问军队采购网，筛选四川工程类项目，仅采集前一日发布公告，提取项目名称、发布时间、预算控制价、建设内容、建设地点、报名时段、开标时间、公告类型、采购方式，清洗统一格式输出规范Excel。</p>
+
+        <h4>（一）国产工具：WorkBuddy</h4>
+        <p><strong>优势</strong></p>
+        <p>1. 零部署门槛，图形化客户端开箱即用，无需命令行、不用修改配置文件，依靠积分体系使用，无强制付费；</p>
+        <p>2. 原生支持图片OCR识别，截图、公告图片内文字可提取，这是核心独有优势；</p>
+        <p>3. 完美适配国内大模型（DeepSeek、通义千问等），一键切换模型，不用手动填写API配置。</p>
+        <p><strong>致命短板（实测采集任务暴露）</strong></p>
+        <p>1. 浏览器、本地系统操控能力薄弱，网页翻页、详情页批量读取速度缓慢；</p>
+        <p>2. 模型调度逻辑不稳定，即便切换同一DeepSeek模型，输出质量随机波动；</p>
+        <p>3. 数据智能清洗能力弱：采集军队采购公告时，经常漏识别预算、报名时间；建设内容会混杂地点、工期无关文字，输出Excel字段残缺、格式混乱，表格数据“千疮百孔”，几乎无法直接用于业务，需要人工二次整理大量内容；</p>
+        <p>4. 长任务响应慢，20条公告完整采集耗时翻倍，批量处理效率很低。</p>
+
+        <h4>（二）海外工具：Codex（国内搭配DeepSeek云端API使用）</h4>
+        <p><strong>安装适配难点（前期踩坑）</strong></p>
+        <p>1. GitHub源国内下载速度极慢、频繁中断，只能通过微软商店获取客户端；</p>
+        <p>2. 官方默认绑定ChatGPT，国内无法直连，必须手动替换国内DeepSeek等国产大模型API；</p>
+        <p>3. 基础环境需要额外安装浏览器驱动、数据处理Python库，有少量前置配置。</p>
+        <p><strong>核心优势（采集任务碾压WorkBuddy）</strong></p>
+        <p>1. 底层浏览器自动化引擎成熟，批量翻页、批量打开详情页速度快，20条昨日公告短时间完整抓取；</p>
+        <p>2. 文本结构化推理极强：能智能区分「建设内容」与地点、工期、报价等无关信息；自动识别“最高限价、项目估算价、预算”多类金额描述，统一换算万元标准；标准化时间格式，无冗余杂项文字；</p>
+        <p>3. 输出Excel规范，字段完整、分类清晰，区分招标/结果/废标公告，数据清洗几乎无需人工修正，完全满足招投标业务使用；</p>
+        <p>4. 对话流畅，长上下文理解稳定，复杂自动化指令不用反复补充说明。</p>
+        <p><strong>唯一短板</strong>：不支持图片OCR识别，如果公告内容以图片形式展示，无法自动提取文字，只能手动复制文字后再分析；WorkBuddy恰好弥补这一缺陷。</p>
+
+        <h3>三、两款工具搭配使用最优方案</h3>
+        <p>结合两者优缺点，形成互补工作流：</p>
+        <p>1. 纯文字网页数据批量采集、生成规范表格、脚本自动化：使用Codex，速度快、数据结构化精度高；</p>
+        <p>2. 含图片公告、截图文件、扫描类文档文字提取：切换WorkBuddy，依靠OCR图片识别能力解析图像内信息；</p>
+        <p>3. 统一使用DeepSeek系列大模型，消除模型差异带来的数据输出偏差，方便后续横向对比工具真实能力。</p>
+
+        <h3>四、三款工具深度对比总结表</h3>
+        <table>
+            <tr>
+                <th>对比维度</th>
+                <th>OpenClaw（龙虾）</th>
+                <th>WorkBuddy（国产一体化）</th>
+                <th>Codex（海外智能体）</th>
+            </tr>
+            <tr>
+                <td>部署难度</td>
+                <td>极高（命令行+JSON配置）</td>
+                <td>极低（图形化开箱即用）</td>
+                <td>中等（商店下载+替换国内API）</td>
+            </tr>
+            <tr>
+                <td>16G轻薄本适配</td>
+                <td>极差，本地模型卡顿超时</td>
+                <td>良好，轻量化运行</td>
+                <td>良好，云端推理不吃本地算力</td>
+            </tr>
+            <tr>
+                <td>网页批量采集</td>
+                <td>弱，仅能执行脚本</td>
+                <td>一般，速度慢、漏数据</td>
+                <td>极强，批量翻页稳定</td>
+            </tr>
+            <tr>
+                <td>文本智能清洗</td>
+                <td>无，仅脚本硬解析</td>
+                <td>一般，字段残缺混杂</td>
+                <td>极强，统一格式归类</td>
+            </tr>
+            <tr>
+                <td>图片OCR识别</td>
+                <td>不支持</td>
+                <td>支持（核心亮点）</td>
+                <td>不支持</td>
+            </tr>
+            <tr>
+                <td>付费模式</td>
+                <td>完全免费，消耗API积分</td>
+                <td>积分制，轻度免费</td>
+                <td>API按需付费</td>
+            </tr>
+            <tr>
+                <td>适用人群</td>
+                <td>会代码、高配台式机</td>
+                <td>办公小白、需图片文字提取</td>
+                <td>网页采集、报表自动化业务</td>
+            </tr>
+        </table>
+
+        <div class="tip-box">
+            <h3>五、选型避坑核心建议</h3>
+            <p>1. 不要盲目跟风OpenClaw教程：网上流畅演示全部基于高配电脑本地Ollama模型，普通轻薄本、无代码办公用户很难达到同等效果，时间成本极高；</p>
+            <p>2. 分需求选工具：经常处理截图图片选WorkBuddy；网页批量采集、报表生成选Codex；有编程+高配台式机再尝试OpenClaw；</p>
+            <p>3. 多工具搭配优于单一工具：两款成品工具能力互补，分开使用覆盖图文业务；</p>
+            <p>4. 测试任务统一大模型，排除模型差距，客观判断工具自动化引擎强弱。</p>
+        </div>
+
+        <div class="conclusion">
+            <h3>六、写在最后</h3>
+            <p>桌面AI智能体没有“全能完美”工具，所有软件都存在底层短板，选择核心逻辑是根据自己电脑硬件、日常业务场景取舍。OpenClaw开源自由度高，但门槛劝退普通办公人；国产WorkBuddy简单友好，但批量数据处理能力不足；Codex文字自动化能力顶尖，但缺少图像识别。</p>
+            <p>本文记录全部实测踩坑经历，希望正在挑选AI自动化工具的朋友，避开浪费大量时间调试配置、反复采集不合格数据的弯路，快速匹配适合自己的生产力工具。</p>
+        </div>
+    </div>
+</section>
+
+<footer id="footer">
+    <p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/jquery.scrolly.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
+</body>
+</html>

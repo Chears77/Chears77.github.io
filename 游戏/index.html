@@ -1,121 +1,69 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
     <title>游戏 - 安即是佛</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="../assets/css/common.css" />
     <noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
     <style>
-        #game-header {
-            padding: 1.2em 0 0.8em;
-            text-align: center;
-            background: linear-gradient(135deg, #2a2624 0%, #1a1714 100%);
-            color: #fff;
-            position: relative;
-        }
-        #game-header h1 {
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 0.1em;
-        }
-        #game-header p {
-            font-size: 0.9em;
-            color: #bbb;
-        }
-        #game-header .back-link {
-            position: absolute;
-            top: 1em;
-            right: 1.5em;
-            color: #a0825a;
-            text-decoration: none;
-            font-size: 0.85em;
-            transition: color 0.2s;
-        }
-        #game-header .back-link:hover { color: #c8a87a; }
-        .games-wrapper {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 3em 2em 4em;
-        }
-        .game-card {
-            display: flex;
-            align-items: center;
-            gap: 2em;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-            margin-bottom: 1.8em;
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid #eee;
-            padding: 1.5em 2em;
-        }
-        .game-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(0,0,0,0.1);
-        }
-        .game-card .game-icon { font-size: 2.5em; color: #a0825a; flex-shrink: 0; }
-        .game-card .game-info { flex: 1; }
-        .game-card .game-title { font-size: 1.3em; font-weight: 700; color: #1a1714; margin-bottom: 0.3em; }
-        .game-card .game-desc { font-size: 0.9em; color: #888; }
-        .game-card .game-arrow { font-size: 1.2em; color: #ccc; transition: color 0.2s, transform 0.2s; }
-        .game-card:hover .game-arrow { color: #a0825a; transform: translateX(4px); }
-        #game-footer { text-align: center; padding: 2em; color: #999; font-size: 0.85em; border-top: 1px solid #eee; }
-        @media screen and (max-width: 600px) {
-            .game-card { padding: 1.2em 1.5em; }
-            #game-header h1 { font-size: 1.8em; }
-            .games-wrapper { padding: 1.5em 1em 3em; }
-        }
+        .game-grid { max-width: 700px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; }
+        .game-card { background: #fff; border-radius: 6px; border: solid 1px rgba(144,144,144,0.15); padding: 1.5em; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 1em; }
+        .game-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: inherit; }
+        .game-card .game-icon { font-size: 2.2em; color: #4696e5; flex-shrink: 0; }
+        .game-card .game-info h3 { font-size: 1.05em; font-weight: 500; color: #555; margin: 0 0 0.2em 0; }
+        .game-card .game-info p { font-size: 0.82em; color: #999; margin: 0; line-height: 1.4; }
+        .game-card .game-arrow { font-size: 1.1em; color: #ccc; transition: color 0.2s, transform 0.2s; }
+        .game-card:hover .game-arrow { color: #4696e5; transform: translateX(4px); }
+        @media screen and (max-width: 736px) { .game-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body class="">
-    <header id="game-header">
-        <a href="../index.html" class="back-link">← 返回首页</a>
-        <h1>🎮 游戏</h1>
-        <p>闲暇时光，玩点小游戏</p>
-    </header>
-    <div class="games-wrapper">
+
+<nav id="top-nav">
+    <a href="../项目/index-xiangmu.html">项目</a>
+    <a href="../index.html">首页</a>
+    <a href="../文章/articles.html">文章</a>
+    <a href="../图片/index.html">图片</a>
+</nav>
+
+<section class="page-hero">
+    <h1>游戏</h1>
+    <p class="hero-sub">闲暇时光，玩点小游戏</p>
+</section>
+
+<section class="page-section">
+    <div class="game-grid">
         <a href="snake-game.html" class="game-card">
             <div class="game-icon"><i class="icon solid fa-robot"></i></div>
             <div class="game-info">
-                <div class="game-title">🐍 贪吃狗</div>
-                <div class="game-desc">经典贪吃蛇玩法，控制小狗吃掉食物</div>
+                <h3>贪吃狗</h3>
+                <p>经典贪吃蛇玩法，控制小狗吃掉食物</p>
             </div>
             <div class="game-arrow"><i class="icon solid fa-chevron-right"></i></div>
         </a>
         <a href="flappy-cat.html" class="game-card">
             <div class="game-icon"><i class="icon solid fa-dog"></i></div>
             <div class="game-info">
-                <div class="game-title">🐱 飞小狗</div>
-                <div class="game-desc">Flappy Bird 风格，控制小狗穿越障碍</div>
+                <h3>飞小狗</h3>
+                <p>Flappy Bird 风格，控制小狗穿越障碍</p>
             </div>
             <div class="game-arrow"><i class="icon solid fa-chevron-right"></i></div>
         </a>
     </div>
-    <footer id="game-footer">
-        <ul class="icons">
-            <li><a href="../index.html" class="icon solid fa-home"><span class="label">首页</span></a></li>
-        </ul>
-        <p class="copyright">&copy; 安即是佛. Credits: <a href="http://html5up.net">HTML5 UP</a></p>
-    </footer>
-    <script src="../assets/js/jquery.min.js"></script>
-    <script src="../assets/js/jquery.scrolly.min.js"></script>
-    <script src="../assets/js/browser.min.js"></script>
-    <script src="../assets/js/breakpoints.min.js"></script>
-    <script src="../assets/js/util.js"></script>
-    <script src="../assets/js/main.js"></script>
-    <script>
-    window.addEventListener('load', function() {
-        setTimeout(function() {
-            document.body.classList.remove('is-preload');
-        }, 100);
-    });
-    </script>
+</section>
+
+<footer id="footer">
+    <p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../assets/js/jquery.min.js"></script>
+<script src="../assets/js/jquery.scrolly.min.js"></script>
+<script src="../assets/js/browser.min.js"></script>
+<script src="../assets/js/breakpoints.min.js"></script>
+<script src="../assets/js/util.js"></script>
+<script src="../assets/js/main.js"></script>
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
 </body>
 </html>
-
-
