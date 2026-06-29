@@ -454,7 +454,7 @@
 		height: 100dvh;
 		min-height: 100vh;
 		min-height: 100dvh;
-		padding: 0 1.5em;
+		padding: 3.5em 1.8em 0 1.8em;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -464,22 +464,23 @@
 		width: 100%;
 		text-align: center;
 		margin: 0;
-		padding: 0 0.5em;
+		padding: 0 0.3em;
 	}
 	#header .content h1 {
-		font-size: 1.8em;
+		font-size: 2em;
+		margin-bottom: 0.3em;
 	}
 	#header .content p {
-		font-size: 0.9em;
-		line-height: 1.7;
+		font-size: 0.95em;
+		line-height: 1.8;
 	}
 	#header .content p br {
-		display: none;
+		display: inline;
 	}
 	#header .image {
-		margin: 0 auto 1em auto;
-		font-size: 0.55em;
-		max-width: 55vw;
+		margin: 0 auto 1.5em auto;
+		font-size: 0.85em;
+		max-width: 65vw;
 	}
 	#header .image.phone .inner,
 	#header .image.phone:before,
@@ -488,29 +489,40 @@
 	}
 	#header .actions {
 		justify-content: center;
-		margin-top: 0.5em;
+		flex-wrap: wrap;
+		gap: 0.5em;
+		margin-top: 0.8em;
+	}
+	#header .actions li {
+		padding: 0;
 	}
 	#header .actions .button {
-		font-size: 0.85em;
-		padding: 0 1.2em;
+		font-size: 0.88em;
+		padding: 0 1.3em;
+		height: 2.8em;
+		line-height: 2.8em;
 	}
 }
 @media screen and (max-width: 480px) {
 	#header {
-		padding: 0 1em;
+		padding: 3em 1.2em 0 1.2em;
 	}
 	#header .content h1 {
-		font-size: 1.5em;
+		font-size: 1.65em;
 	}
 	#header .content p {
-		font-size: 0.82em;
+		font-size: 0.88em;
+		line-height: 1.7;
 	}
 	#header .image {
-		max-width: 70vw;
-		font-size: 0.45em;
+		max-width: 78vw;
+		font-size: 0.75em;
 	}
 	#header .actions .button {
-		font-size: 0.78em;
+		font-size: 0.82em;
+		height: 2.6em;
+		line-height: 2.6em;
+		padding: 0 1.1em;
 	}
 }
 
