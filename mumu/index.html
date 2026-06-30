@@ -1,111 +1,349 @@
-<!DOCTYPE HTML>
-<html>
-	<head>
-		<title>我的项目 - 安即是佛</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="../assets/css/main.css" />
-		<link rel="stylesheet" href="../assets/css/common.css" />
-		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="">
-		<nav id="top-nav">
-			<a href="../index.html">首页</a>
-			<a href="../文章/articles.html">文章</a>
-			<a href="../图片/index.html">图片</a>
-			<a href="../游戏/index.html">游戏</a>
-		</nav>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Alisa 的成长纪念</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* ===== Hero (V1 style full-screen cover) ===== */
+.hero {
+  position:relative; min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(170deg, var(--pink-light) 0%, var(--cream) 40%, var(--yellow) 80%, var(--pink-light) 100%);
+  overflow:hidden;
+}
+.hero-content { text-align:center; z-index:2; padding:var(--space-xl); }
+.hero-avatar {
+  width:150px; height:150px; margin:0 auto var(--space-xl);
+  border-radius:var(--radius-full); border:4px solid var(--white);
+  box-shadow:var(--shadow-lg);
+  background:linear-gradient(135deg, var(--pink-light), var(--pink));
+  display:flex; align-items:center; justify-content:center;
+  animation:heroFadeIn 1s ease 0.1s both, heartbeat 8s ease-in-out 1.5s infinite;
+}
+.hero-title {
+  font-size:var(--font-2xl); color:var(--pink-dark);
+  margin-bottom:var(--space-md); font-weight:700; letter-spacing:1px;
+  animation:heroFadeIn 1s ease 0.3s both;
+}
+.hero-subtitle {
+  font-size:var(--font-md); color:var(--text-light);
+  animation:heroFadeIn 1s ease 0.6s both;
+}
+.hero-scroll {
+  position:absolute; bottom:var(--space-xl); left:50%; transform:translateX(-50%);
+  color:var(--pink-dark); opacity:0.7;
+  animation:bounceDown 2s ease-in-out infinite; cursor:pointer;
+}
 
-		<section class="page-hero">
-			<h1>我的项目000000</h1>
-			<p class="hero-sub">用 AI 把想法变成作品<br>记录从灵感到落地的每一个步骤</p>
-			<div class="hero-stats">
-				<span>6 个项目00000</span>
-				<span>持续更新000000</span>
-			</div>
-		</section>
+/* Decorative elements */
+.hero-deco { position:absolute; pointer-events:none; z-index:1; }
+.deco-cloud {
+  position:absolute; background:rgba(255,255,255,0.5); border-radius:50%;
+}
+.deco-cloud-1 { width:120px; height:50px; top:15%; left:8%; animation:floatCloud 7s ease-in-out infinite; }
+.deco-cloud-2 { width:90px; height:38px; top:25%; right:10%; animation:floatCloud 9s ease-in-out 2s infinite; }
+.deco-cloud-3 { width:100px; height:42px; top:60%; left:12%; animation:floatCloud 8s ease-in-out 4s infinite; }
+.deco-star {
+  position:absolute; color:#FFD700; opacity:0.4; font-size:24px;
+  animation:floatStar 5s ease-in-out infinite;
+}
+.deco-star-1 { top:12%; right:20%; }
+.deco-star-2 { top:45%; left:8%; animation-delay:1.5s; }
+.deco-star-3 { top:70%; right:15%; animation-delay:3s; font-size:18px; }
+.deco-star-4 { top:30%; left:75%; animation-delay:4.5s; font-size:20px; }
+.deco-flower {
+  position:absolute; opacity:0.35; font-size:28px;
+  animation:floatStar 6s ease-in-out infinite;
+}
+.deco-flower-1 { top:18%; left:25%; animation-delay:1s; }
+.deco-flower-2 { top:55%; right:8%; animation-delay:3s; }
+.deco-flower-3 { top:78%; left:40%; animation-delay:5s; }
 
-		<section class="page-section">
-			<div class="section-inner">
-				<div class="card-grid">
-					<div class="project-card">
-						<a href="plap-scraper/plap-scraper.html">
-							<div class="card-img"><img src="images/Snipaste_2026-06-29_16-03-48.png" alt="军队采购网报告预览"></div>
-							<div class="card-body">
-								<div class="card-title">军队采购网公告采集系统</div>
-								<div class="card-desc">自动抓取四川工程类招标公告，结构化解析 + HTML 报告，每日定时运行</div>
-								<span class="tag tag-green">运行中</span>
-								<span class="tag tag-gray">Python</span>
-								<span class="tag tag-gray">自动化爬虫</span>
-							</div>
-						</a>
-					</div>
-					<div class="project-card">
-						<a href="chuanzang/chuanzang.html">
-							<div class="card-img"><img src="https://s.coze.cn/image/LxUc_QSV4H0/" alt="川藏线旅游指南预览"></div>
-							<div class="card-body">
-								<div class="card-title">川藏线旅游指南</div>
-								<div class="card-desc">Tailwind CSS + 高德地图，6 大板块完整前端页面，已上线 GitHub Pages</div>
-								<span class="tag tag-green">已上线</span>
-								<span class="tag tag-gray">Tailwind CSS</span>
-								<span class="tag tag-gray">地图 API</span>
-							</div>
-						</a>
-					</div>
-				</div>
-			</div>
-		</section>
+/* ===== Sticky Nav ===== */
+.nav {
+  position:sticky; top:0; z-index:1000;
+  background:rgba(255,255,255,0.88); backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 2px 12px rgba(0,0,0,0.05);
+  height:56px;
+}
+.nav-inner {
+  max-width:var(--max-width); margin:0 auto; height:100%;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--space-lg);
+}
+.nav-logo {
+  font-size:var(--font-md); font-weight:700; color:var(--pink-dark);
+  white-space:nowrap; letter-spacing:0.5px;
+}
+.nav-right { display:flex; align-items:center; gap:var(--space-sm); }
 
-		<section class="page-section alt">
-			<div class="section-inner">
-				<div class="section-header">
-					<h2>商业探索</h2>
-					<p>AI 驱动的副业方向分析，从市场调研到获客策略的全流程记录</p>
-				</div>
-				<div class="card-grid-4">
-					<div class="biz-card">
-						<a href="memoir/memoir.html">
-							<div class="biz-title">回忆录代写</div>
-							<div class="biz-desc">帮老人写一本自己的书，成都本地获客，四层客户画像分析，知乎已发布引流</div>
-							<span class="tag tag-amber">获客中</span>
-						</a>
-					</div>
-					<div class="biz-card">
-						<a href="ppt-template/ppt-template.html">
-							<div class="biz-title">大学专属 PPT 模板</div>
-							<div class="biz-desc">1400 所高职高专为目标，闲鱼上架，校徽策略与品牌维权风险已充分论证</div>
-							<span class="tag tag-amber">规划中</span>
-						</a>
-					</div>
-					<div class="biz-card">
-						<a href="website-service/website-service.html">
-							<div class="biz-title">网页代建服务</div>
-							<div class="biz-desc">个人/小企业网站搭建，500 元起，技术栈成熟可交付，市场调研中</div>
-							<span class="tag tag-blue">早期</span>
-						</a>
-					</div>
-					<div class="biz-card">
-						<a href="workbuddy-manual/workbuddy-manual.html">
-							<div class="biz-title">WorkBuddy 实操手册</div>
-							<div class="biz-desc">AI 工具案例集，6-8 章实操教程，面向副业探索者，电子书售卖模式</div>
-							<span class="tag tag-red">构思中</span>
-						</a>
-					</div>
-				</div>
-			</div>
-		</section>
+/* Hamburger */
+.nav-toggle {
+  display:flex; flex-direction:column; gap:5px;
+  background:none; border:none; padding:var(--space-sm); z-index:1001;
+}
+.nav-toggle span {
+  display:block; width:24px; height:2.5px; background:var(--text);
+  border-radius:2px; transition:all var(--trans-base); transform-origin:center;
+}
+.nav-toggle.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+.nav-toggle.active span:nth-child(2) { opacity:0; }
+.nav-toggle.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
 
-		<footer id="footer" style="margin-top: 0; padding-top: 2em;">
-			<p class="copyright" style="margin-bottom: 0.5em;"><a href="../index.html">← 返回首页</a></p>
-			<p class="copyright">&copy; 安即是佛</p>
-		</footer>
+/* Menu (mobile dropdown) */
+.nav-menu {
+  position:fixed; top:56px; left:0; width:100%;
+  background:rgba(255,255,255,0.97); backdrop-filter:blur(12px);
+  display:flex; flex-direction:column; padding:var(--space-md);
+  transform:translateY(-110%); opacity:0;
+  transition:transform var(--trans-base), opacity var(--trans-base);
+  pointer-events:none; box-shadow:var(--shadow-md);
+  border-radius:0 0 var(--radius-lg) var(--radius-lg);
+}
+.nav-menu.active { transform:translateY(0); opacity:1; pointer-events:auto; }
+.nav-link {
+  display:block; padding:var(--space-md); color:var(--text);
+  font-size:var(--font-base); border-radius:var(--radius-sm);
+  transition:all var(--trans-fast);
+}
+.nav-link:hover, .nav-link.active { background:var(--pink-light); color:var(--pink-dark); font-weight:600; }
 
-		<script src="../assets/js/jquery.min.js"></script>
-		<script src="../assets/js/jquery.scrolly.min.js"></script>
-		<script src="../assets/js/browser.min.js"></script>
-		<script src="../assets/js/breakpoints.min.js"></script>
-		<script src="../assets/js/util.js"></script>
-		<script src="../assets/js/main.js"></script>
-		<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
-	</body>
+/* ===== Preview 2x2 Grid ===== */
+.preview-grid-wrap {
+  padding:var(--space-2xl) var(--space-lg);
+  background:var(--cream);
+}
+.preview-grid-title {
+  text-align:center; font-size:var(--font-xl); color:var(--pink-dark);
+  font-weight:700; margin-bottom:var(--space-xl);
+  display:flex; align-items:center; justify-content:center; gap:var(--space-md);
+}
+.preview-grid-title::before, .preview-grid-title::after {
+  content:''; width:36px; height:2px; border-radius:1px;
+}
+.preview-grid-title::before { background:linear-gradient(90deg, var(--pink), transparent); }
+.preview-grid-title::after  { background:linear-gradient(90deg, transparent, var(--pink)); }
+
+.preview-grid {
+  display:grid; grid-template-columns:1fr; gap:var(--space-md);
+  max-width:var(--max-width); margin:0 auto;
+}
+.preview-cell {
+  background:var(--white); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-sm); padding:var(--space-lg);
+  transition:transform var(--trans-base), box-shadow var(--trans-base);
+  text-align:left !important;
+}
+.preview-cell:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+.preview-cell-header {
+  display:block !important; text-align:left !important;
+  margin-bottom:var(--space-md); font-size:0;
+}
+.preview-cell-icon {
+  display:inline-flex !important; align-items:center; justify-content:center;
+  width:48px; height:48px; border-radius:var(--radius-md);
+  font-size:24px; flex-shrink:0; vertical-align:middle;
+}
+.preview-cell-icon.timeline { background:var(--pink-light); }
+.preview-cell-icon.honors   { background:var(--yellow); }
+.preview-cell-icon.gallery  { background:linear-gradient(135deg, var(--pink-light), var(--yellow)); }
+.preview-cell-icon.diary    { background:var(--blue-light); }
+.preview-cell-title {
+  display:inline !important; vertical-align:middle;
+  font-size:var(--font-md); font-weight:700; color:var(--text-dark);
+  margin-left:var(--space-md);
+}
+.preview-cell-item { font-size:var(--font-sm); color:var(--text-light); padding:3px 0; display:flex; align-items:center; justify-content:flex-start; gap:var(--space-sm); }
+.preview-cell-item::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--pink); flex-shrink:0; }
+.preview-cell-more {
+  display:inline-block; margin-top:var(--space-md);
+  padding:var(--space-sm) var(--space-lg); border-radius:var(--radius-full);
+  background:var(--pink-light); color:var(--pink-dark); font-weight:600;
+  font-size:var(--font-sm); transition:all var(--trans-fast);
+}
+.preview-cell-more:hover { background:var(--pink); color:var(--white); }
+
+/* Animations */
+@keyframes floatCloud {
+  0%,100%{transform:translateY(0) translateX(0);}
+  25%{transform:translateY(-12px) translateX(8px);}
+  50%{transform:translateY(-5px) translateX(16px);}
+  75%{transform:translateY(-15px) translateX(6px);}
+}
+@keyframes floatStar {
+  0%,100%{transform:translateY(0) rotate(0deg); opacity:0.3;}
+  50%{transform:translateY(-18px) rotate(10deg); opacity:0.6;}
+}
+@keyframes bounceDown {
+  0%,100%{transform:translateX(-50%) translateY(0); opacity:0.5;}
+  50%{transform:translateX(-50%) translateY(12px); opacity:0.9;}
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .hero-title { font-size:var(--font-3xl); }
+  .hero-avatar { width:170px; height:170px; }
+  .nav-toggle { display:none; }
+  .nav-menu {
+    position:static; flex-direction:row; transform:none; opacity:1;
+    pointer-events:auto; background:transparent; box-shadow:none;
+    padding:0; width:auto; gap:var(--space-xs);
+  }
+  .nav-link { padding:var(--space-sm) var(--space-md); }
+  .preview-grid { grid-template-columns:1fr 1fr; }
+}
+@media (min-width: 1024px) {
+  .hero-title { font-size:48px; }
+  .preview-grid { gap:var(--space-lg); }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== Sticky Nav ========== -->
+<nav class="nav" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">&#127800; Alisa 的成长纪念</a>
+    <div class="nav-right">
+      <button class="music-toggle" id="musicToggle" aria-label="背景音乐" title="背景音乐">
+        <svg class="music-icon-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
+        <svg class="music-icon-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <ul class="nav-menu" id="navMenu">
+      <li><a href="#" class="nav-link active">首页</a></li>
+      <li><a href="timeline.html" class="nav-link">成长时间轴</a></li>
+      <li><a href="honors.html" class="nav-link">荣誉墙</a></li>
+      <li><a href="gallery.html" class="nav-link">相册画廊</a></li>
+      <li><a href="diary.html" class="nav-link">成长日记</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========== Hero / 封面 (V1 style) ========== -->
+<section class="hero">
+  <div class="hero-deco">
+    <div class="deco-cloud deco-cloud-1"></div>
+    <div class="deco-cloud deco-cloud-2"></div>
+    <div class="deco-cloud deco-cloud-3"></div>
+    <span class="deco-star deco-star-1">&#10022;</span>
+    <span class="deco-star deco-star-2">&#10022;</span>
+    <span class="deco-star deco-star-3">&#10022;</span>
+    <span class="deco-star deco-star-4">&#10022;</span>
+    <span class="deco-flower deco-flower-1">&#127800;</span>
+    <span class="deco-flower deco-flower-2">&#127800;</span>
+    <span class="deco-flower deco-flower-3">&#127800;</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-avatar" style="overflow:hidden;padding:0;">
+      <img src="assets/photo/avatar.png" alt="Alisa" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+    </div>
+    <h1 class="hero-title">我是 Alisa &#127800;</h1>
+    <p class="hero-subtitle">投我以木桃，报之以琼瑶</p>
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('preview-grid').scrollIntoView({behavior:'smooth'})">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="16" y1="6" x2="16" y2="22"/>
+      <polyline points="10,16 16,22 22,16"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ========== 四方格预览 ========== -->
+<div class="preview-grid-wrap" id="preview-grid">
+  <h2 class="preview-grid-title">&#127800; Alisa 的成长故事</h2>
+  <div class="preview-grid">
+
+    <!-- 1. 成长时间轴 -->
+    <div class="preview-cell fade-in" id="preview-timeline">
+      <div class="preview-cell-header">
+        <span class="preview-cell-icon timeline">&#128338;</span>
+        <span class="preview-cell-title">成长时间轴</span>
+      </div>
+      <div class="preview-cell-item">2026 · 11岁，独立善良的大姑娘</div>
+      <div class="preview-cell-item">2025 · 暑假旅行，像小导游做攻略</div>
+      <div class="preview-cell-item">2024 · 水彩画获奖，《春天的花园》</div>
+      <a href="timeline.html" class="preview-cell-more">查看完整时间轴 →</a>
+    </div>
+
+    <!-- 2. 荣誉墙 -->
+    <div class="preview-cell fade-in" id="preview-honors">
+      <div class="preview-cell-header">
+        <span class="preview-cell-icon honors">&#127942;</span>
+        <span class="preview-cell-title">荣誉墙</span>
+      </div>
+      <div class="preview-cell-item">三好学生 · 2021-2025每学期</div>
+      <div class="preview-cell-item">绘画比赛一等奖 · 2024年</div>
+      <div class="preview-cell-item">运动会跑步冠军 · 2023年</div>
+      <a href="honors.html" class="preview-cell-more">查看全部荣誉 →</a>
+    </div>
+
+    <!-- 3. 相册画廊 -->
+    <div class="preview-cell fade-in" id="preview-gallery">
+      <div class="preview-cell-header">
+        <span class="preview-cell-icon gallery">&#128247;</span>
+        <span class="preview-cell-title">相册画廊</span>
+      </div>
+      <div class="preview-cell-item">春日公园野餐</div>
+      <div class="preview-cell-item">生日派对的欢笑</div>
+      <div class="preview-cell-item">海边的小脚印</div>
+      <a href="gallery.html" class="preview-cell-more">浏览相册 →</a>
+    </div>
+
+    <!-- 4. 成长日记 -->
+    <div class="preview-cell fade-in" id="preview-diary">
+      <div class="preview-cell-header">
+        <span class="preview-cell-icon diary">&#128214;</span>
+        <span class="preview-cell-title">成长日记</span>
+      </div>
+      <div class="preview-cell-item">作文《我的爸爸》· 获班级优秀</div>
+      <div class="preview-cell-item">学校公众号报道 · 绘画比赛获奖</div>
+      <div class="preview-cell-item">爸爸写给Alisa的11岁生日信</div>
+      <a href="diary.html" class="preview-cell-more">阅读日记 →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+  <div class="footer-hearts">&#10084; &#10084; &#10084;</div>
+  <p class="footer-quote">"在踟蹰时给以方向，在低谷时给以力量，在孤单时给以陪伴，在追梦时给以守望"</p>
+  <p class="footer-love">愿时光温柔以待</p>
+  <p class="footer-copy">&copy; Alisa 成长纪念册</p>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// Hamburger menu
+(function() {
+  var toggle = document.getElementById('navToggle');
+  var menu   = document.getElementById('navMenu');
+  toggle.addEventListener('click', function() {
+    toggle.classList.toggle('active');
+    menu.classList.toggle('active');
+  });
+  menu.querySelectorAll('.nav-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      toggle.classList.remove('active');
+      menu.classList.remove('active');
+    });
+  });
+})();
+</script>
+</body>
 </html>

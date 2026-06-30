@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>成长时间轴 · Alisa</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ========== Top Bar ========== -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回首页
+    </a>
+    <span class="topbar-title">成长时间轴</span>
+    <span style="width:80px"></span>
+  </div>
+</nav>
+
+<!-- ========== Content ========== -->
+<div class="page-content">
+  <p style="text-align:center; color:var(--text-light); margin-bottom:var(--space-xl);">
+    2015—2026 · 每一年都是珍贵的礼物
+  </p>
+
+  <div class="timeline" id="timelineContainer"></div>
+</div>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+  <div class="footer-hearts">&#10084; &#10084; &#10084;</div>
+  <p class="footer-quote">"你在长大，我们在变老，但爱永远不变"</p>
+  <p class="footer-copy">&copy; 2015 &mdash; 2026 Alisa 成长纪念册</p>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+var timelineData = [
+  { year: 2015, text: '这一年，你像一颗最闪亮的小星星，来到了爸爸妈妈的世界。全家人都为你的到来欢呼雀跃，你让我们成为了最幸福的人。' },
+  { year: 2016, text: '第一次叫"妈妈"、第一次迈出小脚丫学走路……每一个"第一次"都让我们惊喜不已。你是我们的小小探险家。' },
+  { year: 2017, text: '你开始上幼儿园啦！背着小书包走进校门的背影，让妈妈偷偷掉了眼泪。你很快就交到了好朋友，每天放学都有说不完的新鲜事。' },
+  { year: 2018, text: '幼儿园中班的你爱上了画画，墙上贴满了你的"大作"。虽然只是些歪歪扭扭的线条，但在爸爸妈妈眼里，每一幅都是杰作。' },
+  { year: 2019, text: '幼儿园毕业典礼上，你穿着公主裙朗诵诗歌，自信又大方。那个曾经躲在我们身后的小女孩，已经能站在舞台中央闪闪发光了。' },
+  { year: 2020, text: '成为小学生啦！戴上红领巾的那天，你笑得比阳光还灿烂。你用乐观感染着身边的每一个人。' },
+  { year: 2021, text: '第一次拿到"三好学生"奖状，你兴奋地冲回家给我们看。爸爸把它贴在冰箱最显眼的位置，每次路过都要骄傲地看上一眼。' },
+  { year: 2022, text: '你开始迷上阅读，每个周末都要去图书馆"进货"。从童话到科普，你的小脑袋里装满了奇思妙想。' },
+  { year: 2023, text: '学校运动会上，你在跑步比赛中拿了第一名！看着你在跑道上奋力冲刺的样子，爸爸激动得嗓子都喊哑了。' },
+  { year: 2024, text: '你的水彩画在比赛中获奖了，那幅《春天的花园》色彩斑斓、充满想象力。我们知道，你心里住着一个小小的艺术家。' },
+  { year: 2025, text: '暑假我们一起去旅行，你像个小导游一样做攻略、记日记，认真又可爱。旅行让世界在你的眼中变得更大、更精彩。' },
+  { year: 2026, text: '11岁了！你已经是一个独立、善良、多才多艺的大姑娘了。爸爸妈妈想对你说：慢慢长大，好好享受每一天，我们会一直陪在你身边。' }
+];
+
+(function build() {
+  var container = document.getElementById('timelineContainer');
+  timelineData.forEach(function(item) {
+    var div = document.createElement('div');
+    div.className = 'timeline-item fade-in';
+    div.innerHTML =
+      '<div class="timeline-dot"></div>' +
+      '<div class="timeline-card">' +
+        '<div class="timeline-year-badge">' + item.year + '</div>' +
+        '<div class="timeline-img placeholder-img" data-type="baby">' +
+          '<svg width="44" height="44" viewBox="0 0 48 48" fill="none" opacity="0.4">' +
+            '<circle cx="24" cy="24" r="18" stroke="var(--pink-dark)" stroke-width="1.5" stroke-dasharray="4 4"/>' +
+            '<text x="24" y="29" text-anchor="middle" font-size="13" fill="var(--pink-dark)">' + item.year + '</text>' +
+          '</svg>' +
+        '</div>' +
+        '<p class="timeline-text">' + item.text + '</p>' +
+      '</div>';
+    container.appendChild(div);
+  });
+})();
+</script>
+</body>
+</html>

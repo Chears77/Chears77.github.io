@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成长日记 · Alisa</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.diary-container{max-width:900px;margin:0 auto}
+.cat-tabs{display:flex;justify-content:center;gap:var(--space-sm);flex-wrap:wrap;margin-bottom:var(--space-xl)}
+.cat-tab{padding:var(--space-sm) var(--space-lg);border-radius:var(--radius-full);background:var(--white);color:var(--text-light);font-size:var(--font-sm);border:1.5px solid var(--pink-light);cursor:pointer;transition:all var(--trans-fast)}
+.cat-tab:hover{border-color:var(--pink);color:var(--pink-dark)}
+.cat-tab.active{background:var(--pink);color:var(--white);border-color:var(--pink);font-weight:600}
+.diary-grid{display:grid;grid-template-columns:1fr;gap:var(--space-md);max-width:900px;margin:0 auto}
+.diary-entry{background:var(--white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:var(--space-lg);transition:transform var(--trans-base),box-shadow var(--trans-base);display:flex;gap:var(--space-md);align-items:flex-start;text-decoration:none;color:inherit}
+.diary-entry:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.diary-entry-thumb{width:90px;height:68px;border-radius:var(--radius-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;background:var(--pink-light)}
+.diary-entry-thumb img{width:100%;height:100%;object-fit:cover}
+.diary-entry-body{flex:1;min-width:0}
+.diary-entry-cat{display:inline-block;padding:1px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:600;margin-bottom:var(--space-xs)}
+.cat-school{background:var(--blue-light);color:var(--blue-dark)}
+.cat-diary{background:var(--pink-light);color:var(--pink-dark)}
+.cat-parents{background:linear-gradient(135deg,var(--pink-light),var(--yellow));color:var(--pink-dark)}
+.cat-video{background:#1a1a2e;color:#fff}
+.cat-photo{background:var(--yellow);color:#c8a040}
+.diary-entry-title{font-size:var(--font-base);font-weight:700;color:var(--text-dark);margin-bottom:var(--space-xs);line-height:1.4}
+.diary-entry-meta{font-size:var(--font-xs);color:var(--text-light);display:flex;gap:var(--space-md);flex-wrap:wrap}
+.empty-tip{text-align:center;padding:var(--space-2xl);color:var(--text-light);font-size:var(--font-base)}
+@media(min-width:768px){.diary-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav class="topbar">
+<div class="topbar-inner">
+<a href="index.html" class="topbar-back">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+返回首页
+</a>
+<span class="topbar-title">成长日记</span>
+<span style="width:80px"></span>
+</div>
+</nav>
+<div class="page-content diary-container">
+<div class="cat-tabs" id="catTabs">
+<button class="cat-tab active" data-cat="all">全部</button>
+<button class="cat-tab" data-cat="school">校园报道</button>
+<button class="cat-tab" data-cat="diary">个人日记</button>
+<button class="cat-tab" data-cat="parents">父母期许</button>
+<button class="cat-tab" data-cat="video">视频记录</button>
+<button class="cat-tab" data-cat="photo">图片记录</button>
+</div>
+<p style="text-align:center;color:var(--text-light);margin-bottom:var(--space-lg);font-size:var(--font-sm)" id="diaryDesc">共 0 篇记录</p>
+<div class="diary-grid" id="diaryGrid"></div>
+<div class="empty-tip" id="emptyTip" style="display:none">暂无内容，敬请期待</div>
+</div>
+<footer class="footer">
+<div class="footer-hearts">&#10084; &#10084; &#10084;</div>
+<p class="footer-quote">"每一篇文章，都是成长的足迹"</p>
+<p class="footer-copy">&copy; Alisa 成长纪念册</p>
+</footer>
+<script>
+var DIARY_DATA = [{"folder": "20230406_\u6625\u65e5\u5b9a\u683c\uff0c\u7b5d\u7b5d\u65e5\u4e0a\u2014\u2014\u56db\u5ddd\u7701\u53cc\u6d41\u4e2d\u5b66\u4e07\u79d1\u5b9e\u9a8c\u5b66\u6821\u4e00\u5e74\u7ea7\u4e09\u6708\u98ce\u7b5d\u8282\u6d3b\u52a8", "date": "20230406", "title": "\u6625\u65e5\u5b9a\u683c\uff0c\u7b5d\u7b5d\u65e5\u4e0a\u2014\u2014\u56db\u5ddd\u7701\u53cc\u6d41\u4e2d\u5b66\u4e07\u79d1\u5b9e\u9a8c\u5b66\u6821\u4e00\u5e74\u7ea7\u4e09\u6708\u98ce\u7b5d\u8282\u6d3b\u52a8", "imgs": 24, "cat": "school", "thumb": "diaries/20230406_\u6625\u65e5\u5b9a\u683c\uff0c\u7b5d\u7b5d\u65e5\u4e0a\u2014\u2014\u56db\u5ddd\u7701\u53cc\u6d41\u4e2d\u5b66\u4e07\u79d1\u5b9e\u9a8c\u5b66\u6821\u4e00\u5e74\u7ea7\u4e09\u6708\u98ce\u7b5d\u8282\u6d3b\u52a8/images/network-asset-640-20250716081911-thv2ozz.png"}, {"folder": "20230105_\u201c\u7acb\u51ac\u5feb\u4e50 \u6696\u610f\u878d\u878d\u201d", "date": "20230105", "title": "\u201c\u7acb\u51ac\u5feb\u4e50 \u6696\u610f\u878d\u878d\u201d", "imgs": 11, "cat": "school", "thumb": "diaries/20230105_\u201c\u7acb\u51ac\u5feb\u4e50 \u6696\u610f\u878d\u878d\u201d/images/network-asset-640-20250716082255-3es3fxu.jpg"}, {"folder": "20230105_\u201c\u7ae5\u5fc3\u7b51\u65b0\u5e74\u201d\u4eb2\u5b50\u8fd0\u52a8\u4f1a\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed", "date": "20230105", "title": "\u201c\u7ae5\u5fc3\u7b51\u65b0\u5e74\u201d\u4eb2\u5b50\u8fd0\u52a8\u4f1a\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed", "imgs": 56, "cat": "school", "thumb": "diaries/20230105_\u201c\u7ae5\u5fc3\u7b51\u65b0\u5e74\u201d\u4eb2\u5b50\u8fd0\u52a8\u4f1a\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed/images/network-asset-640-20250716082102-hribvm8.jpg"}, {"folder": "20230105_\u30102021\u5c4a\u5927\u73ed\u6bd5\u4e1a\u5178\u793c\u3011\u2014\u2014\u611f\u6069\u9047\u89c1\uff0c\u62e5\u62b1\u672a\u6765", "date": "20230105", "title": "\u30102021\u5c4a\u5927\u73ed\u6bd5\u4e1a\u5178\u793c\u3011\u2014\u2014\u611f\u6069\u9047\u89c1\uff0c\u62e5\u62b1\u672a\u6765", "imgs": 76, "cat": "school", "thumb": "diaries/20230105_\u30102021\u5c4a\u5927\u73ed\u6bd5\u4e1a\u5178\u793c\u3011\u2014\u2014\u611f\u6069\u9047\u89c1\uff0c\u62e5\u62b1\u672a\u6765/images/network-asset-640-20250716082600-0wjh0cb.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011 \u4e0e\u201c\u6ce5\u201d\u540c\u4e50 \u591a\u5f69\u6ce5\u5851\u6d3b\u52a8", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011 \u4e0e\u201c\u6ce5\u201d\u540c\u4e50 \u591a\u5f69\u6ce5\u5851\u6d3b\u52a8", "imgs": 51, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011 \u4e0e\u201c\u6ce5\u201d\u540c\u4e50 \u591a\u5f69\u6ce5\u5851\u6d3b\u52a8/images/network-asset-640-20250716082412-fsc6d05.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011\u5b89\u5168\u9632\u75ab\u201c\u4e00\u7c73\u7ebf\u201d\u2014\u2014\u5b88\u62a4\u5b89\u5168\u4e0e\u5065\u5eb7", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011\u5b89\u5168\u9632\u75ab\u201c\u4e00\u7c73\u7ebf\u201d\u2014\u2014\u5b88\u62a4\u5b89\u5168\u4e0e\u5065\u5eb7", "imgs": 29, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001-\u5927\u4e8c\u73ed\u3011\u5b89\u5168\u9632\u75ab\u201c\u4e00\u7c73\u7ebf\u201d\u2014\u2014\u5b88\u62a4\u5b89\u5168\u4e0e\u5065\u5eb7/images/network-asset-640-20250716082425-w64qmli.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u2014\u5927\u4e8c\u73ed\u3011\u86af\u8693\u5927\u63a2\u79d8\uff01", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u2014\u5927\u4e8c\u73ed\u3011\u86af\u8693\u5927\u63a2\u79d8\uff01", "imgs": 43, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u2014\u5927\u4e8c\u73ed\u3011\u86af\u8693\u5927\u63a2\u79d8\uff01/images/network-asset-640-20250716082511-8h7wwce.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6211\u662f\u5927\u73ed\u54e5\u54e5\u59d0\u59d0\uff01", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6211\u662f\u5927\u73ed\u54e5\u54e5\u59d0\u59d0\uff01", "imgs": 26, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6211\u662f\u5927\u73ed\u54e5\u54e5\u59d0\u59d0\uff01/images/network-asset-640-20250716082344-5mvv17k.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6ce5\u5851\u6d3b\u52a8\u2014\u8c03\u76ae\u7684\u5927\u718a\u732b", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6ce5\u5851\u6d3b\u52a8\u2014\u8c03\u76ae\u7684\u5927\u718a\u732b", "imgs": 36, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6ce5\u5851\u6d3b\u52a8\u2014\u8c03\u76ae\u7684\u5927\u718a\u732b/images/network-asset-640-20250716082444-faeog2l.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6ce5\u5851\u7a7a\u95f4", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u6ce5\u5851\u7a7a\u95f4", "imgs": 0, "cat": "school", "thumb": ""}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u5feb\u4e50\u65e9\u64cd\uff0c\u5065\u5eb7\u6210\u957f", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u5feb\u4e50\u65e9\u64cd\uff0c\u5065\u5eb7\u6210\u957f", "imgs": 34, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u5feb\u4e50\u65e9\u64cd\uff0c\u5065\u5eb7\u6210\u957f/images/network-asset-640-20250716082033-28hpkm0.jpg"}, {"folder": "20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u62cd\u4e86\u62cd\u6211\u7684\u201c\u65b0\u670b\u53cb\u201d\u8bf4\uff1a\u771f\u5f00\u5fc3\uff01", "date": "20230105", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u62cd\u4e86\u62cd\u6211\u7684\u201c\u65b0\u670b\u53cb\u201d\u8bf4\uff1a\u771f\u5f00\u5fc3\uff01", "imgs": 22, "cat": "school", "thumb": "diaries/20230105_\u3010\u4e07\u5e7c\u52a8\u6001\u3011\u62cd\u4e86\u62cd\u6211\u7684\u201c\u65b0\u670b\u53cb\u201d\u8bf4\uff1a\u771f\u5f00\u5fc3\uff01/images/network-asset-640-20250716082004-8zczcrr.jpg"}, {"folder": "20230105_\u3010\u4f1a\u8bf4\u8bdd\u7684\u81ea\u7136\u89d2\u3011\u2014\u2014\u64ad\u79cd\u7231\u7684\u6625\u5929", "date": "20230105", "title": "\u3010\u4f1a\u8bf4\u8bdd\u7684\u81ea\u7136\u89d2\u3011\u2014\u2014\u64ad\u79cd\u7231\u7684\u6625\u5929", "imgs": 18, "cat": "school", "thumb": "diaries/20230105_\u3010\u4f1a\u8bf4\u8bdd\u7684\u81ea\u7136\u89d2\u3011\u2014\u2014\u64ad\u79cd\u7231\u7684\u6625\u5929/images/network-asset-640-20250716082144-8e7rbzc.jpg"}, {"folder": "20230105_\u3010\u6821\u56ed\u6d3b\u52a8\u3011\u201c\u5e86\u516d\u4e00 \u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e\u201d", "date": "20230105", "title": "\u3010\u6821\u56ed\u6d3b\u52a8\u3011\u201c\u5e86\u516d\u4e00 \u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e\u201d", "imgs": 19, "cat": "school", "thumb": "diaries/20230105_\u3010\u6821\u56ed\u6d3b\u52a8\u3011\u201c\u5e86\u516d\u4e00 \u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e\u201d/images/network-asset-640-20250716082204-lbvhv9z.jpg"}, {"folder": "20230105_\u3010\u8bfe\u7a0b\u5efa\u8bbe\u2014\u5927\u4e8c\u73ed\u3011\u7259\u9f7f\u5927\u8857\u7684\u65b0\u9c9c\u4e8b\uff01\uff08\u4e8c\uff09", "date": "20230105", "title": "\u3010\u8bfe\u7a0b\u5efa\u8bbe\u2014\u5927\u4e8c\u73ed\u3011\u7259\u9f7f\u5927\u8857\u7684\u65b0\u9c9c\u4e8b\uff01\uff08\u4e8c\uff09", "imgs": 45, "cat": "school", "thumb": "diaries/20230105_\u3010\u8bfe\u7a0b\u5efa\u8bbe\u2014\u5927\u4e8c\u73ed\u3011\u7259\u9f7f\u5927\u8857\u7684\u65b0\u9c9c\u4e8b\uff01\uff08\u4e8c\uff09/images/network-asset-640-20250716081950-sapwfap.jpg"}, {"folder": "20230105_\u522b\u6765\u65e0\u6059 \u6211\u4eec\u7ec8\u4e8e\u89c1\u9762\u5566\uff01", "date": "20230105", "title": "\u522b\u6765\u65e0\u6059 \u6211\u4eec\u7ec8\u4e8e\u89c1\u9762\u5566\uff01", "imgs": 23, "cat": "school", "thumb": "diaries/20230105_\u522b\u6765\u65e0\u6059 \u6211\u4eec\u7ec8\u4e8e\u89c1\u9762\u5566\uff01/images/network-asset-640-20250716082045-kob7nkn.jpg"}, {"folder": "20230105_\u5e86\u516d\u4e00\uff0c\u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e", "date": "20230105", "title": "\u5e86\u516d\u4e00\uff0c\u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e", "imgs": 17, "cat": "school", "thumb": "diaries/20230105_\u5e86\u516d\u4e00\uff0c\u68a6\u5e7b\u6ce1\u6cab\u5609\u5e74\u534e/images/network-asset-640-20250716082219-h9iu6hd.jpg"}, {"folder": "20230105_\u611f\u6069\u6709\u60a8\u2014\u2014\u7a7a\u6e2f\u4e49\u8b66 \u5bb6\u957f\u62a4\u536b\u961f", "date": "20230105", "title": "\u611f\u6069\u6709\u60a8\u2014\u2014\u7a7a\u6e2f\u4e49\u8b66 \u5bb6\u957f\u62a4\u536b\u961f", "imgs": 18, "cat": "school", "thumb": "diaries/20230105_\u611f\u6069\u6709\u60a8\u2014\u2014\u7a7a\u6e2f\u4e49\u8b66 \u5bb6\u957f\u62a4\u536b\u961f/images/network-asset-640-20250716082133-k7nvv99.jpg"}, {"folder": "20230105_\u672a\u96e8\u7ef8\u7f2a \u5b89\u5168\u4e3a\u9996 \u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u5f00\u5c55\u6d88\u9632\u9003\u751f\u6f14\u7ec3", "date": "20230105", "title": "\u672a\u96e8\u7ef8\u7f2a \u5b89\u5168\u4e3a\u9996 \u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u5f00\u5c55\u6d88\u9632\u9003\u751f\u6f14\u7ec3", "imgs": 17, "cat": "school", "thumb": "diaries/20230105_\u672a\u96e8\u7ef8\u7f2a \u5b89\u5168\u4e3a\u9996 \u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u5f00\u5c55\u6d88\u9632\u9003\u751f\u6f14\u7ec3/images/network-asset-640-20250716082152-awyjm7e.jpg"}, {"folder": "20230105_\u7528\u7231\u966a\u4f34\uff0c\u4f34\u7231\u6210\u957f\uff0c\u5fc3\u5b58\u611f\u6069\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u611f\u6069\u8282\u5bb6\u957f\u5f00\u653e\u65e5\u6d3b\u52a8", "date": "20230105", "title": "\u7528\u7231\u966a\u4f34\uff0c\u4f34\u7231\u6210\u957f\uff0c\u5fc3\u5b58\u611f\u6069\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u611f\u6069\u8282\u5bb6\u957f\u5f00\u653e\u65e5\u6d3b\u52a8", "imgs": 41, "cat": "school", "thumb": "diaries/20230105_\u7528\u7231\u966a\u4f34\uff0c\u4f34\u7231\u6210\u957f\uff0c\u5fc3\u5b58\u611f\u6069\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u611f\u6069\u8282\u5bb6\u957f\u5f00\u653e\u65e5\u6d3b\u52a8/images/network-asset-640-20250716082313-svtebid.jpg"}, {"folder": "20230105_\u7cbd\u60c5\u7aef\u5348\uff0c\u4e0e\u5b50\u540c\u888d\uff0c\u4e0e\u4f34\u540c\u620f\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u7aef\u5348\u6d3b\u52a8", "date": "20230105", "title": "\u7cbd\u60c5\u7aef\u5348\uff0c\u4e0e\u5b50\u540c\u888d\uff0c\u4e0e\u4f34\u540c\u620f\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u7aef\u5348\u6d3b\u52a8", "imgs": 25, "cat": "school", "thumb": "diaries/20230105_\u7cbd\u60c5\u7aef\u5348\uff0c\u4e0e\u5b50\u540c\u888d\uff0c\u4e0e\u4f34\u540c\u620f\u2014\u2014\u6210\u90fd\u5e02\u53cc\u6d41\u533a\u4e5d\u6c5f\u4e07\u5bb6\u5e7c\u513f\u56ed\u7aef\u5348\u6d3b\u52a8/images/network-asset-640-20250716082229-ijmy9y6.jpg"}, {"folder": "20230104_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u8da3\u5473\u6ce5\u5851\u300a\u6cb3\u8c5a\u300b", "date": "20230104", "title": "\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u8da3\u5473\u6ce5\u5851\u300a\u6cb3\u8c5a\u300b", "imgs": 31, "cat": "school", "thumb": "diaries/20230104_\u3010\u4e07\u5e7c\u52a8\u6001\u2014\u5927\u4e8c\u73ed\u3011\u8da3\u5473\u6ce5\u5851\u300a\u6cb3\u8c5a\u300b/images/wpsB423.tmp-20220226205012-qbujh13.png"}];
+(function(){
+var g=document.getElementById("diaryGrid"),t=document.getElementById("catTabs"),d=document.getElementById("diaryDesc"),e=document.getElementById("emptyTip"),
+L={school:"校园报道",diary:"个人日记",parents:"父母期许",video:"视频记录",photo:"图片记录"},
+I={school:"\ud83d\udcf0",diary:"\u270f\ufe0f",parents:"\u2764\ufe0f",video:"\ud83c\udfac",photo:"\ud83d\udcf7"};
+function r(c){
+g.innerHTML="";
+var a=c==="all"?DIARY_DATA:DIARY_DATA.filter(function(x){return x.cat===c});
+d.textContent="共 "+a.length+" 篇记录";
+e.style.display=a.length===0?"block":"none";
+a.forEach(function(x){
+var dd=x.date;
+if(x.date.length===8)dd=x.date.substr(0,4)+"-"+x.date.substr(4,2)+"-"+x.date.substr(6,2);
+else if(x.date.length===6)dd=x.date.substr(0,4)+"-"+x.date.substr(4,2);
+var thumbHTML;
+if(x.thumb){
+thumbHTML='<img src="'+x.thumb+'" alt="" loading="lazy">';
+}else{
+thumbHTML='<span>'+(I[x.cat]||"\ud83d\udcc4")+'</span>';
+}
+var el=document.createElement("a");
+el.className="diary-entry";
+el.href="diaries/"+encodeURI(x.folder)+"/index.html";
+el.innerHTML='<div class="diary-entry-thumb">'+thumbHTML+'</div>'+
+'<div class="diary-entry-body">'+
+'<span class="diary-entry-cat cat-'+(x.cat||"school")+'">'+(L[x.cat]||"")+'</span>'+
+'<div class="diary-entry-title">'+x.title+'</div>'+
+'<div class="diary-entry-meta"><span>'+dd+'</span><span>\ud83d\uddbc '+(x.imgs||0)+'张</span></div>'+
+'</div>';
+g.appendChild(el);
+});
+}
+r("all");
+t.addEventListener("click",function(ev){
+if(!ev.target.classList.contains("cat-tab"))return;
+t.querySelectorAll(".cat-tab").forEach(function(x){x.classList.remove("active")});
+ev.target.classList.add("active");
+r(ev.target.dataset.cat);
+});
+})();
+</script>
+</body>
+</html>
