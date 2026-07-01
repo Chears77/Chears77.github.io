@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """生成带缩略图的diary.html - 智能选择有人像的照片"""
-import os, json
+import os, json, re
 from PIL import Image
 
 diary_dir = r'E:\AI\workbuddy\20260630女儿主页\v2\diaries'
@@ -59,10 +59,24 @@ def score_image(img_path, file_size):
 
     return score
 
+
+def get_category(title):
+    if '作文' in title:
+        return 'essay'
+    if title in ['夁石峡谷穿越', '清明出游']:
+        return 'diary'
+    return 'school'
+
 entries = []
 for f in folders:
     date_part = f[:8] if len(f) >= 8 and f[:8].isdigit() else '00000000'
-    title = f[9:] if len(f) > 9 and f[8] == '_' else f
+    # Read title from article h1 tag
+    html_path = os.path.join(diary_dir, f, 'index.html')
+    title = f[9:] if len(f) > 9 and f[8] == '_' else f  # fallback
+    if os.path.exists(html_path):
+        with open(html_path, 'r', encoding='utf-8') as hf:
+            hm = re.search(r'<h1 class="article-title">(.*?)</h1>', hf.read())
+            if hm: title = hm.group(1)
     img_dir = os.path.join(diary_dir, f, 'images')
 
     scored_imgs = []
@@ -89,7 +103,7 @@ for f in folders:
         'date': date_part,
         'title': title,
         'imgs': len(scored_imgs),
-        'cat': 'school',
+        'cat': get_category(title),
         'thumb': first_img
     })
 
