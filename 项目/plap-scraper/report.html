@@ -117,25 +117,25 @@ thead th.sorted-asc,thead th.sorted-desc{background:#dce6f2!important}
 
 <div class="header">
   <h1>工程公告监控</h1>
-  <div class="sub">起始日期：2026-06-25  |  更新于 2026-07-01 08:55  |  每日 09:00 自动刷新</div>
+  <div class="sub">起始日期：2026-06-25  |  更新于 2026-07-02 11:17  |  每日 09:00 自动刷新</div>
 </div>
 
 <div class="stats">
   <div class="stat-card">
     <div class="si si-red">&#9670;</div>
-    <div><div class="sn" style="color:#c0392b">3</div><div class="sl">今日新增</div></div>
+    <div><div class="sn" style="color:#c0392b">13</div><div class="sl">今日新增</div></div>
   </div>
   <div class="stat-card">
     <div class="si si-blue">&#9670;</div>
-    <div><div class="sn">50</div><div class="sl">累计公告</div></div>
+    <div><div class="sn">67</div><div class="sl">累计公告</div></div>
   </div>
   <div class="stat-card">
     <div class="si si-green">&#9670;</div>
-    <div><div class="sn" style="font-size:12px">2026-06-25 ~ 2026-07-01</div><div class="sl">覆盖日期</div></div>
+    <div><div class="sn" style="font-size:12px">2026-06-25 ~ 2026-07-02</div><div class="sl">覆盖日期</div></div>
   </div>
   <div class="stat-card">
     <div class="si si-gray">&#9670;</div>
-    <div><div class="sn">3</div><div class="sl">采购方式种类</div></div>
+    <div><div class="sn">4</div><div class="sl">采购方式种类</div></div>
   </div>
 </div>
 
@@ -144,17 +144,17 @@ thead th.sorted-asc,thead th.sorted-desc{background:#dce6f2!important}
   <div class="fg">
     <span class="lbl">公告类型（多选）</span>
     <div class="chips" id="typeChips">
-      <label class="chip"><input type="checkbox" value="中标公示" onchange="doFilter()"><span>中标公示</span></label><label class="chip"><input type="checkbox" value="废标公告" onchange="doFilter()"><span>废标公告</span></label><label class="chip"><input type="checkbox" value="招标公告" checked="checked" onchange="doFilter()"><span>招标公告</span></label><label class="chip"><input type="checkbox" value="更正公告" onchange="doFilter()"><span>更正公告</span></label><label class="chip"><input type="checkbox" value="竞争性谈判公告" onchange="doFilter()"><span>竞争性谈判公告</span></label><label class="chip"><input type="checkbox" value="竞争性谈判结果" onchange="doFilter()"><span>竞争性谈判结果</span></label><label class="chip"><input type="checkbox" value="询价公告" checked="checked" onchange="doFilter()"><span>询价公告</span></label><label class="chip"><input type="checkbox" value="询价结果" onchange="doFilter()"><span>询价结果</span></label><label class="chip"><input type="checkbox" value="采购意向公开" checked="checked" onchange="doFilter()"><span>采购意向公开</span></label>
+      <label class="chip"><input type="checkbox" value="001016" onchange="doFilter()"><span>001016</span></label><label class="chip"><input type="checkbox" value="中标公示" onchange="doFilter()"><span>中标公示</span></label><label class="chip"><input type="checkbox" value="废标公告" onchange="doFilter()"><span>废标公告</span></label><label class="chip"><input type="checkbox" value="招标公告" checked="checked" onchange="doFilter()"><span>招标公告</span></label><label class="chip"><input type="checkbox" value="更正公告" onchange="doFilter()"><span>更正公告</span></label><label class="chip"><input type="checkbox" value="竞争性谈判公告" onchange="doFilter()"><span>竞争性谈判公告</span></label><label class="chip"><input type="checkbox" value="竞争性谈判结果" onchange="doFilter()"><span>竞争性谈判结果</span></label><label class="chip"><input type="checkbox" value="询价公告" checked="checked" onchange="doFilter()"><span>询价公告</span></label><label class="chip"><input type="checkbox" value="询价结果" onchange="doFilter()"><span>询价结果</span></label><label class="chip"><input type="checkbox" value="采购意向公开" checked="checked" onchange="doFilter()"><span>采购意向公开</span></label>
     </div>
   </div>
   <div class="fg">
     <span class="lbl">采购方式（多选）</span>
     <div class="chips" id="methodChips">
-      <label class="chip"><input type="checkbox" value="公开招标" onchange="doFilter()"><span>公开招标</span></label><label class="chip"><input type="checkbox" value="竞争性谈判" onchange="doFilter()"><span>竞争性谈判</span></label><label class="chip"><input type="checkbox" value="询价" onchange="doFilter()"><span>询价</span></label>
+      <label class="chip"><input type="checkbox" value="公开招标" onchange="doFilter()"><span>公开招标</span></label><label class="chip"><input type="checkbox" value="其他" onchange="doFilter()"><span>其他</span></label><label class="chip"><input type="checkbox" value="竞争性谈判" onchange="doFilter()"><span>竞争性谈判</span></label><label class="chip"><input type="checkbox" value="询价" onchange="doFilter()"><span>询价</span></label>
     </div>
   </div>
   <button class="btn" onclick="resetFilter()">重置</button>
-  <span class="info" id="rowInfo">共 50 条</span>
+  <span class="info" id="rowInfo">共 67 条</span>
 </div>
 
 <!-- 桌面表格 -->
@@ -175,6 +175,23 @@ thead th.sorted-asc,thead th.sorted-desc{background:#dce6f2!important}
       </tr>
     </thead>
     <tbody id="tableBody">
+<tr class="new-row" data-type="更正公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03669f1bc3ef019f1d4e05d31b41.html" target="_blank" title="查看原文">某厂房改造(2026-YJJDEB-G1004)(第1包)</a></td><td class="code">2026-YJJDEB-G1004</td><td class="center">公开招标</td><td class="center">更正公告</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-02</td></tr>
+<tr class="new-row" data-type="001016" data-method="其他"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03689f1bc3ed019f1cb381510f2d.html" target="_blank" title="查看原文">医院DSA放射性机房防护装饰改造工程比价公告</a></td><td class="code">2026-JWSCYY-G9017</td><td class="center">其他</td><td class="center">001016</td><td class="price">16万元</td><td class="nowrap">乐山市</td><td class="small">2026年7月2日至7月6日</td><td class="center small">2026年7月10日</td><td class="date">2026-07-02</td></tr>
+<tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03689f1bc3ed019f1caa102b0dcf.html" target="_blank" title="查看原文">预先采购两年度限额以下零星维修改造任务实施单位（2026-YJJDZB-G1004（CECOM-2026-BDSC-MY-0547/02））</a></td><td class="code">2026-YJJDZB-G1004（CECOM-2026-BDSC-MY-0547/02）</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03669f1bc3ef019f1c8fe5cc095f.html" target="_blank" title="查看原文">造价服务项目简易比价(第二次)(2026-CDCGJD-G4006)(第1包)</a></td><td class="code">2026-CDCGJD-G4006</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="询价公告" data-method="询价"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03689f1bc3ed019f1ce568c1165c.html" target="_blank" title="查看原文">某部食堂及车库维修改造项目（三次）(2026-VGBVBM-G4004)</a></td><td class="code">2026-VGBVBM-G4004</td><td class="center">询价</td><td class="center">询价公告</td><td class="price">5万元</td><td class="nowrap">四川省</td><td class="small">2026年7月2日至7月6日</td><td class="center small">2026年7月8日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="询价公告" data-method="询价"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03689f1bc3ed019f1cdeb955153b.html" target="_blank" title="查看原文">某部公寓楼燃气管道旧改工程（三次）(2026-VGBVBM-G4003)</a></td><td class="code">2026-VGBVBM-G4003</td><td class="center">询价</td><td class="center">询价公告</td><td class="price">7万元</td><td class="nowrap">四川省</td><td class="small">2026年7月2日至7月6日</td><td class="center small">2026年7月8日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="001016" data-method="其他"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d043e9f1bb7c8019f1c8f2bb909e4.html" target="_blank" title="查看原文">安装监控系统布网线</a></td><td class="code">2026-JLXLBH-G4005</td><td class="center">其他</td><td class="center">001016</td><td class="price">14万元</td><td class="nowrap">四川省</td><td class="small">截止2026年7月6日</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03669f1bc3ef019f1cd4bbd11371.html" target="_blank" title="查看原文">某单位运动场建设项目(第1包)</a></td><td class="code">2026-JTJQC-G1003</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="招标公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03679f1bc3fe019f1ccf3839129a.html" target="_blank" title="查看原文">某单位家属院装饰装修工程施工</a></td><td class="code">2026-JJDCBJ-G1JJK01</td><td class="center">公开招标</td><td class="center">招标公告</td><td class="price">56万元</td><td class="nowrap">宜宾市</td><td class="small">截止2026年7月8日</td><td class="center small">2026年7月22日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="招标公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d04c69e921212019f165b541e4644.html" target="_blank" title="查看原文">某部2026年度50万元以下维护整修工程预先发包采购项目（第二次）（2026-JTJOC-G1001）</a></td><td class="code">2026-JTJOC-G1001</td><td class="center">公开招标</td><td class="center">招标公告</td><td class="price-na">-</td><td class="nowrap">凉山州</td><td class="small">2026年7月2日至7月10日</td><td class="center small">2026年7月22日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="招标公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d03669f1bc3ef019f1cb408ac0e8a.html" target="_blank" title="查看原文">某厂房改造(2026-YJJDEB-G1004)</a></td><td class="code">2026-YJJDEB-G1004</td><td class="center">公开招标</td><td class="center">招标公告</td><td class="price">292万元</td><td class="nowrap">绵阳市</td><td class="small">2026年7月1日至7月10日</td><td class="center small">2026年7月24日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d04639f1bc3f2019f1beef77e025a.html" target="_blank" title="查看原文">油库物联网建设项目(第1包)</a></td><td class="code">2026-JLXLBJ-G1002</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="招标公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d04c69e921212019f167e8dda498e.html" target="_blank" title="查看原文">某部设备配套基建工程项目（2026-JTJIC-G1002）</a></td><td class="code">2026-JTJIC-G1002</td><td class="center">公开招标</td><td class="center">招标公告</td><td class="price-na">-</td><td class="nowrap">凉山州</td><td class="small">2026年7月3日至7月9日</td><td class="center small">2026年7月23日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="竞争性谈判公告" data-method="竞争性谈判"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d02849e9211d9019f1b51f9360511.html" target="_blank" title="查看原文">某部厨房砖混结构房屋加固项目（2026-ZCQWBZ-G3001）</a></td><td class="code">2026-ZCQWBZ-G3001</td><td class="center">竞争性谈判</td><td class="center">竞争性谈判公告</td><td class="price">8万元</td><td class="nowrap">四川省成都市</td><td class="small">2026年7月1日-2026年7月7日</td><td class="center small">2026年7月13日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="招标公告" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d04c59e9211fe019f18c784736812.html" target="_blank" title="查看原文">新建宿舍及库房项目</a></td><td class="code">2026-JLXLBJ-G1005</td><td class="center">公开招标</td><td class="center">招标公告</td><td class="price">369万元</td><td class="nowrap">四川省彭州市</td><td class="small">2026年7月3日-2026年7月9日</td><td class="center small">2026年7月24日</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d02849e9211d9019f1927ff607c68.html" target="_blank" title="查看原文">洞库管线及配套设施安全整治、油罐底板维修 两个项目（打包）施工(第1包)</a></td><td class="code">2026-JQXCEM-G1002</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
+<tr class="new-row" data-type="询价结果" data-method="询价"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d04c59e9211fe019f17bd0b965e41.html" target="_blank" title="查看原文">成都某部变压器扩容项目（第二次）（2026-VGBVBA-G4006）</a></td><td class="code">2026-VGBVBA-G4006</td><td class="center">询价</td><td class="center">询价结果</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
 <tr class="new-row" data-type="更正公告" data-method="询价"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d02a19f169b54019f17dc2f3f16bf.html" target="_blank" title="查看原文">北川园区综合整治工程方案设计服务(第二次)(2026-YJJDYB-G4001)(第1包)</a></td><td class="code">2026-YJJDYB-G4001</td><td class="center">询价</td><td class="center">更正公告</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
 <tr class="new-row" data-type="中标公示" data-method="公开招标"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d02a19f169b54019f17c2d0fb14a4.html" target="_blank" title="查看原文">造价服务项目简易比价(2026-CDCGJD-G4006)(第1包)</a></td><td class="code">2026-CDCGJD-G4006</td><td class="center">公开招标</td><td class="center">中标公示</td><td class="price-na">-</td><td class="nowrap">四川省</td><td class="small">-</td><td class="center small">-</td><td class="date">2026-07-01</td></tr>
 <tr class="new-row" data-type="竞争性谈判公告" data-method="竞争性谈判"><td class="title"><a href="https://www.plap.mil.cn/freecms/site/juncai/ggxx/info/2026/8a1d02849e9211d9019f02e25cb10660.html" target="_blank" title="查看原文">单身干部宿舍改造（2026-JWSCSN-G3003）</a></td><td class="code">2026-JWSCSN-G3003</td><td class="center">竞争性谈判</td><td class="center">竞争性谈判公告</td><td class="price">27万元</td><td class="nowrap">遂宁市</td><td class="small">2026年06月30日至2026年07月06日</td><td class="center small">2026年07月14日</td><td class="date">2026-06-30</td></tr>
