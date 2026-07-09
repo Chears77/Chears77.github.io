@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+    <title>轻识记账开发手记 - 安即是佛</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="../../assets/css/common.css" />
+    <noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+</head>
+<body class="">
+
+<nav id="top-nav">
+    <a href="../../项目/index-xiangmu.html">项目</a>
+    <a href="../../index.html">首页</a>
+    <a href="../../文章/articles.html">文章</a>
+    <a href="../../图片/index.html">图片</a>
+    <a href="../../游戏/index.html">游戏</a>
+</nav>
+
+<section class="page-hero">
+    <h1>轻识记账开发手记</h1>
+    <p class="hero-sub">2026-07-09</p>
+</section>
+
+<section class="page-section">
+    <div class="article-detail">
+        <article><div class="hero"><div class="hero-icon">轻</div><h2>我花了三天，从零搞出了一个记账小程序</h2><p class="sub">一个非程序员，靠 AI 帮忙，把脑子里的想法变成了微信里能跑的小程序</p><p class="meta"><span>📅 2026 年 7 月</span><span>📍 成都</span><span>⏱ 约 72 小时</span></p></div><blockquote>这不是什么技术博客，就是一篇真实的开发手记。告诉你我是怎么把一个想法变成产品的，踩过哪些坑，学到了什么。如果你也有一个想做但不知道怎么开始的小项目，希望这篇文章能给你一点启发。</blockquote>============ 功能亮点 ============<h2>这个小程序到底能干嘛</h2><div class="feature-grid"><div class="feature-card"><div class="fc-icon">⌨️</div><div class="fc-title">文字输入 · 智能识别</div><div class="fc-desc">像发微信一样打字记账。不用选日期、挑分类、填数字——系统自动帮你拆解出每一笔。</div></div><div class="feature-card"><div class="fc-icon">🧠</div><div class="fc-title">分类学习</div><div class="fc-desc">手动改一次分类，AI 记住你的习惯。越用越精准。</div></div><div class="feature-card"><div class="fc-icon">📊</div><div class="fc-title">可视化统计</div><div class="fc-desc">饼状图、柱状图、分类进度条，收支结构一目了然。</div></div><div class="feature-card"><div class="fc-icon">🔒</div><div class="fc-title">本地存储 · 隐私安全</div><div class="fc-desc">所有数据存在手机里，不上传任何服务器。你的账本，只有你能看。</div></div><div class="feature-card"><div class="fc-icon">📐</div><div class="fc-title">实时对账</div><div class="fc-desc">输入实际资产，自动比对账面余额，找出遗忘的账目。</div></div><div class="feature-card"><div class="fc-icon">📤</div><div class="fc-title">数据导出</div><div class="fc-desc">一键导出 CSV，用 Excel 或 Numbers 打开继续分析。</div></div></div>============ 为什么要做 ============<h2>为什么要再做一个记账工具？</h2><p>市面上的记账 App 多到数不清：随手记、挖财、鲨鱼记账、MoneyWiz……但我用过不下十款，没有一款坚持超过两周。</p><p>原因特别简单：<strong>太麻烦</strong>。</p><p>每记一笔账至少要四五步——选日期、选分类、填金额、填备注。对我这种懒人来说，这个门槛直接把我劝退了。</p><p>我想要的记账方式就一种：<strong>像发微信一样，想到什么花销就噼里啪啦打出来，系统自动帮我把账算清楚。</strong></p><div class="img-placeholder"><div class="iph">📝</div><div class="ipt">🖼 这里放一张记账输入页的截图</div><p>输入"6月 / 1#早餐20 / 2号游乐场玩水20，跳楼机20 / 洗车30元"，系统自动解析出 4 笔记录</p></div><p>市面上没有这种工具。那我就自己做一个。</p>============ 技术选型 ============<h2>技术选型：为什么是微信小程序</h2><p>这其实不是我的第一版。最开始我用 HTML + localStorage 做了一个本地网页版，自己能凑合用。但手机浏览器打开网页体验太差，数据存在浏览器缓存里也不踏实。</p><p>后来我接了豆包 AI 的 API 做自然语言解析，免费额度几天就耗完了。</p><p>最终决定：<strong>微信小程序原生框架</strong>。</p><p>三个理由：</p><ol><li>不用下载 App，微信里打开就用</li><li>数据存本地（<code>wx.setStorageSync</code>），隐私零风险</li><li>日常使用场景就是在微信里——聊着天想到花了什么钱，切过去记一笔</li></ol><p>技术栈非常朴素：<strong>零第三方库</strong>，没有后端，没有云服务。就是原生框架 + Canvas 2D + CSS。所有逻辑都是手写的。</p>============ 核心功能 ============<h2>核心功能：智能解析才是灵魂</h2><h3>文字变账单，一行搞定</h3><p>这是整个小程序的核心竞争力。用户只管打字，我写了一个规则引擎来自动拆解内容。</p><p>输入<code>1#早餐20</code>，引擎自动识出：</p><ul><li>日期：1 号（结合上文"6 月"上下文）</li><li>项目：早餐</li><li>金额：20 元（支出）</li></ul><p>你甚至可以一行写多条记录：</p><div class="table-wrap"><table><tr><th>你打的字</th><th>系统解析结果</th></tr><tr><td><code>早餐20</code></td><td>项目=早餐，金额=-20</td></tr><tr><td><code>工资+5000</code></td><td>项目=工资，金额=+5000</td></tr><tr><td><code>1#咖啡15，午餐25</code></td><td>咖啡-15 + 午餐-25</td></tr><tr><td><code>20260703洗车30元</code></td><td>日期=7月3日，项目=洗车，金额=-30</td></tr><tr><td><code>7 月</code></td><td>设置月份上下文（后续无日期记录默认 7 月）</td></tr></table></div><h3>分类学习：越用越聪明</h3><p>纯规则引擎有个死穴：它只能靠关键词猜分类。</p><p>比如你写<code>皮划艇 -100</code>，引擎琢磨半天——"皮划艇"是菜名？娱乐项目？猜不出来，先归到"其他"。</p><p>但当你手动把它改成"娱乐"，系统就记住了。下次再写<code>皮划艇</code>，自动归到娱乐。</p><p>这个功能我做得比较克制：<strong>只在用户手动调整时记录</strong>，自动推理的结果不算数。为的就是避免"越学越错"。</p><p>学习记忆上限 200 条，匹配时优先用最长的关键词（比如"皮划艇"的优先级高于"艇"），保证命中率。</p><div class="img-placeholder"><div class="iph">🧠</div><div class="ipt">🖼 这里放一张设置页"分类学习"的截图</div></div><h3>对账：给你一个"真实"的视角</h3><p>这是朋友给我提的需求。他的原话是：<strong>"你 App 显示我账面余额 20 块，但实际上我不仅没钱，还欠信用卡 20 块。你得让我输真实资产。"</strong></p><p>于是有了对账功能。在明细页点「对账」，弹出输入框：你写下工行卡余额、微信余额、口袋里现金，系统自动提取数字求和。差额就是"对账补遗"——那些你忘了记的、记错金额的、或者自己对不上的账。</p><div class="img-placeholder"><div class="iph">📐</div><div class="ipt">🖼 这里放一张对账功能的截图</div><p>对账结果显示：账面结余 + 实盘合计 + 差额，自动生成对账补遗记录</p></div>============ 图表可视化 ============<h2>统计图表：让数字会说话</h2><p>统计页是我改得最多、也最花心思的地方。光饼状图就重写了不下六版。</p><div class="img-placeholder"><div class="iph">📊</div><div class="ipt">🖼 这里放一张统计页的完整截图（包含饼状图、柱状图、分类进度条）</div></div><h3>饼图为什么这么难画</h3><p>一开始我想用 SVG 画环形图。结果微信小程序的 SVG 支持有坑——<code>stroke-dashoffset</code>传两个值就直接罢工，环形图一片空白。</p><p>改成 Canvas 2D 之后好多了。但下一个问题来了：<strong>饼图边上的引线互相打架</strong>。</p><p>五六个分类标签挤在饼图右侧，引线交叉成蜘蛛网。我一版一版地改：</p><ul><li>第 1 版：虚线加圆点，丑。</li><li>第 2 版：贝塞尔曲线，线太弯了像面条。</li><li>第 3 版：肘形折线，看着还行但所有标签挤在右边。</li><li>第 4 版：左右两侧分开放，但均匀分布还是交叉。</li><li><strong>第 5 版</strong>：按切片角度算出 Y 坐标，同侧做防重叠微调。引线从切片自然延伸到标签，视觉上不打架，一眼看出哪条线指向哪个切片。</li></ul><p>还搞了一个自适应算法：画布宽度、饼图半径、引线长度都按屏幕尺寸动态计算，确保在小屏手机上文字也不会溢出。</p><h3>饼图的两个模式</h3><p><strong>正常情况</strong>（收入 ≥ 支出）：饼基 = 收入，支出分类 + 结余切片填满整个圈。</p><p><strong>超支情况</strong>（支出 &gt; 收入）：饼基 = 支出 + 超支，支出分类 + 红色超支切片填满整个圈，中心显示"189%"，意思是花掉了收入的 1.89 倍。</p><div class="img-placeholder"><div class="iph">📈</div><div class="ipt">🖼 这里放一张年度柱状图的截图</div><p>12 个月收支柱状图：红色 = 收入，绿色 = 支出</p></div>============ 踩坑 ============<h2>那些让我崩溃的坑</h2><h3>坑一：Babel 转译，把 typeof 搞崩了</h3><div class="pain-box"><div class="pb-title">🐛 Bug 级别：全页面白屏</div><p>微信小程序哪怕关掉 ES6 转译，它的工具链还是会用 Babel 处理代码。结果<code>typeof x === 'object'</code>被转译成<code>@babel/runtime/helpers/typeof.js</code>的调用，这个模块在小程序环境里压根不存在。</p><p><strong>后果：整个 App 打开就白屏，所有页面同时崩溃。</strong></p><p>排查花了一个小时。最终方案：把代码里所有<code>typeof</code>全部替换成<code>.constructor</code>等价的判断方式。</p></div><h3>坑二：明细页偶尔空白</h3><div class="pain-box"><div class="pb-title">🐛 Bug 级别：数据在但页面不渲染</div><p>数据明明写进了 storage，明细页就是一片白。排查半天发现是 WXML 模板里缺了某个闭合标签，微信框架根本没注册这个页面。</p><p>教训：标签不闭合，整个页面直接消失了——微信小程序的容错比想象中差很多。</p></div><h3>坑三：金额字段在手机上无法编辑</h3><p>明细页的金额一开始用<code>&lt;view&gt;</code>展示，后来想改成可编辑的<code>&lt;input&gt;</code>。结果<code>type="digit"</code>在部分手机上唤起数字键盘后再也收不回去。最后改成<code>type="text"</code>配合<code>bindblur</code>事件，才兼容了所有设备。</p><h3>坑四：小程序工具链的隐蔽行为</h3><p>微信开发者工具在"代码质量"扫描时会检查你写了哪些页面但没有在<code>app.json</code>中注册，还会检查组件是否按需加载。忘记配<code>lazyCodeLoading: "requiredComponents"</code>就直接扣分。</p><p>这些都不是功能 bug，但审核过不了也很头疼。</p><div class="divider">✦ ✦ ✦</div>============ 坚持本地存储 ============<h2>为什么我坚持本地存储</h2><p>从头到尾，这个小程序没有任何服务器交互。记账数据存在微信的本地存储里，不会上传到任何地方。</p><p>这个选择是有意的。记账数据太敏感了——<strong>你的每一笔花销，本质上是你生活的完整画像</strong>。我不想碰用户的数据，也没有能力做好数据安全。</p><p>本地存储的代价是：删掉小程序数据就没了。所以我在设置页加了一句话：</p><blockquote>「请及时保存数据，手机或微信更新后将无法恢复数据。」</blockquote><p>同时提供了 CSV 导出功能，让用户自己掌控数据。</p>============ 提交审核 ============<h2>提交审核的那一刻</h2><p>2026 年 7 月 5 日凌晨，我点了"提交审核"按钮。</p><p>说实话有点紧张。之前经历过好几次代码质量扫描没通过。一条一条改过来之后，终于看到审核状态变成"审核中"。</p><p>能不能过审我不知道。但至少这个小程序是我想要的东西：</p><blockquote><strong>打字就能记账，数据留在自己手机上，不用学就会用。</strong></blockquote><p>如果审核过了，欢迎你来试试。如果有想法或者建议，也欢迎告诉我。</p>============ 尾声 ============<h2>如果你也想做一个</h2><p>我的体会是：<strong>工具在变，但做产品的核心逻辑没变</strong>。</p><p>先想清楚你到底在解决谁的什么问题。我做的不是"又一个记账 App"，而是一个"打字就能记账"的工具。这个差异化让我有动力把它做完。</p><p>然后别怕技术门槛。说实话我写第一行代码的时候，连微信小程序的框架长什么样都不知道。遇到问题就查文档、看社区、用 AI 帮忙。现在的 AI 工具真的很强，能帮你把脑子里的想法快速变成可运行的代码。</p><p>最后——<strong>先做出来，再优化</strong>。我的统计页改了六版才满意，第一版其实也能用。与其纠结一个完美的方案迟迟不动手，不如先把能跑的版本搞出来。</p><div class="article-footer"><p>写于 2026 年 7 月 5 日，成都</p><p>📱 小程序名称：轻识记账</p></div></article>
+    </div>
+</section>
+
+<footer id="footer">
+    <p class="copyright">&copy; 安即是佛</p>
+</footer>
+
+<script src="../../assets/js/jquery.min.js"></script>
+<script src="../../assets/js/jquery.scrolly.min.js"></script>
+<script src="../../assets/js/browser.min.js"></script>
+<script src="../../assets/js/breakpoints.min.js"></script>
+<script src="../../assets/js/util.js"></script>
+<script src="../../assets/js/main.js"></script>
+<script>window.addEventListener('load',function(){setTimeout(function(){document.body.classList.remove('is-preload');},100);});</script>
+</body>
+</html>
