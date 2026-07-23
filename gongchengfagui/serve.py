@@ -40,20 +40,19 @@ if __name__ == '__main__':
     # 必须用多线程服务器：浏览器会并行开多个 keep-alive 连接请求
     # HTML/CSS/JS/manifest，单线程 TCPServer 会被空闲连接卡住导致 fetch 失败。
     httpd = http.server.ThreadingHTTPServer(("", PORT), Handler)
+    url = f"http://localhost:{PORT}/index.html"
+    print("=" * 50)
+    print(" 工程建设法规库（第二版）本地预览已启动")
+    print(f" 请在浏览器打开：{url}")
+    print(" 导航门户：       " + f"http://localhost:{PORT}/nav.html")
+    print(" 按 Ctrl+C 停止服务")
+    print("=" * 50)
     try:
-        url = f"http://localhost:{PORT}/index.html"
-        print("=" * 50)
-        print(" 工程建设法规库（第二版）本地预览已启动")
-        print(f" 请在浏览器打开：{url}")
-        print(" 导航门户：       " + f"http://localhost:{PORT}/nav.html")
-        print(" 按 Ctrl+C 停止服务")
-        print("=" * 50)
-        try:
-            # 在子线程里打开浏览器，避免阻塞 serve_forever 启动（沙箱环境可能短暂卡顿）
-            threading.Thread(target=lambda: (webbrowser.open(url), None), daemon=True).start()
-        except Exception:
-            pass
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\n服务已停止。")
+        # 在子线程里打开浏览器，避免阻塞 serve_forever 启动（沙箱环境可能短暂卡顿）
+        threading.Thread(target=lambda: (webbrowser.open(url), None), daemon=True).start()
+    except Exception:
+        pass
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\n服务已停止。")

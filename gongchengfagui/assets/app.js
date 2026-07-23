@@ -74,20 +74,23 @@ let bsCur=-1;            // 当前定位的命中项索引
 
 function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function tokenize(q){return (q||'').trim().split(/\s+/).filter(Boolean);}
+/* 空格不敏感：去掉所有空白后再比较（尤其数字+单位，如「400万」↔「400 万」） */
+function normSpace(s){ return (s||'').replace(/\s+/g,''); }
+/* 高亮用：关键词各字符之间允许任意空白，使「400万」也能高亮「400 万元」 */
+function kwRe(k){ const parts=[...k].map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')); return new RegExp('('+parts.join('\\s*')+')','gi'); }
 function hl(text,kws){
   let t=esc(text);
-  kws.forEach(k=>{ if(!k) return; try{ const re=new RegExp('('+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); t=t.replace(re,'<mark>$1</mark>'); }catch(e){} });
+  kws.forEach(k=>{ if(!k) return; try{ const re=kwRe(k); t=t.replace(re,'<mark>$1</mark>'); }catch(e){} });
   return t;
 }
 function lvClass(lv){return (lv||'').replace(/[（）()]/g,'');}
 function lawTag(e){
   return '<span class="tag '+lvClass(e.level)+'">'+e.level+'</span>'+
     '<span class="tag field">'+e.field+'</span>'+
-    (e.status==='已废止'?'<span class="tag abol">已废止</span>':'<span class="tag live">现行</span>')+
-    (e.verify_status==='已校核'?'':'<span class="tag verify">初稿待校核</span>');
+    (e.status==='已废止'?'<span class="tag abol">已废止</span>':'<span class="tag live">现行</span>');
 }
 function statusTag(l){
-  // 列表只展示效力状态（现行/已废止），内部「初稿待校核」不对外显示
+  // 列表只展示效力状态（现行/已废止）
   return (l.status==='已废止') ? '<span class="tag abol">已废止</span>' : '<span class="tag live">现行</span>';
 }
 
@@ -139,12 +142,16 @@ function clearBrowseLevel(){
 }
 /* 时间 / 相关性 / 名称 / 条文数 排序 */
 function ymd(v){ if(!v) return 0; const d=(''+v).replace(/\D/g,''); return d.length>=8? parseInt(d.slice(0,8),10):0; }
-/* 日期取值：有修订日期显示修订，否则施行日期，再无则发布日期 */
+/* 日期取值：优先级 修订日期 > 施行日期 > 发布日期（兼容 v1 eff_date/pub_date 与 v2 effective_date/publish_date 字段名） */
+function revDate(l){ return l.revise_date || ''; }
+function effDate(l){ return l.effective_date || l.eff_date || ''; }
+function pubDate(l){ return l.publish_date || l.pub_date || ''; }
+function sortDate(l){ return revDate(l) || effDate(l) || pubDate(l); }
 function effLabel(l){
-  if(l.revise_date) return {date:l.revise_date, tag:'修订'};
-  if(l.eff_date) return {date:l.eff_date, tag:'施行'};
-  if(l.pub_date) return {date:l.pub_date, tag:'颁布'};
-  return {date:'—', tag:''};
+  if(revDate(l)) return {date:revDate(l), tag:'修订', cls:'dt-xiu'};
+  if(effDate(l)) return {date:effDate(l), tag:'施行', cls:'dt-shi'};
+  if(pubDate(l)) return {date:pubDate(l), tag:'发布', cls:'dt-fa'};
+  return {date:'—', tag:'', cls:''};
 }
 const CORE_KW = ['建设工程','施工','招投标','招标','投标','采购','造价','工程','住建','城乡建设','住房','质量安全','安全','资质','合同','工程总承包','建筑','房地产','市政','城市更新','标准'];
 function relScore(l){
@@ -156,8 +163,8 @@ function relScore(l){
 }
 function sortLaws(list){
   const arr=list.slice(); const s=state.sort;
-  if(s==='time_desc') arr.sort((a,b)=> ymd(b.eff_date||b.pub_date)-ymd(a.eff_date||a.pub_date));
-  else if(s==='time_asc') arr.sort((a,b)=> ymd(a.eff_date||a.pub_date)-ymd(b.eff_date||b.pub_date));
+  if(s==='time_desc') arr.sort((a,b)=> ymd(sortDate(b))-ymd(sortDate(a)));
+  else if(s==='time_asc') arr.sort((a,b)=> ymd(sortDate(a))-ymd(sortDate(b)));
   else if(s==='relevance') arr.sort((a,b)=> relScore(b)-relScore(a));
   else if(s==='name') arr.sort((a,b)=> a.title.localeCompare(b.title,'zh'));
   else if(s==='count') arr.sort((a,b)=> b.count-a.count);
@@ -359,46 +366,64 @@ function toggleRegion(key){ if(regionCollapsed.has(key)) regionCollapsed.delete(
 
 /* 检索态左侧树：层级复选框 + 命中高亮 + 命中条数 */
 function renderSearchSidebar(sb){
+  // 检索态头部与浏览态完全一致：法规库下拉 ⬇下载 ⊞折叠/展开；不显示"检索结果"也不加清除按钮
   const lph=document.getElementById('lpHead');
-  if(lph) lph.innerHTML='🔍 检索层级<span class="lp-count">'+(state.matchedLevels?state.matchedLevels.size:0)+' / '+LEVEL_NAMES.length+'</span><button class="lp-btn" title="下载检索结果" onclick="toggleDlMenu(event)">⬇</button><button class="lp-btn" title="清除检索" onclick="clearSearch()">✕</button><div id="dlMenu" class="dl-menu"></div>';
+  if(lph) lph.innerHTML=lpHeadHTML();
+  updateCollapseAllBtn();
   const filt=treeFilterText.trim().toLowerCase();
-  const levels=[...new Set(LAWS.map(l=>l.level))].sort((a,b)=>(LEVEL_ORDER[a]??9)-(LEVEL_ORDER[b]??9));
+  const curLaw=(state.law)?getLaw(state.law):null;
+  const curLv=curLaw?curLaw.level:null;
+  const curReg=curLaw?curLaw.region||'':'';
   let html='';
+  const levels=[...new Set(LAWS.map(l=>l.level))].sort((a,b)=>(LEVEL_ORDER[a]??9)-(LEVEL_ORDER[b]??9));
   levels.forEach(lv=>{
     const mset=state.matchedLaws[lv]||new Set();
-    const matched=mset.size>0;
-    const checked=state.levelFilter?state.levelFilter.has(lv):false;
-    html+='<div class="tnode lv'+(matched?' hit':' dim')+'">'+
-      '<input type="checkbox" class="lvcb" '+(checked?'checked':'')+(matched?'':' disabled')+' onclick="event.stopPropagation();toggleLevelFilter(\''+lv+'\')">'+
-      '<span class="tw" style="visibility:hidden">▾</span> '+esc(lv)+
+    if(!mset.size) return;                        // 仅显示有命中的层级
+    const included = state.levelFilter ? state.levelFilter.has(lv) : true;
+    let list=LAWS.filter(l=> l.level===lv && mset.has(l.title) && (!filt || l.title.toLowerCase().includes(filt)));
+    if(!list.length) return;
+    const collapsed=treeCollapsed.has('s:'+lv);    // 检索态使用独立折叠键，避免与浏览态互扰
+    const lvsel=(curLv===lv)?' lv-sel':'';
+    const arrow = included
+      ? '<span class="tw" onclick="toggleSearchLevel(\''+lv+'\')">'+(collapsed?'▸':'▾')+'</span>'
+      : '<span class="tw" style="visibility:hidden">▾</span>';
+    html+='<div class="tnode lv'+lvsel+'">'+arrow+
+      ' <span class="lv-label" onclick="toggleLevelFilter(\''+lv+'\')" title="点击：纳入 / 排除该层级的检索结果">'+esc(lv)+'</span>'+
       '<span class="tc">'+mset.size+'</span></div>';
-    if(matched && checked){
-      const titles=[...mset].filter(t=> !filt || t.toLowerCase().includes(filt));
-      titles.forEach(t=>{
-        const idx=LAW_TITLES.indexOf(t);
-        html+='<div class="tnode law"><a href="javascript:;" onclick="openLaw(LAW_TITLES['+idx+'])" title="'+esc(t)+'">'+esc(t)+'</a></div>';
-      });
+    if(!collapsed && included){
+      if(lv.startsWith('地方')){ html+=renderRegionTree(list, curReg); }
+      else { list.forEach(l=>{ html+=lawNode(l); }); }
     }
   });
-  html+='<div class="tnode" style="padding:8px 12px;color:#8c8c8c;font-size:12px;line-height:1.6">勾选 / 取消层级＝筛选右侧结果；深色＝有命中。</div>';
+  if(!html) html='<div class="empty" style="padding:20px 10px;font-size:12px">无匹配法规</div>';
   sb.innerHTML=html;
+  const lc=document.getElementById('lpCount');
+  if(lc) lc.textContent=((state.browseLevel||state.library)? currentLaws().length : LAWS.length)+' 部';
 }
+function toggleSearchLevel(lv){ if(treeCollapsed.has('s:'+lv)) treeCollapsed.delete('s:'+lv); else treeCollapsed.add('s:'+lv); renderSidebar(); }
 function toggleLevel(lv){ if(treeCollapsed.has(lv)) treeCollapsed.delete(lv); else treeCollapsed.add(lv); renderSidebar(); }
 // 法规展开已移除（左树仅到法规名）
 function filterTree(v){ treeFilterText=v; renderSidebar(); }
 function getLaw(title){ return LAWS.find(l=>l.title===title); }
 function toggleCollapseAll(){
+  const searching = (state.view==='search' && state.q);
+  const prefix = searching ? 's:' : '';
   const levels=[...new Set(LAWS.map(l=>l.level))];
-  const allCollapsed = levels.every(lv=>treeCollapsed.has(lv)) && treeExpanded.size===0;
-  if(allCollapsed){ levels.forEach(lv=>treeCollapsed.delete(lv)); regionCollapsed.clear(); }   // 全部展开（显示法规名）
-  else { levels.forEach(lv=>treeCollapsed.add(lv)); treeExpanded.clear(); regionCollapsed.clear(); }  // 全部折叠（仅留层级）
+  // 检索态只针对「有命中的层级」生效（其余层级根本不显示）
+  const relevant = searching ? levels.filter(lv=> (state.matchedLaws[lv]||new Set()).size>0) : levels;
+  const allCollapsed = relevant.length>0 && relevant.every(lv=>treeCollapsed.has(prefix+lv)) && treeExpanded.size===0;
+  if(allCollapsed){ relevant.forEach(lv=>treeCollapsed.delete(prefix+lv)); if(!searching) regionCollapsed.clear(); }   // 全部展开（显示法规名）
+  else { relevant.forEach(lv=>treeCollapsed.add(prefix+lv)); treeExpanded.clear(); if(!searching) regionCollapsed.clear(); }  // 全部折叠（仅留层级）
   renderSidebar();
 }
-/* 左树「全部折叠/展开」图标随状态同步：全部展开→⊟(可收起)，否则→⊞(可展开)，与右栏大纲按钮一致 */
+/* 左树「全部折叠/展开」图标随状态同步：全部展开→⊟(可收起)，否则→⊞(可展开)，与右栏大纲按钮一致；检索态使用 s: 前缀键 */
 function updateCollapseAllBtn(){
   const b=document.getElementById('collapseAllBtn'); if(!b) return;
+  const searching = (state.view==='search' && state.q);
+  const prefix = searching ? 's:' : '';
   const levels=[...new Set(LAWS.map(l=>l.level))];
-  const allOpen = levels.length>0 && levels.every(lv=>!treeCollapsed.has(lv));
+  const relevant = searching ? levels.filter(lv=> (state.matchedLaws[lv]||new Set()).size>0) : levels;
+  const allOpen = relevant.length>0 && relevant.every(lv=>!treeCollapsed.has(prefix+lv));
   b.textContent = allOpen ? '⊟' : '⊞';
 }
 
@@ -484,20 +509,20 @@ function renderHome(){
           '<div class="meta">'+lawTag(l)+
           '<span class="mfi">'+esc(l.doc_number||'—')+'</span>'+
           '<span class="mfi">'+esc(l.publisher||'')+'</span>'+
-          '<span class="mfi">'+esc(el.date)+(el.tag?'<span class="dtag">'+el.tag+'</span>':'')+'</span>'+
+          '<span class="mfi">'+esc(el.date)+(el.tag?'<span class="dtag '+el.cls+'">'+el.tag+'</span>':'')+'</span>'+
           '<span class="cnt">'+l.count+' 条</span></div></div>';
       });
       html += '</div>';
     } else {
       html += '<table class="lawtable"><thead><tr>'+
-        '<th style="width:36%">法规名称</th><th style="width:16%">法规文号</th><th style="width:18%">发布机关</th><th style="width:15%">施行日期</th><th style="width:15%">状态</th></tr></thead><tbody>';
+        '<th style="width:36%">法规名称</th><th style="width:16%">法规文号</th><th style="width:18%">发布机关</th><th style="width:15%">日期</th><th style="width:15%">状态</th></tr></thead><tbody>';
       list.forEach(l=>{
         const el=effLabel(l);
         html += '<tr onclick="openLaw(\''+l.title.replace(/'/g,"\\'")+'\')">'+
           '<td><div class="nm">'+esc(l.title)+'</div></td>'+
           '<td>'+esc(l.doc_number||'—')+'</td>'+
           '<td>'+esc(l.publisher||'—')+'</td>'+
-          '<td class="dt">'+esc(el.date)+(el.tag?'<span class="dtag">'+el.tag+'</span>':'')+'</td>'+
+          '<td class="dt">'+esc(el.date)+(el.tag?'<span class="dtag '+el.cls+'">'+el.tag+'</span>':'')+'</td>'+
           '<td class="status-td">'+statusTag(l)+'</td></tr>';
       });
       html += '</tbody></table>';
@@ -544,7 +569,8 @@ function renderRead(title){
   const arts=data.chapters.reduce((s,c)=>s+c.articles.length,0);
   const words=data.chapters.reduce((s,c)=>s+c.articles.reduce((a,ar)=>a+(ar.content?ar.content.length:0),0),0);
   const amendYear=(title.match(/[（(]([0-9]{4})/)||[])[1];
-  let h='<div class="crumb"><a onclick="switchView(\'home\')">目录</a> › <a onclick="switchView(\'home\')">'+m.level+'</a> › <b>'+esc(title)+'</b></div>';
+  const lw=getLaw(title);
+  let h='<div class="crumb"><a onclick="switchView(\'home\')">目录</a> › <a onclick="switchView(\'home\')">'+esc(lw?lw.level:'')+'</a> › <b>'+esc(title)+'</b></div>';
   h+='<div class="read-head"><h1>'+esc(title)+'</h1></div>';
   // 语雀式发布信息表
   h+='<table class="info-table">';
@@ -952,8 +978,8 @@ function queryMatches(){
   const kws=tokenize(state.q);
   return searchData.filter(e=>{
     if(state.status!=='全部' && e.status!==state.status) return false;
-    if(kws.length){ const hay=(e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase();
-      if(!kws.every(k=>hay.includes(k.toLowerCase()))) return false; }
+    if(kws.length){ const hay=normSpace((e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase());
+      if(!kws.every(k=>hay.includes(normSpace(k.toLowerCase())))) return false; }
     return true;
   });
 }
@@ -976,8 +1002,8 @@ function filterEntries(){
   return searchData.filter(e=>{
     if(state.view==='search' && state.levelFilter && state.levelFilter.size && !state.levelFilter.has(e.level)) return false;
     if(state.status!=='全部' && e.status!==state.status) return false;
-    if(kws.length){ const hay=(e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase();
-      if(!kws.every(k=>hay.includes(k.toLowerCase()))) return false; }
+    if(kws.length){ const hay=normSpace((e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase());
+      if(!kws.every(k=>hay.includes(normSpace(k.toLowerCase())))) return false; }
     return true;
   });
 }
@@ -988,8 +1014,8 @@ function drawResults(){
   const kws=tokenize(state.q);
   list.sort((a,b)=>{
     const ab=(a.status==='已废止')?1:0,bb=(b.status==='已废止')?1:0; if(ab!==bb) return ab-bb;
-    if(kws.length){ const ta=kws.some(k=>a.law_title.toLowerCase().includes(k.toLowerCase()))?0:1;
-      const tb=kws.some(k=>b.law_title.toLowerCase().includes(k.toLowerCase()))?0:1; if(ta!==tb) return ta-tb; }
+    if(kws.length){ const ta=kws.some(k=>normSpace(a.law_title.toLowerCase()).includes(normSpace(k.toLowerCase())))?0:1;
+      const tb=kws.some(k=>normSpace(b.law_title.toLowerCase()).includes(normSpace(k.toLowerCase())))?0:1; if(ta!==tb) return ta-tb; }
     return (LEVEL_ORDER[a.level]??9)-(LEVEL_ORDER[b.level]??9);
   });
   document.getElementById('meta').textContent='共匹配 '+list.length+' 条'+(state.q?'（"'+state.q+'"）':'');
@@ -1022,11 +1048,11 @@ function askAI(){
   if(!q){ box.innerHTML='<div class="empty">请输入问题</div>'; return; }
   const kws=tokenize(q);
   const top=searchData.filter(e=>{
-    const hay=(e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase();
-    return kws.some(k=>hay.includes(k.toLowerCase()));
+    const hay=normSpace((e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase());
+    return kws.some(k=>hay.includes(normSpace(k.toLowerCase())));
   }).sort((a,b)=>{
-    const sa=kws.filter(k=>a.content.toLowerCase().includes(k.toLowerCase())).length;
-    const sb=kws.filter(k=>b.content.toLowerCase().includes(k.toLowerCase())).length;
+    const sa=kws.filter(k=>normSpace(a.content.toLowerCase()).includes(normSpace(k.toLowerCase()))).length;
+    const sb=kws.filter(k=>normSpace(b.content.toLowerCase()).includes(normSpace(k.toLowerCase()))).length;
     return sb-sa;
   }).slice(0,12);
   if(!top.length){ box.innerHTML='<div class="empty">未检索到相关条文，试试更通用的关键词（如「招标」「资质」「合同」）。</div>'; return; }
