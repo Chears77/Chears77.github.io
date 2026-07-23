@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工建法研 · 法规导航</title>
+<link rel="stylesheet" href="./assets/app.css">
+<style>
+  .navwrap{max-width:1080px;margin:0 auto;padding:30px 22px 60px}
+  .navzone{margin-bottom:26px}
+  .navzone h2{font-size:17px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .navzone h2 .badge{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px;background:#e6f4ff;color:#1677ff}
+  .navzone .desc{font-size:12.5px;color:#8c8c8c;margin-bottom:12px}
+  .navlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+  .navitem{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.15s;text-decoration:none;color:inherit;display:block}
+  .navitem:hover{border-color:#1677ff;box-shadow:0 4px 14px rgba(22,119,255,.08)}
+  .navitem .lt{font-weight:600;font-size:14px;color:#262626;line-height:1.4;margin-bottom:6px}
+  .navitem .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .navitem .cnt{margin-left:auto;font-size:12px;color:#8c8c8c}
+  .nfilter{margin:6px 0 18px;display:flex;gap:10px;align-items:center}
+  .nfilter input{width:320px;padding:9px 14px;border:1px solid #e8e8e8;border-radius:20px;font-size:13.5px;outline:none;background:#f5f5f5}
+  .nfilter input:focus{background:#fff;border-color:#1677ff;box-shadow:0 0 0 2px rgba(22,119,255,.15)}
+  .nstat{font-size:12.5px;color:#8c8c8c;margin-left:auto}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo" onclick="location.href='./index.html'">工建法研<small>工程建设法规库</small></div>
+  <div class="hdr-btns">
+    <a class="hdr-btn-page" href="./index.html">法规库</a>
+    <a class="hdr-btn-page active">导航页</a>
+  </div>
+  <div class="hdr-search">
+    <div class="hs-input"><span class="hs-ico">🔍</span><input id="topq" placeholder="跳转到法规库检索…" onkeydown="if(event.key==='Enter')location.href='./index.html?q='+encodeURIComponent(this.value)"></div>
+    <a class="hdr-btn" href="./index.html">进入法规库</a>
+  </div>
+</header>
+<div class="navwrap">
+  <div class="hero"><h1>法规导航 · 工程建设法规库</h1>
+    <p class="hero-sub">按效力层级整理的 500+ 部工程建设法规、标准、案例与政策解读。点击任一法规直达阅读页逐条精读。</p></div>
+  <div class="nfilter">
+    <input id="nf" placeholder="筛选法规名称 / 文号 / 发布机关…" oninput="renderNav(this.value.trim())">
+    <span class="nstat" id="nstat"></span>
+  </div>
+  <div id="navbody"><div class="loading">⏳ 正在加载法规清单…</div></div>
+</div>
+<footer>工程建设法规AI知识库 · 导航页 v2.0 ｜ 数据来自公开法律文本，仅供参考，不构成法律意见</footer>
+<script>
+const LEVEL_ORDER={'法律':0,'司法解释':1,'中央行政法规':2,'中央部门规章':3,'中央规范性文件':4,'地方行政法规':5,'地方规章':6,'地方规范性文件':7,'标准规范':8,'司法案例':9,'行政案例':10,'政策解读':11};
+const LEVEL_DESC={'法律':'全国人大及其常委会制定，工程建设合规的顶层依据。','司法解释':'最高人民法院司法解释、全国人大常委会立法解释，裁判与执法的直接依据。','中央行政法规':'国务院制定，细化法律、具普遍约束力的条例与规定。','中央部门规章':'国务院部委制定，招投标、施工、造价等管理的具体规则。','中央规范性文件':'部委发布的通知、意见、办法等执行口径（全国适用）。','地方行政法规':'省级人大/政府制定，本地适用的地方性法规与条例。','地方规章':'省级政府规章，地方工程建设管理的细化规定。','地方规范性文件':'省市发布的规范性文件，本地执行口径。','标准规范':'GB/JGJ 等强制性及推荐性技术标准，质量安全的底线。','司法案例':'最高人民法院指导性案例及参考性案例，同案同判的参照。','行政案例':'住建部等行政部门通报的违法违规典型案例与执法实践。','政策解读':'部委对重要规章、标准的官方政策解读。'};
+let LAWS=[];
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function statusTag(l){return (l.status==='已废止')?'<span class="tag abol">已废止</span>':'<span class="tag live">现行</span>';}
+function lvClass(lv){return (lv||'').replace(/[（）()]/g,'');}
+function renderNav(filt){
+  const f=filt.toLowerCase();
+  const levels=[...new Set(LAWS.map(l=>l.level))].sort((a,b)=>(LEVEL_ORDER[a]??9)-(LEVEL_ORDER[b]??9));
+  let html='',total=0;
+  levels.forEach(lv=>{
+    let list=LAWS.filter(l=>l.level===lv);
+    if(f) list=list.filter(l=>(l.title+' '+l.doc_number+' '+l.publisher).toLowerCase().includes(f));
+    if(!list.length) return;
+    total+=list.length;
+    html+='<div class="navzone"><h2>'+esc(lv)+' <span class="badge">'+list.length+' 部</span></h2><div class="desc">'+(LEVEL_DESC[lv]||'')+'</div><div class="navlist">';
+    list.forEach(l=>{
+      html+='<a class="navitem" href="./index.html#'+encodeURIComponent(l.title)+'">'+
+        '<div class="lt">'+esc(l.title)+'</div>'+
+        '<div class="meta"><span class="tag '+lvClass(l.level)+'">'+esc(l.level)+'</span>'+statusTag(l)+
+        '<span class="cnt">'+l.count+' 条</span></div></a>';
+    });
+    html+='</div></div>';
+  });
+  document.getElementById('navbody').innerHTML=html||'<div class="empty">无匹配法规</div>';
+  document.getElementById('nstat').textContent='共 '+total+' 部';
+}
+fetch(encodeURI('./data/manifest.json'),{cache:'force-cache'}).then(r=>r.json()).then(d=>{LAWS=d;renderNav('');}).catch(e=>{
+  document.getElementById('navbody').innerHTML='<div class="law-fetch-err">⚠️ 无法加载 manifest.json：'+(e&&e.message?e.message:e)+'<br>请通过本地服务器或 GitHub Pages 访问。</div>';
+});
+</script>
+</body>
+</html>

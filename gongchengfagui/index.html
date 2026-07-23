@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工建法研 · 工程建设法规库（第二版）</title>
+<link rel="stylesheet" href="./assets/app.css">
+</head>
+<body>
+<header>
+  <div class="logo" onclick="switchView('home')">工建法研<small>工程建设法规库</small></div>
+  <div class="hdr-btns">
+    <a class="hdr-btn-page" href="./nav.html">导航页</a>
+    <a class="hdr-btn-page active">法规库</a>
+  </div>
+  <div class="hdr-search">
+    <div class="hs-input"><span class="hs-ico">🔍</span><input id="topq" placeholder="搜索法规、条文、关键词…" onkeydown="if(event.key==='Enter')doSearch()"></div>
+    <button class="hdr-btn" onclick="doSearch()">原文检索</button>
+    <button class="hdr-btn ghost" onclick="doAI()">AI问答</button>
+  </div>
+</header>
+<div class="layout">
+  <aside id="leftPanel">
+    <div class="lp-head" id="lpHead">法规库<span class="lp-count" id="lpCount"></span>
+      <button class="lp-btn" id="collapseAllBtn" title="全部折叠/展开" onclick="toggleCollapseAll()">⊟</button>
+    </div>
+    <div class="lp-filter"><input id="treeFilter" placeholder="筛选法规标题…" oninput="filterTree(this.value)"></div>
+    <div id="sidebar"></div>
+  </aside>
+  <div class="resizer" id="leftResizer" title="拖拽调整法规库宽度"></div>
+  <main id="center"><div id="view"></div></main>
+  <aside id="rightPanel" class="hidden">
+    <div class="rp-head">大纲
+      <div class="rp-actions">
+        <button id="tocAllBtn" title="折叠/展开全部大纲" onclick="toggleTocAll()">⊞</button>
+        <div class="exp-wrap">
+          <button title="导出当前法规" onclick="toggleExpMenu(event)">⬇</button>
+          <div id="expMenu" class="exp-menu">
+            <div class="exp-menu-t">导出当前法规</div>
+            <a onclick="exportCurrent('doc')">📄 Word 文档</a>
+            <a onclick="exportCurrent('md')">📝 Markdown</a>
+            <a onclick="exportCurrent('pdf')">🖨️ PDF（打印）</a>
+          </div>
+        </div>
+        <button title="悬浮 / 停靠" onclick="toggleTocMode()">⤢</button>
+        <button title="隐藏目录" onclick="hideToc()">✕</button>
+      </div>
+    </div>
+    <div class="rp-search">
+      <div class="bs-in"><span class="bs-ico">🔍</span><input id="bodySearch" placeholder="在本文中搜索关键词…" oninput="applyBodySearch()"></div>
+      <div class="bs-bar"><span class="bs-count" id="bsCount"></span><button class="bs-nav" id="bsPrev" title="上一个" onclick="bsPrev()">↑</button><button class="bs-nav" id="bsNext" title="下一个" onclick="bsNext()">↓</button></div>
+    </div>
+    <div id="toc"></div>
+  </aside>
+  <div id="tocEdge" title="移入此处自动显示目录"></div>
+</div>
+<button class="toc-pill" id="tocPill" onclick="showToc('docked', false)">📖 显示目录</button>
+<div id="customModal" class="custom-modal"></div>
+<footer>工程建设法规AI知识库 · 学习网站 v2.0 ｜ 数据来自公开法律文本，仅供参考，不构成法律意见</footer>
+<script src="./assets/app.js" defer></script>
+</body>
+</html>
