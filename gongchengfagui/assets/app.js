@@ -56,6 +56,8 @@ async function boot(){
   if(location.hash){ try{ const t=decodeURIComponent(location.hash.slice(1)); if(LAW_BY_TITLE[t]){ openLaw(t); return; } }catch(e){} }
   renderHome();
   if(isMobile()) openLeftDrawer();
+  // 后台预热检索索引：页面加载完即静默拉取 search.json，用户首次检索时已就绪（不再卡顿）
+  ensureSearch().catch(function(){});
 }
 
 
@@ -462,6 +464,11 @@ async function doSearch(){
   const q=document.getElementById('topq').value.trim();
   state.q=q; state.view='search'; state.law=null;
   hideRightPanel();
+  if(!searchData){
+    // 冷加载：先渲染检索框架并给出加载提示，避免白屏卡顿
+    renderSearch(); renderSidebar();
+    const box=document.getElementById('results'); if(box) box.innerHTML='<div class="empty">⏳ 正在加载检索索引（首次访问约需几秒）…</div>';
+  }
   try{ await ensureSearch(); }catch(e){}
   recomputeMatches();
   renderSearch(); renderSidebar(); window.scrollTo(0,0);
@@ -472,6 +479,7 @@ async function doAI(){
   state.q=q; state.view='ai'; state.law=null; state.levelFilter=null; state.matchedLevels=null; state.matchedLaws={};
   hideRightPanel();
   renderAI(); renderSidebar();
+  if((state.aiMode||'key')==='key' && !aiKeyGet(state.aiProv||'deepseek')){ openKeyModal(); }
   if(q){ try{ await ensureSearch(); }catch(e){} const ta=document.getElementById('aique'); if(ta) ta.value=q; askAI(); }
   window.scrollTo(0,0);
 }
@@ -1068,42 +1076,265 @@ function drawResults(){
   });
 }
 
-/* ============ AI 问答（检索增强） ============ */
+/* ============ AI 问答（混合：本地检索 + 本地模型 + 自带 Key） ============ */
+/* 核心原则：无论哪种模式，都先在本地知识库检索相关条文作为依据，AI 只能引用真实条文，杜绝凭空编造。 */
+const AI_PROVIDERS={
+  deepseek:{name:'DeepSeek', url:'https://api.deepseek.com/chat/completions', model:'deepseek-chat'},
+  qwen:{name:'通义千问', url:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions', model:'qwen-plus'},
+  zhipu:{name:'智谱 GLM', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash'},
+  kimi:{name:'Kimi', url:'https://api.moonshot.cn/v1/chat/completions', model:'moonshot-v1-8k'}
+};
+function aiKeyGet(p){ try{ return JSON.parse(localStorage.getItem('aikey_'+p)||'null'); }catch(e){ return null; } }
+function aiKeySet(p,k){ try{ localStorage.setItem('aikey_'+p, JSON.stringify(k)); }catch(e){} }
+let localModel=null, localModelLoading=false;
+
 function renderAI(){
   const v=document.getElementById('view');
-  v.innerHTML='<div class="ai-note">💡 <b>当前为「检索增强」模式</b>：基于你的知识库检索相关条文并归纳要点。接入豆包大模型（需提供 endpoint ID）后，可生成自然语言回答并逐条引用出处。</div>'+
-    '<div class="ai-box"><textarea id="aique" placeholder="例如：施工单项合同多少金额必须招标？哪些情形可以不招标？转包和分包有什么区别？"></textarea>'+
-    '<button onclick="askAI()">查找相关法规要点</button></div>'+
+  const mode=state.aiMode||'key';
+  const provOpts=Object.keys(AI_PROVIDERS).map(p=>'<option value="'+p+'"'+(state.aiProv===p?' selected':'')+'>'+AI_PROVIDERS[p].name+'</option>').join('');
+  let html='<div class="ai-note">💡 <b>检索增强底座（免费·精准）</b>：无论哪种模式，都会先在本地知识库检索相关条文作为依据，AI 只能引用这些真实条文，杜绝凭空编造。援引可点击跳转原文。</div>';
+  html+='<div class="ai-tabs">'+
+    '<button class="ai-tab'+(mode==='retrieve'?' active':'')+'" onclick="setAiMode(\'retrieve\')">① 本地检索</button>'+
+    '<button class="ai-tab'+(mode==='local'?' active':'')+'" onclick="setAiMode(\'local\')">② 本地AI模型</button>'+
+    '<button class="ai-tab'+(mode==='key'?' active':'')+'" onclick="setAiMode(\'key\')">③ 自带 API Key</button></div>';
+  html+='<div class="ai-sub">'+ (mode==='retrieve'?'纯本地关键词检索，免费、离线、最精准——直接给出命中的真实条文要点。'
+        : mode==='local'?'浏览器本地运行开源小模型（WebGPU），免费、离线、私有；首次需下载模型权重。'
+        : '用你自己的 API Key 直连大模型厂商，质量最高；Key 仅存本机，不经任何服务器。') +'</div>';
+  if(mode==='key'){
+    const p=state.aiProv||'deepseek'; const k=aiKeyGet(p);
+    html+='<div class="ai-row"><label>模型</label><select id="aiProv" onchange="state.aiProv=this.value;renderAI()">'+provOpts+'</select>'+
+      '<button class="ai-setkey" onclick="openKeyModal()">'+(k?'更换 / 查看 Key':'设置 API Key')+'</button>'+
+      '<span class="ai-key-status">'+(k?('● 已配置（'+esc(k.slice(0,4))+'…'+esc(k.slice(-4))+'）'):'○ 未配置')+'</span></div>';
+  }
+  if(mode==='local'){
+    html+='<div class="ai-row"><label>模型</label><select id="aiLocalModel">'+
+      '<option value="Qwen/Qwen2.5-0.5B-Instruct">Qwen2.5-0.5B（快·小·约0.4GB）</option>'+
+      '<option value="Qwen/Qwen2.5-1.5B-Instruct" selected>Qwen2.5-1.5B（准·大·约1.1GB）</option></select>'+
+      '<button class="ai-setkey" onclick="loadLocalModel()">'+(localModel?'重新加载':'加载本地模型')+'</button>'+
+      '<span class="ai-key-status" id="lmStatus">'+(localModel?'● 已加载':(localModelLoading?'加载中…':'○ 未加载（首次需下载）'))+'</span></div>'+
+      '<div class="ai-progress" id="lmProg" style="display:none"><div class="ai-progress-bar" id="lmBar"></div></div>';
+  }
+  html+='<div class="ai-box"><textarea id="aique" placeholder="例如：施工单项合同多少金额必须招标？哪些情形可以不招标？转包和分包有什么区别？"></textarea>'+
+    '<button onclick="askAI()">'+(mode==='retrieve'?'查找相关法规要点':'提问并生成回答')+'</button></div>'+
     '<div id="aians"></div>';
+  v.innerHTML=html;
 }
+function setAiMode(m){ state.aiMode=m; renderAI(); const ta=document.getElementById('aique'); if(ta&&state.q) ta.value=state.q; }
+
+/* 本地检索底座：返回与问题最相关的条文（援引来源） */
+function aiRetrieve(q,k){
+  k=k||12; const kws=tokenize(q);
+  return searchData.filter(e=>{
+    const hay=normSpace((e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase());
+    return kws.some(kk=>hay.includes(normSpace(kk.toLowerCase())));
+  }).sort((a,b)=>{
+    const sa=kws.filter(kk=>normSpace(a.content.toLowerCase()).includes(normSpace(kk.toLowerCase()))).length;
+    const sb=kws.filter(kk=>normSpace(b.content.toLowerCase()).includes(normSpace(kk.toLowerCase()))).length;
+    return sb-sa;
+  }).slice(0,k);
+}
+function aiContext(top){
+  return top.map((e,i)=>'【'+(i+1)+'】《'+e.law_title+'》'+(e.article||'')+(e.chapter&&e.chapter!=='（未分章）'?'（'+(e.chapter)+'）':'')+'：'+e.content).join('\n');
+}
+function aiSystemPrompt(){
+  return '你是「工程建设法规」智能助手。请严格按以下规则：\n'+
+    '1）优先依据用户提供的【资料】中的条文作答；资料已包含真实法规原文，应尽量引用其中的条文。\n'+
+    '2）回答中凡涉及法条，必须用格式「《法规名》第X条」标注出处，法规名与条号务必准确。\n'+
+    '3）若资料中没有相关内容，可结合你的专业知识补充，但须明确区分「资料内条文」与「资料外补充」，且资料外补充的条文同样必须标注「《法规名》第X条」。\n'+
+    '4）若完全无依据，明确回答"资料中未收录该问题的相关条文"，绝对不要编造条号。\n'+
+    '5）语言简练、专业，面向工程合规实务。';
+}
+function aiRenderRetrieve(top){
+  const groups={}; top.forEach(e=>{ (groups[e.law_title]=groups[e.law_title]||[]).push(e); });
+  let html='<div class="ai-res"><h3>📋 相关法规要点（共 '+top.length+' 条，来自 '+Object.keys(groups).length+' 部法规）</h3>';
+  Object.keys(groups).forEach(g=>{
+    html+='<div class="ai-grp"><div class="gt" onclick="openLaw(\''+g.replace(/'/g,"\\'")+'\')" style="cursor:pointer">'+esc(g)+'</div>';
+    groups[g].forEach(e=>{
+      html+='<div class="gi"><b>'+esc(e.article||'')+'</b> （'+(e.chapter||'未分章')+'）｜ '+esc(e.content.slice(0,140))+'…</div>';
+    });
+    html+='</div>';
+  });
+  html+='<div class="ai-note" style="margin-top:18px">以上为检索到的真实条文要点。切换到「本地AI模型 / 自带API Key」可生成自然语言解答并自动标注援引。</div></div>';
+  return html;
+}
+function aiSourcesHtml(top){
+  const groups={}; top.forEach(e=>{ (groups[e.law_title]=groups[e.law_title]||[]).push(e); });
+  let h='<details class="ai-src"><summary>📚 本次回答依据的 '+top.length+' 条真实条文（来自 '+Object.keys(groups).length+' 部法规，点击展开）</summary>';
+  Object.keys(groups).forEach(g=>{
+    h+='<div class="ai-grp"><div class="gt" onclick="openLaw(\''+g.replace(/'/g,"\\'")+'\')" style="cursor:pointer">'+esc(g)+'</div>';
+    groups[g].forEach(e=>{ h+='<div class="gi"><b>'+esc(e.article||'')+'</b>：'+esc(e.content.slice(0,160))+'…</div>'; });
+    h+='</div>';
+  });
+  h+='</details>'; return h;
+}
+/* 中文数字 → 阿拉伯数字（用于条号比对） */
+function cn2num(s){
+  s=(s||'').trim();
+  if(/^\d+$/.test(s)) return parseInt(s,10);
+  const d={'零':0,'一':1,'二':2,'两':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9};
+  let total=0, section=0, number=0;
+  for(const ch of s){
+    if(d[ch]!==undefined) number=d[ch];
+    else if(ch==='十'){ total+=(section+number||1)*10; section=0; number=0; }
+    else if(ch==='百'){ total+=(section+number||1)*100; section=0; number=0; }
+    else if(ch==='千'){ total+=(section+number||1)*1000; section=0; number=0; }
+  }
+  total+=section+number;
+  return total;
+}
+/* 在本地法规库核实一条援引：库内命中返回 entry，否则返回 out */
+function verifyCitation(title, numCn){
+  const num=cn2num(numCn);
+  if(!num) return {status:'out'};
+  const tl=title.replace(/\s/g,'');
+  for(const e of searchData){
+    const et=e.law_title.replace(/\s/g,'');
+    if(et!==tl && !et.includes(tl) && !tl.includes(et)) continue;
+    const an=cn2num((e.article||'').replace(/[^一二三四五六七八九十百零两0-9]/g,''));
+    if(an===num) return {status:'in', entry:e};
+  }
+  return {status:'out'};
+}
+/* 解析回答中的所有《法规名》第X条，逐条核验，生成「📌 法规援引核验」面板 */
+function renderVerification(raw){
+  const re=/《([^》]{1,40})》第([一二三四五六七八九十百零两0-9]+)条/g;
+  const seen={}; const rows=[];
+  let m;
+  while((m=re.exec(raw||''))){
+    const title=m[1], numCn=m[2];
+    const key=title+'#'+numCn; if(seen[key]) continue; seen[key]=1;
+    const v=verifyCitation(title, numCn);
+    if(v.status==='in'){
+      const e=v.entry;
+      rows.push('<div class="vf in"><span class="vf-ic">✅</span><div class="vf-bd"><a class="cite" onclick="openLawCite(\''+e.law_title.replace(/'/g,"\\'")+'\',\''+numCn+'\')">《'+esc(e.law_title)+'》第'+numCn+'条</a>'+
+        '<div class="vf-tx">'+esc((e.content||'').slice(0,160))+((e.content||'').length>160?'…':'')+'</div></div></div>');
+    } else {
+      const url='https://flk.npc.gov.cn/search.html?keyword='+encodeURIComponent(title);
+      rows.push('<div class="vf out"><span class="vf-ic">ℹ️</span><div class="vf-bd">《'+esc(title)+'》第'+numCn+'条'+
+        '<span class="vf-tag">库外·本库未收录</span> ｜ <a class="ext" href="'+url+'" target="_blank" rel="noopener">在国家法律法规数据库核对原文 ↗</a>'+
+        '<div class="vf-tx">AI 引用的该条文未在本站法规库中找到，请以上述官方数据库原文为准，谨慎采信。</div></div></div>');
+    }
+  }
+  if(!rows.length) return '';
+  const inv=rows.filter(r=>r.indexOf('vf in')>=0).length;
+  return '<div class="ai-verify"><div class="av-h">📌 法规援引核验（'+inv+'/'+rows.length+' 条已在本库核实）</div>'+rows.join('')+
+    '<div class="av-foot">✅ 库内条文可点击跳转至具体条款原文；ℹ️ 库外条文已附国家法律法规数据库官网链接供核对。AI 仅作辅助，正式效力以官方公报 / 主管部门原文为准。</div></div>';
+}
+/* 把回答中的《法规名》第X条 变成可点击跳转 */
+function renderCitations(t){
+  let h=esc(t);
+  h=h.replace(/《([^》]{1,40})》第([一二三四五六七八九十百零0-9]+)条/g, function(_, title, num){
+    return '<a class="cite" onclick="openLawCite(\''+title.replace(/'/g,"\\'")+'\',\''+num+'\')">《'+esc(title)+'》第'+num+'条</a>';
+  });
+  h=h.replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>');
+  return '<p>'+h+'</p>';
+}
+function openLawCite(title, num){
+  openLaw(title);
+  setTimeout(function(){
+    const view=document.getElementById('view'); if(!view) return;
+    const heads=view.querySelectorAll('h3,h4,.art');
+    let target=null;
+    heads.forEach(hh=>{ if(hh.textContent.indexOf('第'+num+'条')>=0) target=hh; });
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 450);
+}
+
 function askAI(){
   const q=document.getElementById('aique').value.trim();
   const box=document.getElementById('aians');
   if(!q){ box.innerHTML='<div class="empty">请输入问题</div>'; return; }
-  const kws=tokenize(q);
-  const top=searchData.filter(e=>{
-    const hay=normSpace((e.law_title+' '+e.chapter+' '+e.article+' '+e.content).toLowerCase());
-    return kws.some(k=>hay.includes(normSpace(k.toLowerCase())));
-  }).sort((a,b)=>{
-    const sa=kws.filter(k=>normSpace(a.content.toLowerCase()).includes(normSpace(k.toLowerCase()))).length;
-    const sb=kws.filter(k=>normSpace(b.content.toLowerCase()).includes(normSpace(k.toLowerCase()))).length;
-    return sb-sa;
-  }).slice(0,12);
-  if(!top.length){ box.innerHTML='<div class="empty">未检索到相关条文，试试更通用的关键词（如「招标」「资质」「合同」）。</div>'; return; }
-  // 按法规分组
-  const groups={};
-  top.forEach(e=>{ (groups[e.law_title]=groups[e.law_title]||[]).push(e); });
-  let html='<div class="ai-res"><h3>📋 相关法规要点（共 '+top.length+' 条，来自 '+Object.keys(groups).length+' 部法规）</h3>';
-  Object.keys(groups).forEach(g=>{
-    html+='<div class="ai-grp"><div class="gt">'+esc(g)+'</div>';
-    groups[g].forEach(e=>{
-      html+='<div class="gi"><b>'+hl(e.article,kws)+'</b> （'+(e.chapter||'未分章')+'）｜ '+hl(e.content.slice(0,120),kws)+'…</div>';
-    });
-    html+='</div>';
-  });
-  html+='<div class="ai-note" style="margin-top:18px">以上为检索到的现行/相关条文要点。点击左侧法规库可点开对应法规完整学习；接入 AI 后将自动归纳成连贯解答。</div></div>';
-  box.innerHTML=html;
+  const mode=state.aiMode||'key';
+  ensureSearch().then(function(){
+    const top=aiRetrieve(q, mode==='retrieve'?14:10);
+    if(!top.length){ box.innerHTML='<div class="empty">未检索到相关条文，试试更通用的关键词（如「招标」「资质」「合同」）。</div>'; return; }
+    if(mode==='retrieve'){ box.innerHTML=aiRenderRetrieve(top); return; }
+    if(mode==='key'){ askAIKey(q, top, box); return; }
+    if(mode==='local'){ askAILocal(q, top, box); return; }
+  }).catch(function(e){ box.innerHTML='<div class="empty">检索索引加载失败：'+esc(e.message)+'</div>'; });
 }
+
+/* 模式③：自带 API Key（浏览器直连厂商，流式） */
+function askAIKey(q, top, box){
+  const p=state.aiProv||'deepseek'; const cfg=AI_PROVIDERS[p]; const key=aiKeyGet(p);
+  if(!key){ box.innerHTML='<div class="empty">尚未配置 '+cfg.name+' 的 API Key。<button class="linkbtn" onclick="openKeyModal()">去设置</button></div>'; return; }
+  box.innerHTML='<div class="ai-ans" id="aiAns"></div><div class="ai-note" id="aiNote">⏳ 正在向 '+cfg.name+' 请求…</div>';
+  const ctx=aiContext(top);
+  const user='【资料】\n'+ctx+'\n\n【问题】'+q+'\n\n请依据资料回答，并标注「《法规名》第X条」出处。';
+  fetch(cfg.url,{
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({model:cfg.model, messages:[{role:'system',content:aiSystemPrompt()},{role:'user',content:user}], stream:true, temperature:0.2})
+  }).then(function(r){
+    if(!r.ok){ return r.text().then(function(t){ throw new Error('HTTP '+r.status+' '+t.slice(0,200)); }); }
+    const reader=r.body.getReader(); const dec=new TextDecoder(); let buf=''; const ans=document.getElementById('aiAns'); let raw='';
+    function pump(){
+      return reader.read().then(function(res){
+        if(res.done){ return; }
+        buf+=dec.decode(res.value,{stream:true});
+        const lines=buf.split('\n'); buf=lines.pop();
+        for(const ln of lines){ const s=ln.trim(); if(!s||!s.startsWith('data:')) continue; const d=s.slice(5).trim(); if(d==='[DONE]') continue;
+          try{ const j=JSON.parse(d); const tk=j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content; if(tk){ raw+=tk; ans.innerHTML=renderCitations(raw); } }catch(e){} }
+        return pump();
+      });
+    }
+    return pump();
+  }).then(function(){
+    const note=document.getElementById('aiNote'); if(note) note.innerHTML='✅ 回答由 '+cfg.name+' 基于本地检索的 '+top.length+' 条真实条文生成，已逐条核验援引。';
+    box.insertAdjacentHTML('beforeend', aiSourcesHtml(top));
+    box.insertAdjacentHTML('beforeend', renderVerification(raw));
+  }).catch(function(e){
+    const note=document.getElementById('aiNote'); if(note) note.innerHTML='<span style="color:#cf1322">请求失败：'+esc(e.message)+'（检查 Key / 模型是否支持浏览器跨域；或改用「本地AI模型」）</span>';
+  });
+}
+
+/* 模式②：本地浏览器模型（WebGPU，离线） */
+async function loadLocalModel(){
+  if(localModel||localModelLoading) return;
+  if(!(navigator.gpu)){ alert('当前浏览器不支持 WebGPU，无法运行本地模型。请改用「自带 API Key」或「本地检索」。\n（推荐用 Chrome / Edge 最新版）'); return; }
+  localModelLoading=true; const st=document.getElementById('lmStatus'); const prog=document.getElementById('lmProg'); const bar=document.getElementById('lmBar');
+  if(st) st.textContent='加载中…'; if(prog) prog.style.display='block'; if(bar) bar.style.width='0%';
+  try{
+    const T=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.5.2');
+    T.env.allowLocalModels=false;
+    const mdl=document.getElementById('aiLocalModel').value;
+    localModel=await T.pipeline('text-generation', mdl, {dtype:'q4', device:'webgpu', progress_callback:function(pg){
+      if(pg&&pg.status==='progress'&&bar&&pg.total){ bar.style.width=Math.round(pg.loaded/pg.total*100)+'%'; }
+      else if(pg&&pg.status==='ready'&&bar){ bar.style.width='100%'; }
+    }});
+    localModelLoading=false; if(st) st.textContent='● 已加载'; if(prog) setTimeout(function(){ if(prog) prog.style.display='none'; },600);
+  }catch(e){ localModelLoading=false; if(st) st.textContent='○ 加载失败'; if(prog) prog.style.display='none'; alert('本地模型加载失败：'+e.message); }
+}
+async function askAILocal(q, top, box){
+  if(!localModel){ box.innerHTML='<div class="empty">请先点击「加载本地模型」（首次需下载，约 0.4–1.1GB）。</div>'; return; }
+  box.innerHTML='<div class="ai-ans" id="aiAns"></div><div class="ai-note" id="aiNote">⏳ 本地模型生成中（首次较慢）…</div>';
+  const ctx=aiContext(top);
+  const user='【资料】\n'+ctx+'\n\n【问题】'+q+'\n\n请依据资料回答，并标注「《法规名》第X条」出处。';
+  try{
+    const out=await localModel([{role:'system',content:aiSystemPrompt()},{role:'user',content:user}], {max_new_tokens:600, temperature:0.3, do_sample:false});
+    let raw='';
+    try{ raw=out[0].generated_text.at(-1).content; }catch(e){ raw=String(out); }
+    const ans=document.getElementById('aiAns'); if(ans) ans.innerHTML=renderCitations(raw||'（模型未返回内容）');
+    const note=document.getElementById('aiNote'); if(note) note.innerHTML='✅ 本机离线生成，基于检索到的 '+top.length+' 条真实条文，已逐条核验援引。';
+    box.insertAdjacentHTML('beforeend', aiSourcesHtml(top));
+    box.insertAdjacentHTML('beforeend', renderVerification(raw||''));
+  }catch(e){
+    const note=document.getElementById('aiNote'); if(note) note.innerHTML='<span style="color:#cf1322">生成失败：'+esc(e.message)+'</span>';
+  }
+}
+
+/* Key 弹窗（复用 #customModal） */
+function openKeyModal(){
+  const p=state.aiProv||'deepseek'; const cfg=AI_PROVIDERS[p]; const cur=aiKeyGet(p)||'';
+  const m=document.getElementById('customModal'); if(!m) return;
+  m.innerHTML='<div class="cm-overlay" onclick="closeKeyModal()"></div><div class="cm-box">'+
+    '<div class="cm-title">配置 '+cfg.name+' API Key</div>'+
+    '<div class="cm-h">Key 仅保存在本机浏览器(localStorage)，不会上传到任何服务器；由你的浏览器直连 '+cfg.name+' 官方接口。请妥善保管、勿在公共电脑保存。</div>'+
+    '<input id="kmKey" class="cm-kw" placeholder="粘贴 API Key" value="'+esc(cur)+'">'+
+    '<div class="cm-actions"><button onclick="closeKeyModal()">取消</button><button class="primary" onclick="saveKey()">保存</button></div></div>';
+  m.style.display='flex';
+}
+function saveKey(){ const p=state.aiProv||'deepseek'; const k=document.getElementById('kmKey').value.trim(); if(!k){ alert('请输入 Key'); return; } aiKeySet(p,k); closeKeyModal(); renderAI(); }
+function closeKeyModal(){ const m=document.getElementById('customModal'); if(m) m.style.display='none'; }
 
 /* ============ 左侧法规库 拖拽调宽 ============ */
 (function(){

@@ -231,6 +231,46 @@
   .ai-grp .gi b{color:#1677ff}
   mark{background:var(--mark);color:#ad6800;padding:0 1px;border-radius:2px}
   .empty{text-align:center;color:#8c8c8c;padding:50px;font-size:14px}
+  /* AI 问答：混合面板 */
+  .ai-tabs{display:flex;gap:8px;margin:6px 0 10px;flex-wrap:wrap}
+  .ai-tab{border:1px solid var(--line);background:#fff;color:#595959;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;transition:.15s}
+  .ai-tab:hover{border-color:#1677ff;color:#1677ff}
+  .ai-tab.active{background:#1677ff;border-color:#1677ff;color:#fff;font-weight:600}
+  .ai-sub{font-size:12.5px;color:#8c8c8c;background:#fafafa;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:14px}
+  .ai-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .ai-row label{font-size:13px;color:#595959}
+  .ai-row select{padding:7px 10px;border:1px solid #e8e8e8;border-radius:8px;font-size:13px;background:#fff;outline:none}
+  .ai-setkey{border:1px solid #1677ff;background:#fff;color:#1677ff;padding:7px 14px;border-radius:8px;font-size:13px;cursor:pointer}
+  .ai-setkey:hover{background:#1677ff;color:#fff}
+  .ai-key-status{font-size:12.5px;color:#8c8c8c}
+  .ai-progress{height:8px;background:#f0f0f0;border-radius:6px;overflow:hidden;margin:-4px 0 14px}
+  .ai-progress-bar{height:100%;width:0;background:linear-gradient(90deg,#1677ff,#69b1ff);transition:width .2s}
+  .ai-ans{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:14px;font-size:14.5px;line-height:1.85;color:#262626}
+  .ai-ans p{margin:0 0 12px}
+  .ai-ans p:last-child{margin-bottom:0}
+  .cite{color:#1677ff;cursor:pointer;border-bottom:1px dashed #1677ff;font-weight:600}
+  .cite:hover{background:rgba(22,119,255,.08)}
+  .ai-src{margin-top:6px;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#fafafa}
+  .ai-src summary{cursor:pointer;font-size:13px;color:#595959;font-weight:600}
+  .ai-src .ai-grp{margin:10px 0 0}
+  /* 📌 法规援引核验面板 */
+  .ai-verify{margin-top:8px;border:1px solid #b7eb8f;border-radius:10px;padding:14px 16px;background:#f6ffed}
+  .av-h{font-size:14px;font-weight:700;color:#389e0d;margin-bottom:10px}
+  .vf{display:flex;gap:8px;padding:8px 0;border-bottom:1px dashed #d9f7be}
+  .vf:last-of-type{border:0}
+  .vf-ic{flex:0 0 auto;font-size:14px;line-height:1.5}
+  .vf-bd{flex:1 1 auto;min-width:0}
+  .vf-bd .cite{font-size:13.5px}
+  .vf-tx{font-size:12.5px;color:#595959;margin-top:3px;line-height:1.6}
+  .vf-tag{display:inline-block;margin-left:6px;padding:1px 7px;font-size:11px;color:#d46b08;background:#fff7e6;border:1px solid #ffd591;border-radius:8px;vertical-align:middle}
+  .vf.out .vf-ic{filter:grayscale(.2)}
+  .ext{color:#1677ff;font-size:12.5px;text-decoration:none}
+  .ext:hover{text-decoration:underline}
+  .av-foot{margin-top:10px;font-size:12px;color:#8c8c8c;line-height:1.6}
+  .linkbtn{border:0;background:none;color:#1677ff;cursor:pointer;font-size:14px;text-decoration:underline;padding:0}
+  /* 移动端抽屉触发按钮/遮罩：桌面端默认隐藏，仅 ≤820 显示 */
+  .m-fab{display:none}
+  .scrim{display:none}
   footer{text-align:center;color:#bfbfbf;font-size:12px;padding:20px;background:#fff;border-top:1px solid #f0f0f0}
   .footlinks{max-width:1180px;margin:40px auto 0;padding:30px 16px 8px;border-top:1px solid var(--line2)}
   .footlinks-h{font-size:17px;font-weight:800;color:#1f2329;margin:0 0 22px;padding-left:11px;border-left:4px solid var(--brand)}
@@ -263,7 +303,7 @@
     body.toc-available .m-fab-right{display:flex}
     body.right-open .m-fab-right{display:none}
     /* 遮罩层 */
-    .scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:55;opacity:0;visibility:hidden;transition:opacity .26s ease}
+    .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:55;opacity:0;visibility:hidden;transition:opacity .26s ease}
     .scrim.show{opacity:1;visibility:visible}
     /* 顶栏自适应 */
     header{gap:8px;padding:0 12px}
