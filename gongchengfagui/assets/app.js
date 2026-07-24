@@ -3,7 +3,7 @@
 let LAWS=[], LAW_TITLES=[], READ={}, LAW_BY_TITLE={}, searchData=null, searchLoading=null;
 const RE_ART_MD=/^###\s*第[一二三四五六七八九十百零0-9]+[条款]/;
 function fetchLawMd(law){
-  return fetch(encodeURI('./'+law.file), {cache:'force-cache'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
+  return fetch(encodeURI('./'+law.file), {cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); });
 }
 function parseMd(md){
   const lines = md.split(/\r?\n/);
@@ -35,12 +35,12 @@ async function getScopeMds(){
 async function ensureSearch(){
   if(searchData) return searchData;
   if(searchLoading) return searchLoading;
-  searchLoading = fetch(encodeURI('./data/search.json'), {cache:'force-cache'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }).then(function(d){ searchData=d; return d; });
+  searchLoading = fetch(encodeURI('./data/search.json'), {cache:'no-cache'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }).then(function(d){ searchData=d; return d; });
   return searchLoading;
 }
 async function boot(){
   try{
-    const r=await fetch(encodeURI('./data/manifest.json'), {cache:'force-cache'});
+    const r=await fetch(encodeURI('./data/manifest.json'), {cache:'no-cache'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     LAWS=await r.json();
   }catch(e){
@@ -52,15 +52,16 @@ async function boot(){
   toggleCollapseAll(); renderSidebar();
   const qs=new URLSearchParams(location.search);
   const q=qs.get('q');
-  if(q){ const t=document.getElementById('topq'); if(t) t.value=q; if(qs.get('ai')){ doAI(); } else { doSearch(); } return; }
+  if(q){ const t=document.getElementById('topq'); if(t) t.value=q; if(qs.get('ai')){ doAI(); } else { doSearch(); } if(isMobile()) openLeftDrawer(); return; }
   if(location.hash){ try{ const t=decodeURIComponent(location.hash.slice(1)); if(LAW_BY_TITLE[t]){ openLaw(t); return; } }catch(e){} }
   renderHome();
+  if(isMobile()) openLeftDrawer();
 }
 
 
 const LEVEL_ORDER = {'法律':0,'司法解释':1,'中央行政法规':2,'中央部门规章':3,'中央规范性文件':4,'地方行政法规':5,'地方规章':6,'地方规范性文件':7,'标准规范':8,'司法案例':9,'行政案例':10,'政策解读':11};
 const LEVEL_NAMES = ['法律','司法解释','中央行政法规','中央部门规章','中央规范性文件','地方行政法规','地方规章','地方规范性文件','标准规范','司法案例','行政案例','政策解读'];
-let state = { view:'home', law:null, q:'', status:'全部', homeView:'table', levelFilter:null, matchedLevels:null, matchedLaws:{}, browseLevel:null, library:null, customLib:null, sort:'time_desc' };
+let state = { view:'home', law:null, q:'', status:'全部', homeView:'table', levelFilter:null, matchedLevels:null, matchedLaws:{}, browseLevel:null, library:null, customLib:null, sort:'time_desc', scrollToLaw:null };
 let tocState='hidden';   // docked(停靠) | floating(悬浮) | hidden(隐藏)
 let tocPeek=false;       // 是否处于「边界感应悬浮」状态（鼠标离开即收起）
 let tocHideTimer=null;   // 收起延时，避免边界抖动
@@ -84,6 +85,10 @@ function hl(text,kws){
   return t;
 }
 function lvClass(lv){return (lv||'').replace(/[（）()]/g,'');}
+/* 左侧面板「返回列表」图标（Feather arrow-left，仅打开法规时显示） */
+const ICON_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>';
+/* 平滑滚动到页脚「外部权威法规库」区块 */
+function scrollToFootlinks(){ var f=document.getElementById('footlinks'); if(!f) return; var y=f.getBoundingClientRect().top+window.pageYOffset-64; window.scrollTo({top:y, behavior:'smooth'}); }
 function lawTag(e){
   return '<span class="tag '+lvClass(e.level)+'">'+e.level+'</span>'+
     '<span class="tag field">'+e.field+'</span>'+
@@ -432,13 +437,25 @@ function hideRightPanel(){
   const pill=document.getElementById('tocPill'); if(pill) pill.style.display='none';
   const e=document.getElementById('tocEdge'); if(e) e.style.display='none';
   if(spyObserver){ spyObserver.disconnect(); spyObserver=null; }
+  /* 移动端：关闭右抽屉并隐藏其触发图标 */
+  document.body.classList.remove('toc-available','right-open');
+  const rpd=document.getElementById('rightPanel'); if(rpd) rpd.classList.remove('drawer-open');
+  updateScrim();
 }
 function switchView(v){
-  state.view=v; state.law=null; state.levelFilter=null; state.matchedLevels=null; state.matchedLaws={}; state.browseLevel=null;
+  state.view=v; state.law=null; state.levelFilter=null; state.matchedLevels=null; state.matchedLaws={}; state.browseLevel=null; state.scrollToLaw=null;
   if(v!=='read') hideRightPanel();
   if(v==='home') renderHome();
   renderSidebar();
   window.scrollTo(0,0);
+}
+/* 从阅读视图返回列表，并在中间栏定位到该法规的位置（点击面包屑层级或「返回列表」按钮时调用） */
+function backToList(title){
+  const lw=getLaw(title);
+  state.view='home'; state.law=null; state.levelFilter=null; state.matchedLevels=null; state.matchedLaws={};
+  state.browseLevel = lw? lw.level : null;   // 聚焦到该法规所属层级，列表更聚焦
+  state.scrollToLaw = title;
+  hideRightPanel(); renderHome(); renderSidebar();
 }
 /* 右上角：原文检索 —— 全文搜索 */
 async function doSearch(){
@@ -502,7 +519,8 @@ function renderHome(){
       html += '<div class="cards">';
       list.forEach(l=>{
         const el=effLabel(l);
-        html += '<div class="lcard" onclick="openLaw(\''+l.title.replace(/'/g,"\\'")+'\')">'+
+        const idx=LAW_TITLES.indexOf(l.title);
+        html += '<div class="lcard" data-idx="'+idx+'" onclick="openLaw(\''+l.title.replace(/'/g,"\\'")+'\')">'+
           '<div class="lt">'+esc(l.title)+'</div>'+
           '<div class="meta">'+lawTag(l)+
           '<span class="mfi">'+esc(l.doc_number||'—')+'</span>'+
@@ -516,7 +534,8 @@ function renderHome(){
         '<th style="width:36%">法规名称</th><th style="width:16%">法规文号</th><th style="width:18%">发布机关</th><th style="width:15%">日期</th><th style="width:15%">状态</th></tr></thead><tbody>';
       list.forEach(l=>{
         const el=effLabel(l);
-        html += '<tr onclick="openLaw(\''+l.title.replace(/'/g,"\\'")+'\')">'+
+        const idx=LAW_TITLES.indexOf(l.title);
+        html += '<tr data-idx="'+idx+'" onclick="openLaw(\''+l.title.replace(/'/g,"\\'")+'\')">'+
           '<td><div class="nm">'+esc(l.title)+'</div></td>'+
           '<td>'+esc(l.doc_number||'—')+'</td>'+
           '<td>'+esc(l.publisher||'—')+'</td>'+
@@ -528,11 +547,19 @@ function renderHome(){
     html += '</div>';
   });
   v.innerHTML=html;
+  // 返回列表后，在中间栏定位到目标法规（browseLevel 已限定层级，列表更聚焦）
+  if(state.scrollToLaw){
+    const idx=LAW_TITLES.indexOf(state.scrollToLaw);
+    const el=v.querySelector('[data-idx="'+idx+'"]');
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+    state.scrollToLaw=null;
+  }
 }
 
 /* ============ 阅读视图 ============ */
 async function openLaw(title){
   state.law=title; state.view='read';
+  if(isMobile()) closeLeftDrawer();
   tocExpandedCh.clear(); tocAllExpanded=false;
   const lw=getLaw(title);
   if(lw){
@@ -552,7 +579,8 @@ async function openLaw(title){
     const bsCnt=document.getElementById('bsCount'); if(bsCnt) bsCnt.textContent='';
     renderToc(title);
     startScrollSpy();
-    showToc('docked', false);
+    if(isMobile()){ const rp=document.getElementById('rightPanel'); if(rp) rp.classList.remove('hidden','floating'); document.body.classList.add('toc-available'); closeRightDrawer(); }
+    else { showToc('docked', false); }
     window.scrollTo(0,0);
     const cur=document.querySelector('.tnode.law.cur'); if(cur) cur.scrollIntoView({block:'nearest'});
   }catch(e){
@@ -566,9 +594,8 @@ function renderRead(title){
   const m=data.meta;
   const arts=data.chapters.reduce((s,c)=>s+c.articles.length,0);
   const words=data.chapters.reduce((s,c)=>s+c.articles.reduce((a,ar)=>a+(ar.content?ar.content.length:0),0),0);
-  const amendYear=(title.match(/[（(]([0-9]{4})/)||[])[1];
   const lw=getLaw(title);
-  let h='<div class="crumb"><a onclick="switchView(\'home\')">目录</a> › <a onclick="switchView(\'home\')">'+esc(lw?lw.level:'')+'</a> › <b>'+esc(title)+'</b></div>';
+  let h='<div class="crumb"><span class="crumb-path"><a onclick="switchView(\'home\')">目录</a> › <a onclick="backToList(\''+title.replace(/'/g,"\\'")+'\')">'+esc(lw?lw.level:'')+'</a> › <b>'+esc(title)+'</b></span><button class="crumb-back" title="返回列表（定位到本法规）" onclick="backToList(state.law)">'+ICON_BACK+'</button></div>';
   h+='<div class="read-head"><h1>'+esc(title)+'</h1></div>';
   // 语雀式发布信息表
   h+='<table class="info-table">';
@@ -576,7 +603,7 @@ function renderRead(title){
      '<td class="label">发布机关</td><td class="value">'+esc(m.publisher||'—')+'</td></tr>';
   h+='<tr><td class="label">颁布时间</td><td class="value">'+esc(m.publish_date||'—')+'</td>'+
      '<td class="label">实施时间</td><td class="value">'+esc(m.effective_date||'—')+'</td></tr>';
-  h+='<tr><td class="label">修订时间</td><td class="value">'+(m.revise_date?m.revise_date:(amendYear?amendYear+'-01-01':'—'))+'</td>'+
+  h+='<tr><td class="label">修订时间</td><td class="value">'+(m.revise_date||'—')+'</td>'+
      '<td class="label">是否有效</td><td class="value">'+(m.status==='已废止'?'已废止':'现行有效')+'</td></tr>';
   const srcName=esc(m.publisher||'');
   const srcUrl=(m.source_url||'').trim();
@@ -886,6 +913,7 @@ function startScrollSpy(){
 }
 /* 右侧目录 显示 / 隐藏 / 悬浮 切换 */
 function showToc(mode, peek){
+  if(isMobile()){ openRightDrawer(); return; }
   const rp=document.getElementById('rightPanel'), pill=document.getElementById('tocPill'), edge=document.getElementById('tocEdge');
   if(mode) tocState=mode;
   tocPeek=(typeof peek==='boolean')?peek:false;
@@ -894,9 +922,17 @@ function showToc(mode, peek){
   if(tocState==='floating') rp.classList.add('floating');
   pill.style.display='none'; if(edge) edge.style.display='none';
 }
-function hideToc(){ tocState='hidden'; const rp=document.getElementById('rightPanel'); if(rp) rp.classList.add('hidden'); const pill=document.getElementById('tocPill'); if(pill) pill.style.display='block'; const e=document.getElementById('tocEdge'); if(e) e.style.display='block'; }
+function hideToc(){ if(isMobile()){ closeRightDrawer(); return; } tocState='hidden'; const rp=document.getElementById('rightPanel'); if(rp) rp.classList.add('hidden'); const pill=document.getElementById('tocPill'); if(pill) pill.style.display='block'; const e=document.getElementById('tocEdge'); if(e) e.style.display='block'; }
 function toggleTocMode(){ tocState=(tocState==='floating')?'docked':'floating'; showToc(null, false); }
-function jump(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }
+function jump(id){ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); if(isMobile()) closeRightDrawer(); }
+/* ============ 移动端抽屉（左右栏悬浮 / 收为图标） ============ */
+function isMobile(){ return window.matchMedia('(max-width:820px)').matches; }
+function openLeftDrawer(){ if(!isMobile()) return; const lp=document.getElementById('leftPanel'); if(lp) lp.classList.add('drawer-open'); document.body.classList.add('left-open'); updateScrim(); }
+function closeLeftDrawer(){ const lp=document.getElementById('leftPanel'); if(lp) lp.classList.remove('drawer-open'); document.body.classList.remove('left-open'); updateScrim(); }
+function openRightDrawer(){ if(!isMobile()) return; const rp=document.getElementById('rightPanel'); if(rp) rp.classList.add('drawer-open'); document.body.classList.add('right-open'); updateScrim(); }
+function closeRightDrawer(){ const rp=document.getElementById('rightPanel'); if(rp) rp.classList.remove('drawer-open'); document.body.classList.remove('right-open'); updateScrim(); }
+function closeDrawers(){ closeLeftDrawer(); closeRightDrawer(); }
+function updateScrim(){ const s=document.getElementById('scrim'); if(!s) return; const open=document.body.classList.contains('left-open')||document.body.classList.contains('right-open'); s.classList.toggle('show', open); }
 
 /* ============ 右栏正文搜索（在当前阅读文档内高亮关键词） ============ */
 function escRe(s){ return (s||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
@@ -1094,5 +1130,15 @@ function askAI(){
     rp.addEventListener('mouseleave',()=>{ if(tocPeek){ clearTimeout(tocHideTimer); tocHideTimer=setTimeout(()=>{ tocPeek=false; hideToc(); }, 180); } });
   }
 })();
+
+/* 移动端↔桌面切换时清理抽屉状态，避免残留悬浮层 */
+window.addEventListener('resize', function(){
+  if(!isMobile()){
+    document.body.classList.remove('left-open','right-open');
+    const lp=document.getElementById('leftPanel'); if(lp) lp.classList.remove('drawer-open');
+    const rp=document.getElementById('rightPanel'); if(rp) rp.classList.remove('drawer-open');
+    const s=document.getElementById('scrim'); if(s) s.classList.remove('show');
+  }
+});
 
 boot();

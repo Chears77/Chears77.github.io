@@ -8,11 +8,7 @@
 </head>
 <body>
 <header>
-  <div class="logo" onclick="switchView('home')">工建法研<small>工程建设法规库</small></div>
-  <div class="hdr-btns">
-    <a class="hdr-btn-page" href="./nav.html">导航页</a>
-    <a class="hdr-btn-page active">法规库</a>
-  </div>
+  <div class="logo" onclick="location.reload()" title="刷新">工建法研<small>工程建设法规库</small></div>
   <div class="hdr-search">
     <div class="hs-input"><span class="hs-ico">🔍</span><input id="topq" placeholder="搜索法规、条文、关键词…" onkeydown="if(event.key==='Enter')doSearch()"></div>
     <button class="hdr-btn" onclick="doSearch()">原文检索</button>
@@ -47,16 +43,45 @@
       </div>
     </div>
     <div class="rp-search">
-      <div class="bs-in"><span class="bs-ico">🔍</span><input id="bodySearch" placeholder="在本文中搜索关键词…" oninput="applyBodySearch()"></div>
-      <div class="bs-bar"><span class="bs-count" id="bsCount"></span><button class="bs-nav" id="bsPrev" title="上一个" onclick="bsPrev()">↑</button><button class="bs-nav" id="bsNext" title="下一个" onclick="bsNext()">↓</button></div>
+      <div class="bs-row">
+        <div class="bs-in"><span class="bs-ico">🔍</span><input id="bodySearch" placeholder="在本文中搜索关键词…" oninput="applyBodySearch()"></div>
+        <button class="bs-nav" id="bsPrev" title="上一个" onclick="bsPrev()">↑</button>
+        <button class="bs-nav" id="bsNext" title="下一个" onclick="bsNext()">↓</button>
+      </div>
+      <span class="bs-count" id="bsCount"></span>
     </div>
     <div id="toc"></div>
   </aside>
   <div id="tocEdge" title="移入此处自动显示目录"></div>
 </div>
+<button class="m-fab m-fab-left" id="leftFab" type="button" aria-label="打开法规库目录" onclick="openLeftDrawer()">☰</button>
+<button class="m-fab m-fab-right" id="rightFab" type="button" aria-label="打开大纲" onclick="openRightDrawer()">≡</button>
+<div class="scrim" id="scrim" onclick="closeDrawers()"></div>
 <button class="toc-pill" id="tocPill" onclick="showToc('docked', false)">📖 显示目录</button>
 <div id="customModal" class="custom-modal"></div>
-<footer>工程建设法规AI知识库 · 学习网站 v2.0 ｜ 数据来自公开法律文本，仅供参考，不构成法律意见</footer>
+<section class="footlinks" id="footlinks">
+  <h2 class="footlinks-h">外部权威法规库 · 官方与专业平台</h2>
+  <div class="fl-cols">
+    <div class="fl-col"><div class="fl-col-h">国家级法规库（官方权威）</div><div class="fl-list">
+      <a class="fl-link" href="https://flk.npc.gov.cn/" target="_blank" rel="noopener">国家法律法规数据库（全国人大常委会）</a>
+      <a class="fl-link" href="http://xzfg.moj.gov.cn/search2.html" target="_blank" rel="noopener">国家行政法规库（司法部）</a>
+      <a class="fl-link" href="https://www.gov.cn/zhengce/xxgk/gjgzk/index.htm" target="_blank" rel="noopener">国家规章库（国务院办公厅）</a>
+      <a class="fl-link" href="https://www.gov.cn/zhengce/zhengcewenjianku/index.htm" target="_blank" rel="noopener">国务院政策文件库</a>
+    </div></div>
+    <div class="fl-col"><div class="fl-col-h">工程建设主管部门</div><div class="fl-list">
+      <a class="fl-link" href="https://www.mohurd.gov.cn/gongkai/zhengce/gzk/index.html" target="_blank" rel="noopener">住建部 · 规章库</a>
+      <a class="fl-link" href="https://www.mohurd.gov.cn/gongkai/zhengce/index.html" target="_blank" rel="noopener">住建部 · 行政规范性文件库</a>
+      <a class="fl-link" href="https://www.mohurd.gov.cn/hudong/shcezxdzjb/index.html" target="_blank" rel="noopener">住建部 · 地方主管部门（各省住建厅）</a>
+      <a class="fl-link" href="https://www.ndrc.gov.cn/" target="_blank" rel="noopener">国家发展和改革委员会</a>
+      <a class="fl-link" href="https://www.samr.gov.cn/" target="_blank" rel="noopener">国家市场监督管理总局（标准）</a>
+    </div></div>
+    <div class="fl-col"><div class="fl-col-h">专业检索平台</div><div class="fl-list">
+      <a class="fl-link" href="http://www.cebpubservice.com/" target="_blank" rel="noopener">中国招标投标公共服务平台</a>
+      <a class="fl-link" href="https://www.pkulaw.com/" target="_blank" rel="noopener">北大法宝（商业法规库）</a>
+    </div></div>
+  </div>
+</section>
+<footer>本站法规条文整理自互联网公开信息，仅供学习与研究参考，不构成正式法律意见。具体以政府公报、主管部门官网原文为准。因使用本站信息所产生的任何民事、行政或刑事风险及后果，由使用者自行承担，本站不承担责任。</footer>
 <script src="./assets/app.js" defer></script>
 </body>
 </html>
