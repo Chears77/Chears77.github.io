@@ -7,11 +7,12 @@ build_data.py — 第二版数据构建脚本
   data/search.json    —— 紧凑全文检索索引（懒加载，用户点检索时才 fetch）
 保留 md 为唯一数据源；本脚本不修改 md。
 """
-import os, re, json
+import os, re, json, hashlib, shutil
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 LIB_DIR = os.path.join(BASE, '法规库')
 DATA_DIR = os.path.join(BASE, 'data')
+LAWS_DIR = os.path.join(BASE, 'laws')   # ASCII 部署副本（GitHub Pages 对中文路径支持不佳，fetch 中文路径会 404）
 
 LEVEL_ORDER = {'法律':0,'司法解释':1,'中央行政法规':2,'中央部门规章':3,'中央规范性文件':4,
                '地方行政法规':5,'地方规章':6,'地方规范性文件':7,'标准规范':8,
@@ -127,6 +128,10 @@ def _flush(art):
 def main():
     laws = []
     search = []
+    # 清空旧 ASCII 副本，避免残留
+    if os.path.isdir(LAWS_DIR):
+        shutil.rmtree(LAWS_DIR)
+    os.makedirs(LAWS_DIR, exist_ok=True)
     for root, _, files in os.walk(LIB_DIR):
         for fn in sorted(files):
             if not fn.endswith('.md'):
@@ -149,11 +154,16 @@ def main():
             effective_date = norm_date(meta.get('effective_date', ''))
             revise_date = norm_date(meta.get('revise_date', ''))
             source_url = meta.get('source_url', '')
-            rel = os.path.relpath(path, BASE).replace('\\', '/')
+            # 生成 ASCII 部署副本（GitHub Pages 对中文路径支持不佳，fetch 中文路径会 404）
+            ascii_base = '%02d_%s' % (LEVEL_ORDER.get(level, 99), hashlib.sha1(title.encode('utf-8')).hexdigest()[:12])
+            dest = os.path.join(LAWS_DIR, ascii_base + '.md')
+            with open(dest, 'w', encoding='utf-8') as _f:
+                _f.write(text)
+            rel = 'laws/' + ascii_base + '.md'
             # 库标签
             libs = [k for k in LIB_DEFS if lib_match(k, field, title, region)]
             law = {
-                'id': fn[:-3],
+                'id': ascii_base,
                 'title': title,
                 'level': level,
                 'region': region,
@@ -174,7 +184,7 @@ def main():
             laws.append(law)
             for a in arts:
                 search.append({
-                    'lid': fn[:-3],
+                    'lid': ascii_base,
                     'law_title': title,
                     'level': level,
                     'region': region,

@@ -140,7 +140,7 @@ function clearBrowseLevel(){
   if(!state.browseLevel) return;
   state.browseLevel=null; state.view='home'; state.law=null; hideRightPanel(); renderHome(); renderSidebar();
 }
-/* 时间 / 相关性 / 名称 / 条文数 排序 */
+/* 时间 / 相关性 / 名称 排序 */
 function ymd(v){ if(!v) return 0; const d=(''+v).replace(/\D/g,''); return d.length>=8? parseInt(d.slice(0,8),10):0; }
 /* 日期取值：优先级 修订日期 > 施行日期 > 发布日期（兼容 v1 eff_date/pub_date 与 v2 effective_date/publish_date 字段名） */
 function revDate(l){ return l.revise_date || ''; }
@@ -167,7 +167,6 @@ function sortLaws(list){
   else if(s==='time_asc') arr.sort((a,b)=> ymd(sortDate(a))-ymd(sortDate(b)));
   else if(s==='relevance') arr.sort((a,b)=> relScore(b)-relScore(a));
   else if(s==='name') arr.sort((a,b)=> a.title.localeCompare(b.title,'zh'));
-  else if(s==='count') arr.sort((a,b)=> b.count-a.count);
   return arr;
 }
 /* 库菜单 */
@@ -475,8 +474,7 @@ function renderHome(){
       '<option value="time_desc"'+(state.sort==='time_desc'?' selected':'')+'>时间（新→旧）</option>'+
       '<option value="time_asc"'+(state.sort==='time_asc'?' selected':'')+'>时间（旧→新）</option>'+
       '<option value="relevance"'+(state.sort==='relevance'?' selected':'')+'>相关性</option>'+
-      '<option value="name"'+(state.sort==='name'?' selected':'')+'>名称（A→Z）</option>'+
-      '<option value="count"'+(state.sort==='count'?' selected':'')+'>条文数（多→少）</option></select></label>';
+      '<option value="name"'+(state.sort==='name'?' selected':'')+'>名称（A→Z）</option></select></label>';
   const scopeLabel = (state.browseLevel?('层级：'+state.browseLevel):'') + (state.library?((state.browseLevel?' · ':'')+'库：'+(LIB_DEFS[state.library]||'自定义')):'');
   html += '<span class="tool-info">'+(scopeLabel||'当前：法规总库')+'</span></div>';
 
