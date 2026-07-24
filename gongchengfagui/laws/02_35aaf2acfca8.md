@@ -3,8 +3,9 @@ title: 建设工程勘察设计管理条例（2017修订）
 category: 02-行政法规
 doc_number: 国务院令第687号
 publisher: 国务院
-publish_date: 2017-10-07
+publish_date: 2000-09-25
 effective_date: 2017-10-07
+revise_date: 2017-10-07
 level: 中央行政法规
 field: 勘察设计
 status: 现行
@@ -13,8 +14,6 @@ tags: [建设工程, 勘察, 设计, 资质资格, 发包承包]
 source_url: https://www.gd.gov.cn/zwgk/wjk/zcfgk/content/post_2531450.html
 phase: 首期
 ---
-
-
 # 建设工程勘察设计管理条例（2017修订）
 
 > 发布机构：国务院 ｜ 文号：国务院令第687号 ｜ 发布日期：2017-10-07 ｜ 实施日期：2017-10-07
