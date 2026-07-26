@@ -350,7 +350,29 @@
     .fl-cols{grid-template-columns:1fr 1fr}
   }
   @media(max-width:480px){
-    .hdr-btn.ghost{display:none}
+    /* 顶栏：保留「检索」「AI问答」两按钮，缩短文字、紧凑布局 */
+    header{gap:6px;padding:0 10px}
+    header .logo{font-size:15px}
+    header .logo small{display:none}
+    .hdr-search{gap:4px}
+    .hs-input input{padding:7px 10px 7px 30px;font-size:12px}
+    .hs-ico{left:8px;font-size:13px}
+    .hdr-btn.ghost{display:inline-flex;align-items:center;padding:7px 10px;font-size:0;white-space:nowrap;border-radius:16px}
+    #hdrSearch::before{content:"检索";font-size:12px}
+    #hdrAi::before{content:"AI问答";font-size:12px}
+    /* 检索/AI 头部：隐藏副标题，标题不换行，控件紧凑 */
+    .ai-head{gap:8px;margin:4px 0 10px}
+    .ai-title{font-size:17px;white-space:nowrap;gap:0}
+    .ai-title .ai-sep,.ai-title .ai-sub2{display:none}
+    .ai-head-r{gap:6px}
+    .ai-seg{padding:2px;gap:2px;margin-bottom:0}
+    .ai-seg-btn{padding:6px 10px;font-size:12px;white-space:nowrap}
+    .ai-gear{width:32px;height:30px;font-size:15px}
+    .ai-settings{padding:10px 12px;margin-bottom:10px}
+    .ai-conv{margin-top:14px}
+    .ai-a{padding:16px 14px}
+    .ai-ans{font-size:14px;line-height:1.85}
+    .ai-q{max-width:88%;font-size:14px;padding:10px 14px}
     .fl-cols{grid-template-columns:1fr}
     #center{padding:16px 12px 56px}
     .read-head h1{font-size:21px}
