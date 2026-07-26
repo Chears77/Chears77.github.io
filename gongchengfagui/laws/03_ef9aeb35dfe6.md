@@ -1,33 +1,21 @@
 ---
 title: 安全生产违法行为行政处罚办法
-category: 04-中央部门规章
-doc_number: 应急管理部令第18号
+level: 中央部门规章
+region: ''
 publisher: 应急管理部
+doc_number: 应急管理部令第18号
 publish_date: 2025-11-27
 effective_date: 2026-02-01
 revise_date: ''
-level: 中央部门规章
-region: ''
-field: 安全/行政执法
 status: 现行
 doc_type: law
-verify_status: 初稿待校核
-tags: [安全生产, 行政处罚, 行政执法, 事故调查, 安全监管]
+field: 安全/行政执法
 source_url: https://www.mem.gov.cn/gk/zfxxgkpt/fdzdgknr/202512/t20251202_587134.shtml
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 安全生产违法行为行政处罚办法
-
 （2025年11月27日中华人民共和国应急管理部令第18号公布，自2026年2月1日起施行）
-
-
-
-
-
-
-
-
 ## 第一章 总则
 
 ### 第一条

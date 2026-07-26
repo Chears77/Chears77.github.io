@@ -1,30 +1,19 @@
 ---
 title: 园林绿化工程项目规范
-category: 05-标准规范
-doc_number: GB55014-2021
+level: 标准规范
 publisher: 中华人民共和国住房和城乡建设部 / 国家市场监督管理总局
+doc_number: GB55014-2021
 publish_date: 2021-04-09
 effective_date: 2022-01-01
-level: 标准规范
-field: 园林绿化
 status: 现行
-superseded_by: ''
-verify_status: 初稿待校核
-tags: [园林绿化, 工程项目规范, 全文强制]
+field: 园林绿化
 source_url: https://ceasjx.com/ueditor/php/upload/file/20220506/1651802775626912.pdf
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 园林绿化工程项目规范
-
 （2021年4月9日中华人民共和国住房和城乡建设部 / 国家市场监督管理总局发布，自2022年1月1日起施行）
-
-
-
-
-
 （本初稿暂仅收录已核实章节，其余待补充）
-
 ## 1 总则
 
 ### 1.0.1 为建设高质量园林绿化工程项目，打造生态、宜居、和谐、美丽的城市环境，满足人民群众对美好生活和优美生态环境的需求，为民众提供公平享受的绿色福利，制定本规范。

@@ -1,22 +1,19 @@
 ---
 title: "西宁市2026年上半年房屋市政工程领域安全生产典型执法案例通报"
-doc_number: ""
+level: 行政案例
+region: 青海
 publisher: 西宁市住房和城乡建设局
+doc_number: ""
 publish_date: 2026-06-01
 effective_date: 2026-06-01
-level: 行政案例
-doc_type: doc
 status: 现行
-verify_status: 初稿待校核
+doc_type: doc
 field: 安全
-tags: [安全生产, 重大事故隐患, 深基坑, 危大工程, 吊车违规吊人, 项目经理履职, 青海]
 source_url: https://www.toutiao.com/article/7660347597378306569
-region: 青海
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 西宁市2026年上半年房屋市政工程领域安全生产典型执法案例通报
-
 ## 案情简介
 
 为强化安全生产执法监督，充分发挥典型案例警示教育作用，推动参建单位严格落实安全生产主体责任，西宁市住房和城乡建设局通报2026年上半年查处的房屋市政工程安全生产违法违规典型案例。

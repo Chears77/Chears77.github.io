@@ -6,23 +6,14 @@ publisher: 北京市人民政府（地方政府规章）
 doc_number: 北京市人民政府令第122号
 publish_date: 2003-04-02
 effective_date: 2003-06-01
-field: 招投标
 status: 现行
+field: 招投标
 source_url: https://www.beijing.gov.cn/zhengce/gfxwj/201905/t20190522_56596.html
-category: 05-规范性文件/北京
-tags: [北京, 招标投标, 建设工程, 监督管理, 地方政府规章]
 verify_status: 初稿待校核
 ---
 
 # 北京市建设工程招标投标监督管理规定
-
 （2003年4月2日北京市人民政府令第122号发布，自2003年6月1日起施行）
-
-
-
-
-
-
 ## 一、总则（目的、适用范围、招标范围与规模标准、监管职责分工）
 
 ### 第一条【立法目的与依据】

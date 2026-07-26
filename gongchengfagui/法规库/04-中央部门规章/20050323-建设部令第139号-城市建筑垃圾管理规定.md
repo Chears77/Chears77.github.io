@@ -7,23 +7,15 @@ doc_number: 建设部令第139号
 publish_date: 2005-03-23
 effective_date: 2005-06-01
 revise_date: ''
-field: 城建/市容环卫
 status: 现行
 doc_type: law
+field: 城建/市容环卫
 source_url: https://www.gd.gov.cn/zwgk/wjk/zcfgk/content/post_2531615.html
-tags:
-  - 城市建筑垃圾
-  - 建筑垃圾处置
-  - 市容环卫
-  - 建设部令
 verify_status: 初稿待校核
-phase: 首期
 ---
 
 # 城市建筑垃圾管理规定
-
 （2005年3月23日建设部令第139号发布，自2005年6月1日起施行）
-
 ## 第一章 总则
 
 ### 第一条

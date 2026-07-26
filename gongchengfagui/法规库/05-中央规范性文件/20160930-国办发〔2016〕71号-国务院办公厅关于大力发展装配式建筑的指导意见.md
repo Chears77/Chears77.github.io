@@ -7,20 +7,15 @@ doc_number: 国办发〔2016〕71号
 publish_date: 2016-09-30
 effective_date: 2016-09-30
 revise_date: ''
-field: 建筑工业化
 status: 现行
 doc_type: law
+field: 建筑工业化
 source_url: https://www.gov.cn/zhengce/zhengceku/2016-09/30/content_5114118.htm
-tags: [装配式建筑, 建筑工业化, 绿色建筑, 产业结构调整]
 verify_status: 初稿待校核
-phase: 首期
 ---
 
 # 国务院办公厅关于大力发展装配式建筑的指导意见
-
 （2016年9月30日国务院办公厅国办发〔2016〕71号印发，自2016年9月30日起施行）
-
-
 ## 一、总体要求
 
 （一）指导思想。以装配式混凝土结构、钢结构、现代木结构等装配式建筑为重点，推动建造方式创新，促进建筑业与信息化、工业化深度融合。

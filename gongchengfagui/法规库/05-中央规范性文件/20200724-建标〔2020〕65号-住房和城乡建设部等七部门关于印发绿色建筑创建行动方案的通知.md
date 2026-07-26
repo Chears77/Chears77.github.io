@@ -7,20 +7,15 @@ doc_number: 建标〔2020〕65号
 publish_date: 2020-07-24
 effective_date: 2020-07-24
 revise_date: ''
-field: 绿色建筑
 status: 现行
 doc_type: law
+field: 绿色建筑
 source_url: https://www.gov.cn/zhengce/zhengceku/2020-07/24/content_5529745.htm
-tags: [绿色建筑, 创建行动, 建筑能效, 节能减排]
 verify_status: 初稿待校核
-phase: 首期
 ---
 
 # 住房和城乡建设部等七部门关于印发绿色建筑创建行动方案的通知
-
 （2020年7月24日住房和城乡建设部等七部门建标〔2020〕65号印发，自2020年7月24日起施行）
-
-
 ## 一、创建对象
 
 绿色建筑创建行动以城镇建筑作为创建对象。绿色建筑指在全寿命期内节约资源、保护环境、减少污染，为人们提供健康、适用、高效的使用空间，最大限度实现人与自然和谐共生的高质量建筑。

@@ -1,30 +1,20 @@
 ---
 title: 完善房屋建筑和市政基础设施工程招标投标制度的意见
-doc_number: 苏建规字〔2025〕12号
-publisher: 江苏省住房和城乡建设厅
 level: 地方规范性文件
 region: 江苏
-field: 招投标
-status: 现行
-phase: 首期
-category: 08-地方规范性文件/江苏
-doc_type: law
-superseded_by: ""
-source_url: http://xeyxjy.haian.gov.cn/tzgg/20260104/3248c32b-0511-4a99-9a56-2ea3cd4cf24b.html
+publisher: 江苏省住房和城乡建设厅
+doc_number: 苏建规字〔2025〕12号
 publish_date: 2025-10-22
 effective_date: 2026-02-01
+status: 现行
+doc_type: law
+field: 招投标
+source_url: http://xeyxjy.haian.gov.cn/tzgg/20260104/3248c32b-0511-4a99-9a56-2ea3cd4cf24b.html
 verify_status: 初稿待校核
-tags: [招投标, 江苏, 房屋市政, 评定分离, 远程异地评标, 暗标评审, 信息公开]
 ---
 
 # 完善房屋建筑和市政基础设施工程招标投标制度的意见
-
 （2025年10月22日江苏省住房和城乡建设厅苏建规字〔2025〕12号印发，自2026年2月1日起施行）
-
-
-
-
-
 ## 一、突出重点，放管结合
 
 （一）国有资金占控股或者主导地位的房屋建筑与市政基础设施工程项目的施工、货物、服务，以单项合同估算价是否达到依法必须招标的规模标准确定是否必须招标发包，不受项目总投资额大小的限制。

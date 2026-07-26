@@ -1,29 +1,18 @@
 ---
 title: 建筑施工企业安全生产许可证管理规定
-category: 03-部门规章
-doc_number: 建设部令第128号
+level: 中央部门规章
 publisher: 住房和城乡建设部
+doc_number: 建设部令第128号
 publish_date: 2004-07-05
 effective_date: 2004-07-05
-level: 中央部门规章
-field: 安全生产
 status: 现行
-superseded_by: ""
-verify_status: 初稿待校核
-tags: [安全生产, 安全生产许可证, 建筑施工企业]
+field: 安全生产
 source_url: https://www.beijing.gov.cn/zhengce/zhengcefagui/qtwj/201106/t20110615_780597.html
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 建筑施工企业安全生产许可证管理规定
-
 （2004年7月5日中华人民共和国建设部令第128号发布，自2004年7月5日起施行）
-
-
-
-
-
-
 ## 第一章 总则
 
 ### 第一条

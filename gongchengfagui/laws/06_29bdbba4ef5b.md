@@ -6,20 +6,15 @@ publisher: 重庆市人民政府
 doc_number: 重庆市人民政府令第307号
 publish_date: 2016-11-15
 effective_date: 2017-01-01
-revise_date: 
-field: 工程造价
 status: 现行
 doc_type: law
+field: 工程造价
 source_url: https://www.cq.gov.cn/zwgk/zfxxgkml/szfwj/zfgz/zfgz/201611/W020210205093340786583.pdf
-tags: [重庆, 地方规章, 工程造价, 计价管理]
 verify_status: 初稿待校核
-phase: 首期
 ---
 
 # 重庆市建设工程造价管理规定
-
 （2016年11月15日重庆市人民政府令第307号公布 自2017年1月1日起施行）
-
 ## 第一章 总则
 
 ### 第一条

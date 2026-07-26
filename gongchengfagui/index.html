@@ -11,8 +11,8 @@
   <div class="logo" onclick="location.reload()" title="刷新">工建法研<small>工程建设法规库</small></div>
   <div class="hdr-search">
     <div class="hs-input"><span class="hs-ico">🔍</span><input id="topq" placeholder="搜索法规、条文、关键词…" onkeydown="if(event.key==='Enter')doSearch()"></div>
-    <button class="hdr-btn" onclick="doSearch()">原文检索</button>
-    <button class="hdr-btn ghost" onclick="doAI()">AI问答</button>
+    <button class="hdr-btn ghost" id="hdrSearch" onclick="doSearch()">原文检索</button>
+    <button class="hdr-btn ghost" id="hdrAi" onclick="doAI()">AI问答</button>
   </div>
 </header>
 <div class="layout">
@@ -26,7 +26,7 @@
   <div class="resizer" id="leftResizer" title="拖拽调整法规库宽度"></div>
   <main id="center"><div id="view"></div></main>
   <aside id="rightPanel" class="hidden">
-    <div class="rp-head">大纲
+    <div class="rp-head"><span id="rpTitle">大纲</span>
       <div class="rp-actions">
         <button id="tocAllBtn" title="折叠/展开全部大纲" onclick="toggleTocAll()">⊞</button>
         <div class="exp-wrap">

@@ -121,9 +121,21 @@ def parse_md(text):
     return meta, chapters, arts
 
 def _flush(art):
-    art['content'] = '\n'.join(art['lines']).strip()
+    art['content'] = clean_content('\n'.join(art['lines']).strip())
     del art['lines']
     return art
+
+# 防御性清洗：剔除任何残余的网页标签/脚本片段（源已清洗，这里做二次保险）
+_IMPORT_RE = re.compile(r'<!--.*?-->', re.DOTALL | re.IGNORECASE)
+_ISCRIPT_RE = re.compile(r'<script.*?</script>', re.DOTALL | re.IGNORECASE)
+_ISTYLE_RE = re.compile(r'<style.*?</style>', re.DOTALL | re.IGNORECASE)
+_ITAG_RE = re.compile(r'<[^>]+>')
+def clean_content(s):
+    s = _IMPORT_RE.sub('', s)
+    s = _ISCRIPT_RE.sub('', s)
+    s = _ISTYLE_RE.sub('', s)
+    s = _ITAG_RE.sub('', s)
+    return s.strip()
 
 def main():
     laws = []
@@ -189,6 +201,7 @@ def main():
                     'level': level,
                     'region': region,
                     'status': status,
+                    'field': field,
                     'chapter_title': a['chapter'],
                     'article': a['article'],
                     'content': a['content'],

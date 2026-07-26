@@ -1,35 +1,22 @@
 ---
 title: 城镇燃气设施运行、维护和抢修安全技术标准
-category: 09-标准规范
+level: 标准规范
 region: ''
-doc_number: GB/T 51474-2025
 publisher: 中华人民共和国住房和城乡建设部
+doc_number: GB/T 51474-2025
 publish_date: 2025-05-29
 effective_date: 2025-10-01
 revise_date: ''
-level: 标准规范
+status: 现行
 doc_type: law
 field: 燃气
-status: 现行
-superseded_by: ''
-verify_status: 初稿待校核
-tags: [城镇燃气, 运行维护, 抢修, 安全]
 source_url: https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2025/art_e6f65d4cd5b44156a73bf1794d977f62.html
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 城镇燃气设施运行、维护和抢修安全技术标准
-
 （2016年6月6日中华人民共和国住房和城乡建设部发布；2025年5月29日中华人民共和国住房和城乡建设部公告第83号修订发布，自2025年10月1日起实施）
-
-
-
-
-
-
-
 （本初稿依据住房城乡建设部公告2025年第83号整理，全文条文待校核补充。原行业标准《城镇燃气设施运行、维护和抢修安全技术规程》CJJ 51-2016 同时废止。）
-
 ## 1 总则
 
 ### 1.0.1 为规范城镇燃气设施的运行、维护和抢修，保障人身和公共安全，制定本标准。

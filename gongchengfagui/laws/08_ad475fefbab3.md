@@ -1,35 +1,22 @@
 ---
 title: 建筑与市政工程施工现场临时用电安全技术标准
-category: 09-标准规范
+level: 标准规范
 region: ''
-doc_number: JGJ/T 46-2024
 publisher: 中华人民共和国住房和城乡建设部
+doc_number: JGJ/T 46-2024
 publish_date: 2024-09-09
 effective_date: 2025-01-01
 revise_date: ''
-level: 标准规范
+status: 现行
 doc_type: law
 field: 施工安全
-status: 现行
-superseded_by: ''
-verify_status: 初稿待校核
-tags: [临时用电, 施工安全, 施工现场]
 source_url: https://www.mohurd.gov.cn/gongkai/zc/wjk/art/2024/art_17339_780410.html
-phase: 首期
+verify_status: 初稿待校核
 ---
 
 # 建筑与市政工程施工现场临时用电安全技术标准
-
 （2005年4月15日中华人民共和国建设部发布；2024年9月9日中华人民共和国住房和城乡建设部公告第152号修订发布，自2025年1月1日起实施）
-
-
-
-
-
-
-
 （本初稿依据住房城乡建设部公告2024年第152号整理，全文条文待校核补充。原《施工现场临时用电安全技术规范》JGJ 46-2005 同时废止。）
-
 ## 1 总则
 
 ### 1.0.1 为贯彻国家安全生产法律法规，保障建筑与市政工程施工现场临时用电安全，制定本标准。

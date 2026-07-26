@@ -6,20 +6,15 @@ publisher: 江苏省人民政府
 doc_number: 江苏省政府令第168号
 publish_date: 2023-01-30
 effective_date: 2023-04-01
-revise_date: 
-field: 勘察设计
 status: 现行
 doc_type: law
+field: 勘察设计
 source_url: https://www.jiangsu.gov.cn/art/2023/2/3/art_46143_10740670.html
-tags: [江苏, 地方规章, 勘察设计, 资质管理, 质量管理]
 verify_status: 初稿待校核
-phase: 首期
 ---
 
 # 江苏省建设工程勘察设计管理办法
-
 （2023年1月30日江苏省人民政府令第168号公布 自2023年4月1日起施行，2000年3月31日江苏省人民政府发布的原办法同时废止）
-
 ## 第一章 总则
 
 ### 第一条

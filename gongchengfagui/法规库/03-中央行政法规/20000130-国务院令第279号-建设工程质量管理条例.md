@@ -6,26 +6,14 @@ doc_number: 国务院令第279号
 publish_date: 2000-01-30
 effective_date: 2000-01-30
 revise_date: 2019-04-23
-field: 住建
 status: 现行
+field: 住建
 source_url: https://www.gov.cn/gongbao/content/2000/content_60658.htm
-category: 02-行政法规
-tags: [工程质量, 保修, 竣工验收, 终身责任制]
 verify_status: 初稿待校核
 ---
 
 # 建设工程质量管理条例
-
 （2000年1月30日中华人民共和国国务院令第279号发布；根据2017年10月7日《国务院关于修改部分行政法规的决定》第一次修订；根据2019年4月23日《国务院关于修改部分行政法规的决定》第二次修订）
-
-
-
-
-
-
-
-
-
 ## 第一章 总则
 
 ### 第一条
