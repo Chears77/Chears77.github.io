@@ -30,15 +30,22 @@
   <!-- Year Filter -->
   <div class="year-filter" id="yearFilter">
     <button class="year-filter-btn active" data-year="all">全部</button>
-    <button class="year-filter-btn" data-year="2026">2026</button>
-    <button class="year-filter-btn" data-year="2025">2025</button>
-    <button class="year-filter-btn" data-year="2024">2024</button>
-    <button class="year-filter-btn" data-year="2023">2023</button>
-    <button class="year-filter-btn" data-year="2022">2022</button>
-    <button class="year-filter-btn" data-year="2021">2021</button>
   </div>
 
-  <div class="award-grid" id="awardGrid"></div>
+  <!-- Photo Wall -->
+  <section class="honor-photo-section">
+    <h2 class="section-title"><span>&#128247;</span> 荣誉照片墙 <span>&#128247;</span></h2>
+    <div class="honor-photo-grid" id="honorPhotoGrid"></div>
+  </section>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">&times;</div>
+  <div class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</div>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</div>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
 </div>
 
 <!-- ========== Footer ========== -->
@@ -49,54 +56,122 @@
 </footer>
 
 <script src="js/main.js"></script>
+<script src="js/honor-photos.js"></script>
 <script>
-var awards = [
-  { icon: '&#127942;', title: '三好学生', year: '2026', detail: '下学期' },
-  { icon: '&#127942;', title: '三好学生', year: '2025', detail: '上、下学期' },
-  { icon: '&#127942;', title: '三好学生', year: '2024', detail: '上、下学期' },
-  { icon: '&#127942;', title: '三好学生', year: '2023', detail: '上、下学期' },
-  { icon: '&#127942;', title: '三好学生', year: '2022', detail: '下学期' },
-  { icon: '&#127942;', title: '三好学生', year: '2021', detail: '下学期' },
-  { icon: '&#127912;', title: '绘画比赛一等奖', year: '2024', detail: '校级 ·《春天的花园》' },
-  { icon: '&#127939;', title: '运动会跑步冠军', year: '2023', detail: '校级 · 200米' },
-  { icon: '&#128218;', title: '阅读之星', year: '2025', detail: '校级 · 年度评选' },
-  { icon: '&#128218;', title: '阅读之星', year: '2024', detail: '校级 · 年度评选' },
-  { icon: '&#128218;', title: '阅读之星', year: '2023', detail: '校级 · 年度评选' },
-  { icon: '&#128218;', title: '阅读之星', year: '2022', detail: '校级 · 年度评选' },
-  { icon: '&#127891;', title: '优秀少先队员', year: '2022', detail: '校级' },
-  { icon: '&#128172;', title: '朗诵比赛二等奖', year: '2024', detail: '校级' },
-  { icon: '&#9997;', title: '书法优秀奖', year: '2023', detail: '校级' },
-  { icon: '&#127757;', title: '环保小卫士', year: '2025', detail: '社区' },
-  { icon: '&#127939;', title: '运动会接力亚军', year: '2024', detail: '校级 · 4×100米' },
-  { icon: '&#127912;', title: '手抄报比赛二等奖', year: '2025', detail: '校级' }
-];
-
 (function build() {
-  var container = document.getElementById('awardGrid');
+  var photoContainer = document.getElementById('honorPhotoGrid');
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightboxImg');
+  var lightboxCaption = document.getElementById('lightboxCaption');
+  var currentPhotos = [];
+  var currentIndex = 0;
 
-  function render(filter) {
-    container.innerHTML = '';
-    var filtered = filter === 'all' ? awards : awards.filter(function(a) { return a.year === filter; });
-    filtered.forEach(function(item) {
+  function buildPhotoMeta(item) {
+    var parts = [];
+    if (item.unit) parts.push(item.unit);
+    if (item.detail) parts.push(item.detail);
+    return parts.join(' · ');
+  }
+
+  function renderPhotos(filter) {
+    photoContainer.innerHTML = '';
+    currentPhotos = filter === 'all' ? honorPhotos : honorPhotos.filter(function(p) { return p.year === filter; });
+
+    if (currentPhotos.length === 0) {
+      photoContainer.innerHTML = '<p style="text-align:center;color:var(--text-light);grid-column:1/-1;padding:var(--space-xl) 0;">该年份暂无照片记录</p>';
+      return;
+    }
+
+    currentPhotos.forEach(function(item, index) {
       var div = document.createElement('div');
-      div.className = 'award-card fade-in';
+      div.className = 'honor-photo-card fade-in';
       div.innerHTML =
-        '<div class="award-icon">' + item.icon + '</div>' +
-        '<h4>' + item.title + '</h4>' +
-        '<p>' + item.year + ' · ' + item.detail + '</p>';
-      container.appendChild(div);
+        '<div class="honor-photo-frame">' +
+          '<img src="' + item.src + '" alt="' + item.title + '" loading="lazy">' +
+        '</div>' +
+        '<div class="honor-photo-info">' +
+          '<span class="honor-photo-year">' + item.year + '</span>' +
+          '<h4>' + item.title + '</h4>' +
+          '<div class="honor-photo-meta">' + buildPhotoMeta(item) + '</div>' +
+        '</div>';
+      div.addEventListener('click', function() { openLightbox(index); });
+      photoContainer.appendChild(div);
     });
   }
 
-  render('all');
+  function renderAll(filter) {
+    renderPhotos(filter);
+    setTimeout(function() {
+      document.querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('visible'); });
+    }, 50);
+  }
+
+  function openLightbox(index) {
+    currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function updateLightbox() {
+    var item = currentPhotos[currentIndex];
+    lightboxImg.src = item.src;
+    lightboxCaption.innerHTML = '<strong>' + item.title + '</strong><br>' + item.year + (item.unit ? ' · ' + item.unit : '') + (item.detail ? ' · ' + item.detail : '');
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function nextPhoto() {
+    currentIndex = (currentIndex + 1) % currentPhotos.length;
+    updateLightbox();
+  }
+
+  function prevPhoto() {
+    currentIndex = (currentIndex - 1 + currentPhotos.length) % currentPhotos.length;
+    updateLightbox();
+  }
+
+  // Lightbox events
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxPrev').addEventListener('click', function(e) { e.stopPropagation(); prevPhoto(); });
+  document.getElementById('lightboxNext').addEventListener('click', function(e) { e.stopPropagation(); nextPhoto(); });
+  lightbox.addEventListener('click', function(e) { if (e.target === lightbox || e.target === lightboxImg) closeLightbox(); });
+  document.addEventListener('keydown', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') nextPhoto();
+    if (e.key === 'ArrowLeft') prevPhoto();
+  });
 
   // Year filter
   document.getElementById('yearFilter').addEventListener('click', function(e) {
     if (!e.target.classList.contains('year-filter-btn')) return;
     document.querySelectorAll('.year-filter-btn').forEach(function(b) { b.classList.remove('active'); });
     e.target.classList.add('active');
-    render(e.target.dataset.year);
+    renderAll(e.target.dataset.year);
   });
+
+  // 根据照片自动生成年份筛选按钮（新增年份无需改 HTML）
+  (function buildYearButtons() {
+    var yf = document.getElementById('yearFilter');
+    var years = [];
+    honorPhotos.forEach(function(p) {
+      if (years.indexOf(p.year) === -1) years.push(p.year);
+    });
+    years.sort(function(a, b) { return String(b).localeCompare(String(a)); });
+    years.forEach(function(y) {
+      var b = document.createElement('button');
+      b.className = 'year-filter-btn';
+      b.setAttribute('data-year', y);
+      b.textContent = y;
+      yf.appendChild(b);
+    });
+  })();
+
+  renderAll('all');
 })();
 </script>
 </body>
