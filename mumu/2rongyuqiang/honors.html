@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>荣誉墙 · Alisa</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
 <!-- ========== Top Bar ========== -->
 <nav class="topbar">
   <div class="topbar-inner">
-    <a href="index.html" class="topbar-back">
+    <a href="../index.html" class="topbar-back">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       返回首页
     </a>
@@ -23,10 +23,6 @@
 
 <!-- ========== Content ========== -->
 <div class="page-content">
-  <p style="text-align:center; color:var(--text-light); margin-bottom:var(--space-xl);">
-    &#127942; 每一份荣誉，都是成长的闪光点
-  </p>
-
   <!-- Year Filter -->
   <div class="year-filter" id="yearFilter">
     <button class="year-filter-btn active" data-year="all">全部</button>
@@ -34,7 +30,6 @@
 
   <!-- Photo Wall -->
   <section class="honor-photo-section">
-    <h2 class="section-title"><span>&#128247;</span> 荣誉照片墙 <span>&#128247;</span></h2>
     <div class="honor-photo-grid" id="honorPhotoGrid"></div>
   </section>
 </div>
@@ -55,16 +50,12 @@
   <p class="footer-copy">&copy; 2015 &mdash; 2026 Alisa 成长纪念册</p>
 </footer>
 
-<script src="js/main.js"></script>
-<script src="js/honor-photos.js"></script>
+<script src="../js/main.js"></script>
+<script src="honor-photos.js?v=639233835774341569"></script>
 <script>
 (function build() {
   var photoContainer = document.getElementById('honorPhotoGrid');
-  var lightbox = document.getElementById('lightbox');
-  var lightboxImg = document.getElementById('lightboxImg');
-  var lightboxCaption = document.getElementById('lightboxCaption');
   var currentPhotos = [];
-  var currentIndex = 0;
 
   function buildPhotoMeta(item) {
     var parts = [];
@@ -75,7 +66,9 @@
 
   function renderPhotos(filter) {
     photoContainer.innerHTML = '';
-    currentPhotos = filter === 'all' ? honorPhotos : honorPhotos.filter(function(p) { return p.year === filter; });
+    currentPhotos = filter === 'all'
+      ? honorPhotos
+      : honorPhotos.filter(function(p) { return p.year === filter; });
 
     if (currentPhotos.length === 0) {
       photoContainer.innerHTML = '<p style="text-align:center;color:var(--text-light);grid-column:1/-1;padding:var(--space-xl) 0;">该年份暂无照片记录</p>';
@@ -85,16 +78,21 @@
     currentPhotos.forEach(function(item, index) {
       var div = document.createElement('div');
       div.className = 'honor-photo-card fade-in';
+      div.id = 'h' + honorPhotos.indexOf(item);
+      div.setAttribute('data-full', item.src);
+      div.setAttribute('data-caption', item.title);
+      div.setAttribute('data-date', formatDate(item.src));
       div.innerHTML =
         '<div class="honor-photo-frame">' +
           '<img src="' + item.src + '" alt="' + item.title + '" loading="lazy">' +
         '</div>' +
         '<div class="honor-photo-info">' +
-          '<span class="honor-photo-year">' + item.year + '</span>' +
-          '<h4>' + item.title + '</h4>' +
-          '<div class="honor-photo-meta">' + buildPhotoMeta(item) + '</div>' +
+          '<div class="honor-photo-title-row">' +
+            '<span class="honor-photo-date">' + formatDate(item.src) + '</span>' +
+            '<p class="honor-photo-titletext">' + item.title + '</p>' +
+          '</div>' +
+          (buildPhotoMeta(item) ? '<div class="honor-photo-meta">' + buildPhotoMeta(item) + '</div>' : '') +
         '</div>';
-      div.addEventListener('click', function() { openLightbox(index); });
       photoContainer.appendChild(div);
     });
   }
@@ -105,46 +103,6 @@
       document.querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('visible'); });
     }, 50);
   }
-
-  function openLightbox(index) {
-    currentIndex = index;
-    updateLightbox();
-    lightbox.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function updateLightbox() {
-    var item = currentPhotos[currentIndex];
-    lightboxImg.src = item.src;
-    lightboxCaption.innerHTML = '<strong>' + item.title + '</strong><br>' + item.year + (item.unit ? ' · ' + item.unit : '') + (item.detail ? ' · ' + item.detail : '');
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  function nextPhoto() {
-    currentIndex = (currentIndex + 1) % currentPhotos.length;
-    updateLightbox();
-  }
-
-  function prevPhoto() {
-    currentIndex = (currentIndex - 1 + currentPhotos.length) % currentPhotos.length;
-    updateLightbox();
-  }
-
-  // Lightbox events
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  document.getElementById('lightboxPrev').addEventListener('click', function(e) { e.stopPropagation(); prevPhoto(); });
-  document.getElementById('lightboxNext').addEventListener('click', function(e) { e.stopPropagation(); nextPhoto(); });
-  lightbox.addEventListener('click', function(e) { if (e.target === lightbox || e.target === lightboxImg) closeLightbox(); });
-  document.addEventListener('keydown', function(e) {
-    if (!lightbox.classList.contains('active')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') nextPhoto();
-    if (e.key === 'ArrowLeft') prevPhoto();
-  });
 
   // Year filter
   document.getElementById('yearFilter').addEventListener('click', function(e) {
@@ -172,6 +130,26 @@
   })();
 
   renderAll('all');
+
+  // 首页“荣誉墙”预览点击带 #h索引 锚点 → 定位年份并高亮对应奖状
+  function handleDeepLink() {
+    var id = (location.hash || '').replace(/^#/, '');
+    if (!/^h\d+$/.test(id)) return;
+    var target = honorPhotos[parseInt(id.slice(1), 10)];
+    if (!target) return;
+    var btn = document.querySelector('.year-filter-btn[data-year="' + target.year + '"]');
+    function doScroll() {
+      var el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.classList.add('card-highlight');
+        setTimeout(function(){ el.classList.remove('card-highlight'); }, 2400);
+      }
+    }
+    if (btn) { btn.click(); setTimeout(doScroll, 180); }
+    else { setTimeout(doScroll, 120); }
+  }
+  window.addEventListener('load', handleDeepLink);
 })();
 </script>
 </body>

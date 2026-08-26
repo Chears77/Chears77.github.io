@@ -3,7 +3,7 @@
 import os, json, re
 from PIL import Image
 
-diary_dir = r'E:\AI\workbuddy\20260630女儿主页\v2\diaries'
+diary_dir = r'D:\github\homepage\Chears77.github.io\mumu\4diaries'
 folders = sorted([d for d in os.listdir(diary_dir) if os.path.isdir(os.path.join(diary_dir, d))])
 
 def score_image(img_path, file_size):
@@ -96,7 +96,7 @@ for f in folders:
         # 只选评分 > 0 的图片，如果没有则选评分最高的
         good = [x for x in scored_imgs if x[0] > 0]
         pick = good[0] if good else scored_imgs[0]
-        first_img = 'diaries/' + f + '/images/' + pick[2]
+        first_img = f + '/images/' + pick[2]
 
     entries.append({
         'folder': f,
@@ -197,7 +197,7 @@ thumbHTML='<span>'+(I[x.cat]||"\ud83d\udcc4")+'</span>';
 }
 var el=document.createElement("a");
 el.className="diary-entry";
-el.href="diaries/"+encodeURI(x.folder)+"/index.html";
+el.href=encodeURI(x.folder)+"/index.html";
 el.innerHTML='<div class="diary-entry-thumb">'+thumbHTML+'</div>'+
 '<div class="diary-entry-body">'+
 '<span class="diary-entry-cat cat-'+(x.cat||"school")+'">'+(L[x.cat]||"")+'</span>'+
@@ -221,7 +221,12 @@ r(ev.target.dataset.cat);
 
 html_final = html + DATA_SCRIPT
 
-with open(r'E:\AI\workbuddy\20260630女儿主页\v2\diary.html', 'w', encoding='utf-8') as f:
+with open(r'D:\github\homepage\Chears77.github.io\mumu\4diaries\diary.html', 'w', encoding='utf-8') as f:
     f.write(html_final)
 
+# 额外输出 diary-data.js，供首页 index.html 通过 script 标签动态加载
+with open(r'D:\github\homepage\Chears77.github.io\mumu\4diaries\diary-data.js', 'w', encoding='utf-8') as f:
+    f.write(data_js + '\n')
+
 print('OK - diary.html with image thumbnails')
+print('OK - diary-data.js written')

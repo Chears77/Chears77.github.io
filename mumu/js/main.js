@@ -3,6 +3,14 @@
    导航 · 淡入动画 · 音乐播放器 · 灯箱
    ============================================================ */
 
+// ----- 0. 日期提取（相册 / 荣誉墙共用）-----
+// 输入：文件名或日期串，取开头 6~8 位数字 → 纯数字「20251001 / 202510」
+function formatDate(raw) {
+  if (!raw) return '';
+  var m = String(raw).match(/^(\d{6,8})/);
+  return m ? m[1] : String(raw);
+}
+
 // ----- 1. 滚动淡入动画 -----
 (function() {
   var observer = new IntersectionObserver(function(entries) {
@@ -222,7 +230,7 @@
   }, { once: true });
 })();
 
-// ----- 3. 灯箱 (相册页面使用) -----
+// ----- 3. 统一灯箱（相册 / 荣誉墙共用，支持滚轮缩放、拖拽平移、双指捏合）-----
 (function() {
   var lightbox  = document.getElementById('lightbox');
   if (!lightbox) return;
@@ -234,22 +242,48 @@
   var items     = [];
   var index     = 0;
 
+  // 缩放 / 平移状态
+  var scale = 1, tx = 0, ty = 0;
+  var MIN = 1, MAX = 6;
+
+  function applyTransform() {
+    img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    if (scale > 1) img.classList.add('zoomed'); else img.classList.remove('zoomed');
+  }
+  function resetZoom() { scale = 1; tx = 0; ty = 0; applyTransform(); }
+  function setScale(s) {
+    scale = Math.min(MAX, Math.max(MIN, s));
+    if (scale <= 1) { tx = 0; ty = 0; }
+    applyTransform();
+  }
+
   function collect() {
-    items = Array.from(document.querySelectorAll('.masonry-item'));
+    items = Array.from(document.querySelectorAll('.honor-photo-card'));
+  }
+
+  function renderCaption(card) {
+    var date = card.getAttribute('data-date') || '';
+    var caption = card.getAttribute('data-caption') || '';
+    captionEl.innerHTML = '';
+    if (date) {
+      var d = document.createElement('span');
+      d.className = 'lb-date';
+      d.textContent = date;
+      captionEl.appendChild(d);
+    }
+    if (date && caption) captionEl.appendChild(document.createTextNode(' '));
+    if (caption) captionEl.appendChild(document.createTextNode(caption));
   }
 
   function open(i) {
+    collect();
     index = i;
-    var caption = items[index].querySelector('.masonry-caption');
-    img.src = 'data:image/svg+xml,' + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">' +
-      '<rect width="600" height="400" fill="#FDE8EF"/>' +
-      '<circle cx="300" cy="140" r="60" fill="none" stroke="#E8A0B8" stroke-width="2" stroke-dasharray="8 4"/>' +
-      '<text x="300" y="155" text-anchor="middle" font-family="sans-serif" font-size="24" fill="#E8A0B8">&#128247;</text>' +
-      '<text x="300" y="280" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#5D4E4E">放入真实照片后自动展示</text>' +
-      '</svg>'
-    );
-    captionEl.textContent = caption ? caption.textContent : '';
+    var card = items[index];
+    if (!card) return;
+    var full = card.getAttribute('data-full') || (card.querySelector('img') ? card.querySelector('img').src : '');
+    img.src = full;
+    renderCaption(card);
+    resetZoom();
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
   }
@@ -258,17 +292,18 @@
     lightbox.classList.remove('active');
     document.body.style.overflow = '';
     img.src = '';
+    resetZoom();
   }
 
   function prev() { open((index - 1 + items.length) % items.length); }
   function next() { open((index + 1) % items.length); }
 
   closeBtn.addEventListener('click', close);
-  prevBtn.addEventListener('click', prev);
-  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', function(e) { e.stopPropagation(); prev(); });
+  nextBtn.addEventListener('click', function(e) { e.stopPropagation(); next(); });
 
   lightbox.addEventListener('click', function(e) {
-    if (e.target === lightbox) close();
+    if (e.target === lightbox && scale <= 1) close();
   });
 
   document.addEventListener('keydown', function(e) {
@@ -278,11 +313,81 @@
     if (e.key === 'ArrowRight') next();
   });
 
+  // 点击卡片打开（委托，兼容两个页面）
   document.addEventListener('click', function(e) {
-    var target = e.target.closest('.masonry-item');
+    var target = e.target.closest('.honor-photo-card');
     if (!target) return;
     collect();
     var idx = items.indexOf(target);
     if (idx >= 0) open(idx);
   });
+
+  // 滚轮缩放（桌面）
+  lightbox.addEventListener('wheel', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    e.preventDefault();
+    var factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    setScale(scale * factor);
+  }, { passive: false });
+
+  // 双击 / 双触 切换 1x ↔ 2.5x
+  function toggleZoom() {
+    if (scale > 1) setScale(1);
+    else setScale(2.5);
+  }
+  lightbox.addEventListener('dblclick', function(e) {
+    if (e.target === img) { e.preventDefault(); toggleZoom(); }
+  });
+
+  // 鼠标拖拽平移
+  var dragging = false, sx = 0, sy = 0;
+  img.addEventListener('mousedown', function(e) {
+    if (scale <= 1) return;
+    dragging = true; sx = e.clientX - tx; sy = e.clientY - ty;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    tx = e.clientX - sx; ty = e.clientY - sy;
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() { dragging = false; });
+
+  // 触屏：单指平移 + 双指捏合
+  var lastDist = 0, startScale = 1, touchMoved = false, lastTap = 0;
+  lightbox.addEventListener('touchstart', function(e) {
+    touchMoved = false;
+    if (e.touches.length === 1 && scale > 1) {
+      sx = e.touches[0].clientX - tx; sy = e.touches[0].clientY - ty;
+    } else if (e.touches.length === 2) {
+      lastDist = touchDist(e);
+      startScale = scale;
+    }
+  }, { passive: false });
+  lightbox.addEventListener('touchmove', function(e) {
+    if (!lightbox.classList.contains('active')) return;
+    e.preventDefault();
+    touchMoved = true;
+    if (e.touches.length === 1 && scale > 1) {
+      tx = e.touches[0].clientX - sx; ty = e.touches[0].clientY - sy;
+      applyTransform();
+    } else if (e.touches.length === 2) {
+      var d = touchDist(e);
+      if (lastDist > 0) setScale(startScale * (d / lastDist));
+    }
+  }, { passive: false });
+  lightbox.addEventListener('touchend', function(e) {
+    // 双击（双触）切换缩放
+    var now = Date.now();
+    if (!touchMoved && e.changedTouches.length === 1) {
+      if (now - lastTap < 300) toggleZoom();
+      lastTap = now;
+    }
+    if (e.touches.length < 2) lastDist = 0;
+  });
+
+  function touchDist(e) {
+    var a = e.touches[0], b = e.touches[1];
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
 })();
