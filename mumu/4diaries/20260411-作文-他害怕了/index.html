@@ -1,69 +1,201 @@
 <!DOCTYPE html>
+<!--
+================================================================
+  任以沐（Alisa）成长日记 · 单篇网页模板（清爽版）
+  -----------------------------------------------------------------
+  版式说明：
+    · 顶部只有标题 + 日期，没有大封面图、不显示主题词
+    · 正文首行缩进，首字不放大
+    · 图片在正文里自然穿插，点一下可放大查看
+  用法（把文字+图片交给 AI，让 AI 照此生成即可）：
+   1. 新建一个文件夹，命名：  时间-主题-标题（半角短横线 - 分隔三段）
+      例：  20260524-作文-我的探险之旅
+           20260406-日记-夬石峡谷穿越
+           20220401-校园-春日定格风筝节活动
+      · 前 8 位是日期（YYYYMMDD）
+      · 中间是主题：作文 / 日记 / 校园 / 父母期许 / 视频记录 / 图片记录
+      · 末尾是文章标题
+   2. 在该文件夹里放本文件，改名为 index.html
+   3. 建一个 images/ 子文件夹，把图片放进去
+   4. 照下面的「填这里」注释，替换标题、日期、正文、图片
+   5. 把整个文件夹丢进 4diaries/，双击 mumu 根目录的「更新全部.bat」（或 4diaries 里的「更新日记.bat」）即可自动刷新列表与首页
+   6. 想让 AI 代劳？把本文件 + 你的文章图文（文字+图片）一起发给任意 AI，
+      让它照模板生成文件夹即可（详见同目录「diary-template-guide.html」与「AI生成说明.txt」）。
+  -----------------------------------------------------------------
+  机器可读信息（生成器会读取，请如实填写）：
+    <meta name="diary-cat"    content="essay">       ← 主题机器码：essay作文 / diary日记 / school校园 / parents父母期许 / video视频 / photo图片
+    <meta name="diary-date"   content="2026-06-06">  ← 发布日期 YYYY-MM-DD
+    <meta name="diary-theme"  content="作文">         ← 主题中文标签，须与文件夹中间的主题一致（作文/日记/校园/父母期许）
+    <meta name="diary-cover"  content="images/cover.jpg">  ← 可选：列表缩略图，不填则自动取第一张
+    <meta name="diary-excerpt" content="一句话简介">   ← 可选：列表上显示的一句话
+================================================================
+-->
 <html lang="zh-CN">
- <head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>
-   他害怕了 &middot; Alisa 成长日记
-  </title>
-  <style>
-   :root {
-  --pink: #F8C8D8; --pink-dark: #E8A0B8; --pink-light: #FDE8EF;
-  --cream: #FFF8F0; --white: #FFFFFF;
-  --text: #5D4E4E; --text-light: #9B8E8E; --text-dark: #3D3030;
-  --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px;
-  --radius-md: 16px; --shadow-sm: 0 2px 8px rgba(248,200,216,0.15);
-  --font-family: "PingFang SC","Microsoft YaHei",sans-serif;
-  --font-base: 17px; --font-xl: 28px; --font-sm: 14px;
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-family);font-size:var(--font-base);color:var(--text);background:var(--cream);line-height:2;-webkit-font-smoothing:antialiased}
-.topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,0.05);height:56px;display:flex;align-items:center;padding:0 var(--space-lg)}
-.topbar a{display:flex;align-items:center;gap:8px;color:var(--pink-dark);font-weight:600;text-decoration:none}
-.topbar a:hover{color:var(--pink)}
-.article-page{max-width:800px;margin:0 auto;padding:var(--space-2xl) var(--space-lg)}
-.article-title{font-size:var(--font-xl);color:var(--pink-dark);font-weight:700;margin-bottom:8px;line-height:1.4;text-align:center}
-.article-date{font-size:var(--font-sm);color:var(--text-light);margin-bottom:var(--space-xl);text-align:center}
-.article-body{font-size:var(--font-base);color:var(--text);line-height:2}
-.article-body p{margin-bottom:20px;text-indent:2em}
-.article-body img{max-width:100%;display:block;margin:12px auto;border-radius:var(--radius-md);box-shadow:var(--shadow-sm)}
-.article-body .img{display:block;text-align:center;margin:12px 0}
-.article-footer{margin-top:var(--space-2xl);padding-top:var(--space-lg);border-top:1px solid var(--pink-light);text-align:center;color:var(--text-light);font-size:var(--font-sm)}
-@media(max-width:767px){.article-title{font-size:22px}}
-  </style>
- </head>
- <body>
-  <div class="topbar">
-   <a href="javascript:history.back()">
-    <svg fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24" width="20">
-     <polyline points="15 18 9 12 15 6">
-     </polyline>
-    </svg>
-    返回
-   </a>
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>他害怕了 · Alisa 成长日记</title>
+
+<!-- ===== 机器可读信息（生成器依赖，务必填写）===== -->
+<meta name="diary-cat" content="essay">
+<meta name="diary-date" content="2026-08-01">
+<meta name="diary-theme" content="作文">
+<meta name="diary-cover" content="images/1.jpg">
+<meta name="diary-excerpt" content="那是一个夜深人静的傍晚。他和他的几个小伙伴在村边的树林里玩捉…">
+
+<style>
+ :root{
+  --pink:#F8C8D8; --pink-dark:#E8A0B8; --pink-deep:#D985A3; --pink-light:#FDE8EF;
+  --cream:#FFF8F0; --yellow:#FFF5E0; --yellow-dark:#F5E6C8;
+  --white:#FFFFFF;
+  --text:#5D4E4E; --text-light:#9B8E8E; --text-dark:#3D3030;
+  --blue:#B8D4F0; --blue-dark:#8BB8E0; --blue-light:#E8F2FC;
+  --space-sm:8px; --space-md:16px; --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+  --radius-sm:10px; --radius-md:14px; --radius-lg:22px; --radius-full:50%;
+  --shadow-sm:0 2px 10px rgba(248,200,216,.18);
+  --shadow-md:0 8px 28px rgba(232,160,184,.22);
+  --font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-xs:12px; --font-sm:14px; --font-base:17px; --font-md:19px; --font-lg:24px; --font-xl:28px;
+ }
+ *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+ body{
+  font-family:var(--font-family); font-size:var(--font-base); color:var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, var(--pink-light) 0, transparent 40%),
+    radial-gradient(circle at 88% 5%, var(--yellow) 0, transparent 36%),
+    var(--cream);
+  line-height:1.95; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+ }
+ img{max-width:100%;display:block}
+ a{text-decoration:none;color:inherit}
+
+ /* 顶栏 */
+ .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);
+  box-shadow:0 2px 12px rgba(0,0,0,.05);height:56px;display:flex;align-items:center;padding:0 var(--space-lg)}
+ .topbar a{display:flex;align-items:center;gap:6px;color:var(--pink-dark);font-weight:600;transition:color .2s}
+ .topbar a:hover{color:var(--pink-deep)}
+ .topbar svg{width:20px;height:20px}
+ .topbar .crumb{margin-left:auto;font-size:var(--font-sm);color:var(--text-light)}
+
+ /* 文章主体 */
+ .article-page{max-width:760px;margin:0 auto;padding:var(--space-2xl) var(--space-lg) var(--space-2xl)}
+ .article-head{text-align:center;margin-bottom:var(--space-lg)}
+ .article-title{font-size:var(--font-xl);color:var(--pink-deep);font-weight:700;line-height:1.45;letter-spacing:.5px}
+ .article-meta{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  font-size:var(--font-sm);color:var(--text-light)}
+ .article-date{font-variant-numeric:tabular-nums}
+
+ /* 正文（首行缩进、首字不放大）*/
+ .article-body{font-size:var(--font-base);color:var(--text);line-height:2.05}
+ .article-body p{margin-bottom:20px;text-indent:2em;text-align:justify}
+ .article-body h2{font-size:var(--font-md);color:var(--pink-dark);font-weight:700;margin:30px 0 14px;
+  padding-left:12px;border-left:4px solid var(--pink);line-height:1.4}
+ .article-body blockquote{margin:22px 0;padding:12px 18px;background:var(--pink-light);border-left:4px solid var(--pink-dark);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;color:var(--text-dark);font-style:italic}
+ .article-body figure{margin:26px 0;text-align:center}
+ .article-body figure img{cursor:zoom-in;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);
+  max-width:100%;display:inline-block;transition:transform .3s,box-shadow .3s}
+ .article-body figure img:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+ .article-body figure figcaption{margin-top:10px;font-size:var(--font-sm);color:var(--text-light)}
+
+ /* 页脚 */
+ .article-footer{margin-top:var(--space-2xl);padding-top:var(--space-lg);border-top:1px dashed var(--pink);
+  text-align:center;color:var(--text-light);font-size:var(--font-sm)}
+ .article-footer .heart{color:var(--pink-deep);font-size:18px;letter-spacing:4px;margin-bottom:8px}
+ .back-link{display:inline-block;margin-top:14px;padding:8px 22px;border-radius:var(--radius-full);
+  background:var(--pink-light);color:var(--pink-deep);font-weight:600;transition:background .2s}
+ .back-link:hover{background:var(--pink)}
+
+ /* 灯箱 */
+ .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(40,30,35,.93);
+  align-items:center;justify-content:center;padding:var(--space-lg);flex-direction:column}
+ .lightbox.active{display:flex}
+ .lightbox img{max-width:100%;max-height:80vh;border-radius:var(--radius-sm);box-shadow:0 12px 40px rgba(0,0,0,.4);cursor:zoom-in;transition:transform .12s}
+ .lightbox img.zoomed{cursor:grab}
+ .lightbox .lb-cap{color:#fff;margin-top:14px;font-size:var(--font-sm);text-align:center;max-width:90%}
+ .lightbox .lb-close{position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+ .lightbox .lb-close:hover{background:rgba(255,255,255,.32)}
+ @media(max-width:600px){.article-title{font-size:22px}.article-page{padding:var(--space-xl) var(--space-md) var(--space-2xl)}}
+
+ .article-theme{margin-left:6px;color:var(--text-light)}
+ .article-theme::before{content:"·";margin-right:8px;color:var(--text-light)}
+ .article-body .poem{text-align:center}
+ .article-body .poem p{text-indent:0;text-align:center}
+ .poem-title{font-weight:600;color:var(--pink-dark);margin-bottom:6px}
+
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<nav class="topbar">
+ <a href="../diary.html">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  成长日记
+ </a>
+ <span class="crumb">Alisa 的成长纪念册</span>
+</nav>
+
+<!-- 标题区（填这里：标题 / 日期 / 主题）-->
+<article class="article-page">
+ <header class="article-head">
+  <!-- 填这里：文章标题 -->
+  <h1 class="article-title">他害怕了</h1>
+  <div class="article-meta">
+   <!-- 填这里：发布日期，格式 2026年6月6日 -->
+   <span class="article-date">2026年8月1日</span>
+   <span class="article-theme">作文</span>
   </div>
-  <div class="article-page">
-   <h1 class="article-title">
-    他害怕了
-   </h1>
-   <p class="article-date">
-    2026-04-11
-   </p>
-   <div class="article-body">
-    <p>
-     那是一个夜深人静的傍晚。他和他的几个小伙伴在村边的树林里玩捉迷藏。玩得忘了时间。当小伙伴们都陆陆续续地回家了，才发现天已经完全黑了，只剩下他孤零零地站在小路上。  
-他平时胆子也挺大，但此时四周寂静得可怕，好像有什么东西在窥视他。只有远远的灯光在闪烁。他试着迈开脚步往前走。可脚却像灌了铅一样，怎么迈都迈不动。越听到黑夜里知了的叫声，他的心跳就加速一分，仿佛有一只无形的手紧紧揪住了他的心。  
-这时忽然，他踩到了一根树枝，脚下发出了咔嚓的声音，像是有人在啃食什么东西。更像是有人在笑。他越想越后怕，额头上渗出了冷汗，手心也变得湿漉漉的。  
-他开始后悔自己的贪玩，后悔当时应该跟同伴一起回去。他多么希望此时能有一个人出现在他身边，哪怕是远远地喊他一声也好。  
-就在这时，远处传来了一阵熟悉的狗叫声。他像是抓住了救命稻草一般。顺着他的声音，用自己从未有过的速度朝方向飞奔而去。  
-自那以后，他再也没有贪玩晚回过。因为这次的经历，是那样恐怖，那样难忘。
-    </p>
-   </div>
-   <div class="article-footer">
-    <p>
-     &mdash; Alisa 成长纪念册 &mdash;
-    </p>
-   </div>
-  </div>
- </body>
+ </header>
+
+ <!-- 正文（填这里：段落写 <p>…</p>，图片写成 <figure>）-->
+ <div class="article-body">
+  <p>那是一个夜深人静的傍晚。他和他的几个小伙伴在村边的树林里玩捉迷藏，玩得忘了时间。当小伙伴们都陆陆续续地回家了，他才发现天已经黑了，只剩下他孤零零地站在小路上。</p>
+  <p>他平时胆子挺大，但此时四周安静得可怕，好像有什么东西在窥视着他。他试着迈开脚步，可脚却像灌了铅一样，怎么迈都迈不动。每每在黑夜里走一步，他的心跳就加速一分，仿佛有一只无形的手紧紧揪住了他的心。</p>
+  <p>这时忽然，他踩到了一根树枝，脚下发出了“咔嚓”的声音。像是有人在啃食什么东西，更像是有人在笑。他越想越后怕，额头上渗出了冷汗，手心也变得湿漉漉的。</p>
+  <p>他开始后悔自己的贪玩，后悔当时自己应该跟同伴一起回去。他多么希望此时能有一个人出现在他身边，哪怕远远地喊他一声也好。</p>
+  <p>就在这时，远处传来了一阵熟悉的狗叫声。他像是抓住了救命稻草一般，顺着它的声音，用自己从未有过的速度朝家的方向飞奔而去。</p>
+  <p>自那以后，他再也没有贪玩到那么晚过。因为这次的经历，是那样恐怖，那样难忘。</p>
+  <figure>
+   <img src="images/1.jpg" alt="原稿第1页" data-cap="原稿（第1页）">
+   <figcaption>原稿（第1页）</figcaption>
+  </figure>
+  <figure>
+   <img src="images/2.jpg" alt="原稿第2页" data-cap="原稿（第2页）">
+   <figcaption>原稿（第2页）</figcaption>
+  </figure>
+</div>
+
+ <footer class="article-footer">
+  <div class="heart">♥ ♥ ♥</div>
+  <p>— Alisa 成长纪念册 —</p>
+  <a class="back-link" href="../diary.html">← 返回日记列表</a>
+ </footer>
+</article>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox">
+ <div class="lb-close" onclick="closeLb()">×</div>
+ <img id="lbImg" src="" alt="">
+ <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<script>
+(function(){
+ var lb=document.getElementById('lightbox'),img=document.getElementById('lbImg'),cap=document.getElementById('lbCap');
+ function openLb(src,alt){img.src=src;cap.textContent=alt||'';lb.classList.add('active');document.body.style.overflow='hidden';}
+ window.closeLb=function(){lb.classList.remove('active');img.classList.remove('zoomed');img.style.transform='';document.body.style.overflow='';};
+ document.querySelectorAll('.article-body figure img').forEach(function(im){
+  im.addEventListener('click',function(){openLb(im.src,im.getAttribute('data-cap')||im.alt||'');});
+ });
+ lb.addEventListener('click',function(e){if(e.target===lb)closeLb();});
+ var z=1;img.addEventListener('click',function(e){
+  if(z===1){z=2.2;img.classList.add('zoomed');}else{z=1;img.classList.remove('zoomed');}
+  img.style.transform='scale('+z+')';e.stopPropagation();
+ });
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+})();
+</script>
+</body>
 </html>

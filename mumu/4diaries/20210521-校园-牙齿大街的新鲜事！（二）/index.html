@@ -31,7 +31,14 @@ body{font-family:var(--font-family);font-size:var(--font-base);color:var(--text)
 .article-body .img{display:block;text-align:center;margin:12px 0}
 .article-footer{margin-top:var(--space-2xl);padding-top:var(--space-lg);border-top:1px solid var(--pink-light);text-align:center;color:var(--text-light);font-size:var(--font-sm)}
 @media(max-width:767px){.article-title{font-size:22px}}
-  </style>
+  
+ .article-theme{margin-left:6px;color:var(--text-light)}
+ .article-theme::before{content:"·";margin-right:8px;color:var(--text-light)}
+ .article-body .poem{text-align:center}
+ .article-body .poem p{text-indent:0;text-align:center}
+ .poem-title{font-weight:600;color:var(--pink-dark);margin-bottom:6px}
+
+</style>
  </head>
  <body>
   <div class="topbar">
@@ -48,8 +55,8 @@ body{font-family:var(--font-family);font-size:var(--font-base);color:var(--text)
     【课程建设&mdash;大二班】牙齿大街的新鲜事！（二）
    </h1>
    <p class="article-date">
-    2021-05-21
-   </p>
+    2021-05-21<span class="article-theme">校园</span>
+   
    <div class="article-body">
     <p>
      <strong>
@@ -64,7 +71,6 @@ body{font-family:var(--font-family);font-size:var(--font-base);color:var(--text)
      <em>
       发表于四川
      </em>
-    </p>
     <div class="img">
      <img alt="图片" src="images/network-asset-640-20250716081934-cc5djr4.png">
     </div>
