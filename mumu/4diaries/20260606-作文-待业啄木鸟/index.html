@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>待业啄木鸟 · Alisa 成长日记</title>
+
+<!-- 机器可读信息（生成器依赖）-->
+<meta name="diary-cat" content="essay">
+<meta name="diary-date" content="2026-06-06">
+<meta name="diary-theme" content="作文">
+<meta name="diary-excerpt" content="语文书上的一幅漫画，引出一个关于森林与守护的思考。">
+
+<style>
+ :root{
+  --pink:#F8C8D8; --pink-dark:#E8A0B8; --pink-deep:#D985A3; --pink-light:#FDE8EF;
+  --cream:#FFF8F0; --yellow:#FFF5E0; --yellow-dark:#F5E6C8;
+  --white:#FFFFFF;
+  --text:#5D4E4E; --text-light:#9B8E8E; --text-dark:#3D3030;
+  --blue:#B8D4F0; --blue-dark:#8BB8E0; --blue-light:#E8F2FC;
+  --space-sm:8px; --space-md:16px; --space-lg:24px; --space-xl:32px; --space-2xl:48px;
+  --radius-sm:10px; --radius-md:14px; --radius-lg:22px; --radius-full:50%;
+  --shadow-sm:0 2px 10px rgba(248,200,216,.18);
+  --shadow-md:0 8px 28px rgba(232,160,184,.22);
+  --font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-xs:12px; --font-sm:14px; --font-base:17px; --font-md:19px; --font-lg:24px; --font-xl:28px;
+ }
+ *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+ body{
+  font-family:var(--font-family); font-size:var(--font-base); color:var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, var(--pink-light) 0, transparent 40%),
+    radial-gradient(circle at 88% 5%, var(--yellow) 0, transparent 36%),
+    var(--cream);
+  line-height:1.95; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+ }
+ img{max-width:100%;display:block}
+ a{text-decoration:none;color:inherit}
+ .topbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);
+  box-shadow:0 2px 12px rgba(0,0,0,.05);height:56px;display:flex;align-items:center;padding:0 var(--space-lg)}
+ .topbar a{display:flex;align-items:center;gap:6px;color:var(--pink-dark);font-weight:600;transition:color .2s}
+ .topbar a:hover{color:var(--pink-deep)}
+ .topbar svg{width:20px;height:20px}
+ .topbar .crumb{margin-left:auto;font-size:var(--font-sm);color:var(--text-light)}
+ .article-page{max-width:760px;margin:0 auto;padding:var(--space-2xl) var(--space-lg) var(--space-2xl)}
+ .article-head{text-align:center;margin-bottom:var(--space-lg)}
+ .article-title{font-size:var(--font-xl);color:var(--pink-deep);font-weight:700;line-height:1.45;letter-spacing:.5px}
+ .article-meta{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  font-size:var(--font-sm);color:var(--text-light)}
+ .article-date{font-variant-numeric:tabular-nums}
+ .article-body{font-size:var(--font-base);color:var(--text);line-height:2.05}
+ .article-body p{margin-bottom:20px;text-indent:2em;text-align:justify}
+ .article-body h2{font-size:var(--font-md);color:var(--pink-dark);font-weight:700;margin:30px 0 14px;
+  padding-left:12px;border-left:4px solid var(--pink);line-height:1.4}
+ .article-body blockquote{margin:22px 0;padding:12px 18px;background:var(--pink-light);border-left:4px solid var(--pink-dark);
+  border-radius:0 var(--radius-sm) var(--radius-sm) 0;color:var(--text-dark);font-style:italic}
+ .article-body figure{margin:26px 0;text-align:center}
+ .article-body figure img{cursor:zoom-in;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);
+  max-width:100%;display:inline-block;transition:transform .3s,box-shadow .3s}
+ .article-body figure img:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+ .article-body figure figcaption{margin-top:10px;font-size:var(--font-sm);color:var(--text-light)}
+ .article-footer{margin-top:var(--space-2xl);padding-top:var(--space-lg);border-top:1px dashed var(--pink);
+  text-align:center;color:var(--text-light);font-size:var(--font-sm)}
+ .article-footer .heart{color:var(--pink-deep);font-size:18px;letter-spacing:4px;margin-bottom:8px}
+ .back-link{display:inline-block;margin-top:14px;padding:8px 22px;border-radius:var(--radius-full);
+  background:var(--pink-light);color:var(--pink-deep);font-weight:600;transition:background .2s}
+ .back-link:hover{background:var(--pink)}
+ .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(40,30,35,.93);
+  align-items:center;justify-content:center;padding:var(--space-lg);flex-direction:column}
+ .lightbox.active{display:flex}
+ .lightbox img{max-width:100%;max-height:80vh;border-radius:var(--radius-sm);box-shadow:0 12px 40px rgba(0,0,0,.4);cursor:zoom-in;transition:transform .12s}
+ .lightbox img.zoomed{cursor:grab}
+ .lightbox .lb-cap{color:#fff;margin-top:14px;font-size:var(--font-sm);text-align:center;max-width:90%}
+ .lightbox .lb-close{position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;font-size:26px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+ .lightbox .lb-close:hover{background:rgba(255,255,255,.32)}
+ @media(max-width:600px){.article-title{font-size:22px}.article-page{padding:var(--space-xl) var(--space-md) var(--space-2xl)}}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+ <a href="../diary.html">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  成长日记
+ </a>
+ <span class="crumb">Alisa 的成长纪念册</span>
+</nav>
+
+<article class="article-page">
+ <header class="article-head">
+  <h1 class="article-title">待业啄木鸟</h1>
+  <div class="article-meta">
+   <span class="article-date">2026年6月6日</span>
+  </div>
+ </header>
+
+ <div class="article-body">
+  <p>今天我在语文书上看到了一幅意味深长的漫画——“待业啄木鸟”。</p>
+  <p>画面上有许多被砍伐的只剩树桩的树。和两棵小到跟啄木鸟一样大的小树苗。其中三棵树桩上各站着一只啄木鸟。一只大睁着眼睛，眼神里写满了无奈和迷茫。另一只则低着头，缩着脖子。还有远处的那一只，背对着树桩，仿佛不愿意接受这一现实。它们虽长着尖尖的嘴巴却再也没有树木可以根治。好像真的变成了一个个“待业的员工”。</p>
+  <p>看着这三只可怜的啄木鸟。我仿佛看到了他们的过去。曾经这里是一片茂密的森林。啄木鸟们在这里无忧无虑的生活着，但有一天，一群贪婪的人类闯了进来，不断地砍伐着树木。最后，这片曾经茂密的森林被砍得只剩几棵孤零零的树桩。啄木鸟们只能眼睁睁地看着自己的家园毁于一旦，看着那些人乱砍滥伐，看着他们自己的同类一个接一个的死亡。</p>
+  <p>这让我想到，在现实世界中这样的情况又何尝没有呢？人类为一己私利，不断肆意地砍伐树木。破坏森林环境。让大片森林变成了废墟。但他们可曾想过？今天我们对自然的破坏日后都会造成更加严重的自然灾害向我们反扑。</p>
+  <p>同学们，不要再让电锯声去惊扰森林的净土了。保护自然环境，就是在给动物们一片赖以生存的乐土，更是给我们人类自己一个美好的未来。</p>
+ </div>
+
+ <footer class="article-footer">
+  <div class="heart">♥ ♥ ♥</div>
+  <p>— Alisa 成长纪念册 —</p>
+  <a class="back-link" href="../diary.html">← 返回日记列表</a>
+ </footer>
+</article>
+
+<div class="lightbox" id="lightbox">
+ <div class="lb-close" onclick="closeLb()">×</div>
+ <img id="lbImg" src="" alt="">
+ <div class="lb-cap" id="lbCap"></div>
+</div>
+<script>
+(function(){
+ var lb=document.getElementById('lightbox'),img=document.getElementById('lbImg'),cap=document.getElementById('lbCap');
+ function openLb(src,alt){img.src=src;cap.textContent=alt||'';lb.classList.add('active');document.body.style.overflow='hidden';}
+ window.closeLb=function(){lb.classList.remove('active');img.classList.remove('zoomed');img.style.transform='';document.body.style.overflow='';};
+ document.querySelectorAll('.article-body figure img').forEach(function(im){
+  im.addEventListener('click',function(){openLb(im.src,im.getAttribute('data-cap')||im.alt||'');});
+ });
+ lb.addEventListener('click',function(e){if(e.target===lb)closeLb();});
+ var z=1;img.addEventListener('click',function(e){
+  if(z===1){z=2.2;img.classList.add('zoomed');}else{z=1;img.classList.remove('zoomed');}
+  img.style.transform='scale('+z+')';e.stopPropagation();
+ });
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLb();});
+})();
+</script>
+</body>
+</html>

@@ -1,151 +1,292 @@
 #!/usr/bin/env python
-"""生成带缩略图的diary.html - 智能选择有人像的照片"""
-import os, json, re
+# -*- coding: utf-8 -*-
+"""生成 4diaries/diary.html（美化的成长日记列表）与 4diaries/diary-data.js（供首页调用）
+
+元数据优先级：
+  文章 index.html 内的 <meta name="diary-*">  >  文件夹名解析兜底
+这样未来 AI 按模板生成文章时，只要在 <meta> 写好信息，列表会自动正确归类、取封面。
+兼容两种文件夹命名：
+  旧：20260606_作文—待业啄木鸟
+  新：20260606待业啄木鸟（作文）
+"""
+import os, re, json, html
 from PIL import Image
 
-diary_dir = r'D:\github\homepage\Chears77.github.io\mumu\4diaries'
-folders = sorted([d for d in os.listdir(diary_dir) if os.path.isdir(os.path.join(diary_dir, d))])
+DIARY_DIR = r'D:\github\homepage\Chears77.github.io\mumu\4diaries'
+
+# 分类：机器码 -> 中文标签
+CAT_LABEL = {
+    'essay':   '作文',
+    'diary':   '日记',
+    'school':  '校园',
+    'parents': '父母期许',
+    'video':   '视频记录',
+    'photo':   '图片记录',
+}
 
 def score_image(img_path, file_size):
-    """评分图片：分数越高越可能是有人像的好照片"""
+    """评分图片：分数越高越可能是有人像/好看的好照片（用作封面）"""
     score = 0
     try:
         with Image.open(img_path) as im:
             w, h = im.size
             ratio = w / h if h > 0 else 0
             area = w * h
-
-            # 1. 尺寸评分：太小扣分，适中加分
-            if area < 40000:       # <200x200
-                score -= 50
-            elif area > 200000:    # >500x400
-                score += 20
-            if area > 500000:      # >800x600
-                score += 15
-
-            # 2. 宽高比评分：手机照片比例加分，横幅/长条扣分
-            if 0.65 <= ratio <= 0.85:   # 竖屏人像 3:4
-                score += 30
-            elif 1.2 <= ratio <= 1.6:   # 横屏 4:3
-                score += 20
-            elif 0.9 <= ratio <= 1.1:   # 方形
-                score += 10
-            elif ratio > 3.0:           # 超宽横幅（公众号头图）
-                score -= 40
-            elif ratio < 0.4:           # 超长竖条
-                score -= 40
-
-            # 3. 文件大小评分（大图通常质量更高）
-            if file_size > 100000:   # >100KB
-                score += 25
-            elif file_size > 50000:
-                score += 10
-            elif file_size < 15000:  # <15KB 太小的图
-                score -= 30
-
-            # 4. 色彩评分：检查是否大面积白色/浅色背景（公众号横幅特征）
+            if area < 40000:       score -= 50
+            elif area > 200000:    score += 20
+            if area > 500000:      score += 15
+            if 0.65 <= ratio <= 0.85:   score += 30
+            elif 1.2 <= ratio <= 1.6:   score += 20
+            elif 0.9 <= ratio <= 1.1:   score += 10
+            elif ratio > 3.0:           score -= 40
+            elif ratio < 0.4:           score -= 40
+            if file_size > 100000:      score += 25
+            elif file_size > 50000:     score += 10
+            elif file_size < 15000:     score -= 30
             if area > 50000:
                 im_small = im.resize((20, 20)).convert('RGB')
                 pixels = list(im_small.getdata())
-                light_pixels = sum(1 for p in pixels if p[0] > 230 and p[1] > 230 and p[2] > 230)
-                light_ratio = light_pixels / len(pixels)
-                if light_ratio > 0.7:  # 大部分是白色/浅色 → 可能是横幅
-                    score -= 35
-                elif light_ratio < 0.3:  # 色彩丰富 → 更可能有人物
-                    score += 15
-
-    except Exception as e:
+                light = sum(1 for p in pixels if p[0] > 230 and p[1] > 230 and p[2] > 230)
+                if light / len(pixels) > 0.7:  score -= 35
+                elif light / len(pixels) < 0.3: score += 15
+    except Exception:
         pass
-
     return score
 
+def read_meta(html):
+    """从文章 HTML 读取 diary-* meta 标签"""
+    meta = {}
+    for m in re.finditer(r'<meta\s+name=["\'](diary-[a-z]+)["\']\s+content=["\'](.*?)["\']', html, re.I):
+        meta[m.group(1)] = m.group(2).strip()
+    return meta
 
-def get_category(title):
-    if '作文' in title:
-        return 'essay'
-    if title in ['夁石峡谷穿越', '清明出游']:
-        return 'diary'
+def infer_cat_from_title(title, folder=''):
+    """依据标题与文件夹名推断分类（meta 缺失时的兜底）"""
+    t = (title or '') + ' ' + (folder or '')
+    if '作文' in t: return 'essay'
+    if any(k in t for k in ['日记', '出游', '穿越', '旅行', '游记', '爬山', '露营']): return 'diary'
+    if any(k in t for k in ['父母', '期许', '寄语', '写给']): return 'parents'
+    if '视频' in t: return 'video'
+    if any(k in t for k in ['图片', '相册', '影集']): return 'photo'
+    if any(k in t for k in ['幼儿园', '学校', '小学', '中学', '班', '活动', '典礼', '节', '运动会', '演练', '毕业']): return 'school'
     return 'school'
 
+def clean_text(s):
+    """去标签 + 解码 HTML 实体（&ldquo; &mdash; 等）"""
+    if not s:
+        return ''
+    return html.unescape(re.sub(r'<[^>]+>', '', s)).strip()
+
+def parse_folder_name(folder):
+    """兜底：从文件夹名解析 日期 / 标题 / （主题）"""
+    date_part = '00000000'
+    m = re.match(r'^(\d{8})', folder)
+    if m:
+        date_part = m.group(1)
+    elif re.match(r'^(\d{6})', folder):
+        date_part = re.match(r'^(\d{6})', folder).group(1) + '01'
+    rest = folder[8:] if folder[:8].isdigit() else folder
+    rest = rest.lstrip('_').lstrip()
+    theme_in_name = ''
+    mm = re.search(r'[（(](.+?)[)）]\s*$', rest)
+    if mm:
+        theme_in_name = mm.group(1).strip()
+        rest = rest[:mm.start()].strip()
+    return date_part, rest, theme_in_name
+
+def normalize_date(raw):
+    if not raw:
+        return '00000000'
+    digits = re.sub(r'\D', '', raw)
+    if len(digits) >= 8:
+        return digits[:8]
+    if len(digits) == 6:
+        return digits + '01'
+    return '00000000'
+
 entries = []
-for f in folders:
-    date_part = f[:8] if len(f) >= 8 and f[:8].isdigit() else '00000000'
-    # Read title from article h1 tag
-    html_path = os.path.join(diary_dir, f, 'index.html')
-    title = f[9:] if len(f) > 9 and f[8] == '_' else f  # fallback
-    if os.path.exists(html_path):
-        with open(html_path, 'r', encoding='utf-8') as hf:
-            hm = re.search(r'<h1 class="article-title">(.*?)</h1>', hf.read())
-            if hm: title = hm.group(1)
-    img_dir = os.path.join(diary_dir, f, 'images')
+for f in sorted(os.listdir(DIARY_DIR)):
+    full = os.path.join(DIARY_DIR, f)
+    if not os.path.isdir(full):
+        continue
+    if f.startswith('.'):
+        continue
+    html_path = os.path.join(full, 'index.html')
+    if not os.path.exists(html_path):
+        continue
 
-    scored_imgs = []
-    if os.path.exists(img_dir):
+    with open(html_path, 'r', encoding='utf-8') as hf:
+        html_content = hf.read()
+    meta = read_meta(html_content)
+
+    # 日期
+    date_part = normalize_date(meta.get('diary-date', ''))
+    if date_part == '00000000':
+        date_part, _, _ = parse_folder_name(f)
+
+    # 标题
+    hm = re.search(r'<h1[^>]*class=["\']article-title["\'][^>]*>(.*?)</h1>', html_content, re.I | re.S)
+    title = hm.group(1).strip() if hm else ''
+    if not title:
+        _, title, _ = parse_folder_name(f)
+    title = clean_text(title)
+
+    # 分类
+    cat = meta.get('diary-cat', '')
+    if cat not in CAT_LABEL:
+        cat = infer_cat_from_title(title, f)
+        if cat == 'school':  # 再试文件夹名里的（主题）
+            _, _, theme_in_name = parse_folder_name(f)
+            if theme_in_name in CAT_LABEL.values():
+                cat = [k for k, v in CAT_LABEL.items() if v == theme_in_name][0]
+
+    # 主题中文标签
+    theme = clean_text(meta.get('diary-theme', '')) or CAT_LABEL.get(cat, cat)
+
+    # 摘要
+    excerpt = clean_text(meta.get('diary-excerpt', ''))
+
+    # 图片
+    img_dir = os.path.join(full, 'images')
+    img_files = []
+    if os.path.isdir(img_dir):
         for img in os.listdir(img_dir):
-            if img.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
-                full = os.path.join(img_dir, img)
-                size = os.path.getsize(full)
-                s = score_image(full, size)
-                scored_imgs.append((s, size, img))
+            if img.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.webp')):
+                img_files.append(img)
+    imgs_count = len(img_files)
 
-    # 按评分降序排列
-    scored_imgs.sort(key=lambda x: x[0], reverse=True)
-
-    first_img = ''
-    if scored_imgs:
-        # 只选评分 > 0 的图片，如果没有则选评分最高的
-        good = [x for x in scored_imgs if x[0] > 0]
-        pick = good[0] if good else scored_imgs[0]
-        first_img = f + '/images/' + pick[2]
+    # 封面：优先 meta 指定，否则选评分最高的图
+    thumb = ''
+    cover_meta = meta.get('diary-cover', '').strip()
+    if cover_meta:
+        cover_path = os.path.join(full, cover_meta.lstrip('./\\'))
+        if os.path.exists(cover_path):
+            thumb = f + '/' + cover_meta.lstrip('./\\').replace('\\', '/')
+    if not thumb and img_files:
+        scored = []
+        for img in img_files:
+            p = os.path.join(img_dir, img)
+            scored.append((score_image(p, os.path.getsize(p)), img))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        good = [x for x in scored if x[0] > 0]
+        pick = (good or scored)[0][1]
+        thumb = f + '/images/' + pick
 
     entries.append({
         'folder': f,
-        'date': date_part,
-        'title': title,
-        'imgs': len(scored_imgs),
-        'cat': get_category(title),
-        'thumb': first_img
+        'date':   date_part,
+        'title':  title,
+        'imgs':   imgs_count,
+        'cat':    cat,
+        'theme':  theme,
+        'excerpt': excerpt,
+        'thumb':  thumb,
     })
 
 entries.sort(key=lambda e: e['date'], reverse=True)
-
 data_js = 'var DIARY_DATA = ' + json.dumps(entries, ensure_ascii=True) + ';'
 
-html = r'''<!DOCTYPE html>
+# ===================== 渲染美化的 diary.html =====================
+CSS = """
+/* ===== 内联共享基础样式：保证独立打开 / 预览沙箱也能正常渲染（不依赖 ../css/style.css） ===== */
+:root{
+  --pink:#F8C8D8; --pink-dark:#E8A0B8; --pink-light:#FDE8EF; --pink-deep:#D985A3; --cream:#FFF8F0;
+  --yellow:#FFF5E0; --white:#FFFFFF; --text:#5D4E4E; --text-light:#9B8E8E; --text-dark:#3D3030;
+  --blue-light:#E8F2FC; --blue-dark:#8BB8E0; --yellow-dark:#F5E6C8;
+  --space-xs:4px; --space-sm:8px; --space-md:16px; --space-lg:24px; --space-xl:32px; --space-2xl:48px; --space-3xl:64px;
+  --radius-sm:8px; --radius-md:16px; --radius-lg:24px; --radius-full:50%;
+  --shadow-sm:0 2px 8px rgba(248,200,216,0.15); --shadow-md:0 4px 16px rgba(248,200,216,0.20);
+  --font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-xs:12px; --font-sm:14px; --font-base:16px; --font-md:18px; --font-lg:24px;
+  --trans-fast:0.2s ease; --max-width:1200px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-family);font-size:var(--font-base);color:var(--text);background:var(--cream);line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{font-family:inherit;cursor:pointer;border:none}
+.topbar{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,0.05);height:56px;display:flex;align-items:center}
+.topbar-inner{max-width:var(--max-width);margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 var(--space-lg)}
+.topbar-back{display:flex;align-items:center;gap:var(--space-sm);color:var(--pink-dark);font-weight:600;font-size:var(--font-base);transition:color var(--trans-fast)}
+.topbar-back:hover{color:var(--pink)}
+.topbar-back svg{width:20px;height:20px}
+.topbar-title{font-size:var(--font-md);font-weight:700;color:var(--text-dark)}
+.footer{text-align:center;padding:var(--space-3xl) var(--space-lg);background:var(--cream)}
+.footer-hearts{color:var(--pink);font-size:22px;margin-bottom:var(--space-md);letter-spacing:4px}
+.footer-quote{font-size:var(--font-md);color:var(--text);font-style:italic;margin-bottom:var(--space-sm)}
+.footer-copy{font-size:var(--font-xs);color:var(--text-light)}
+.year-filter{display:flex;justify-content:center;gap:var(--space-sm);flex-wrap:wrap;max-width:var(--max-width);margin:0 auto var(--space-xl);padding:0 var(--space-lg)}
+.year-filter-btn{padding:var(--space-xs) var(--space-md);border-radius:var(--radius-full);background:var(--white);color:var(--text-light);font-size:var(--font-sm);border:1.5px solid var(--pink-light);transition:all var(--trans-fast)}
+.year-filter-btn:hover,.year-filter-btn.active{background:var(--pink);color:var(--white);border-color:var(--pink)}
+
+/* ===== 日记列表专属 ===== */
+.d-wrap{max-width:760px;margin:0 auto;padding:var(--space-lg) var(--space-lg) var(--space-2xl)}
+.d-list{display:flex;flex-direction:column;gap:5px;padding-bottom:var(--space-2xl)}
+.d-row{display:flex;align-items:center;gap:12px;background:#fff;border-radius:var(--radius-sm);padding:8px 13px;
+  box-shadow:var(--shadow-sm);transition:background .15s;text-decoration:none}
+.d-row:hover{background:var(--pink-light)}
+.d-title{flex:1;min-width:0;font-size:15px;font-weight:600;color:var(--text-dark);line-height:1.4;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.d-date{font-variant-numeric:tabular-nums;font-size:var(--font-xs);font-weight:700;color:var(--pink-deep);
+  background:var(--pink-light);padding:3px 9px;border-radius:999px;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
+.d-chip{font-size:var(--font-xs);font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.d-chip[data-cat="essay"]{background:var(--pink-light);color:var(--pink-deep)}
+.d-chip[data-cat="diary"]{background:linear-gradient(135deg,var(--pink-light),var(--yellow));color:var(--pink-deep)}
+.d-chip[data-cat="school"]{background:var(--blue-light);color:var(--blue-dark)}
+.d-chip[data-cat="parents"]{background:linear-gradient(135deg,var(--pink-light),var(--yellow));color:var(--pink-deep)}
+.d-chip[data-cat="video"]{background:#1a1a2e;color:#fff}
+.d-chip[data-cat="photo"]{background:var(--yellow);color:#c8a040}
+@media(max-width:560px){.d-title{font-size:14px}.d-chip{display:none}.d-row{padding:7px 10px}}
+.empty-tip{text-align:center;padding:var(--space-xl);color:var(--text-light);font-size:var(--font-base)}
+"""
+
+JS = r"""
+(function(){
+ var GRID=document.getElementById('diaryGrid');
+ var TABS=document.getElementById('dTabs');
+ function fmt(d){if(!d||d.length<8)return d||'';return d.substr(0,4)+'.'+d.substr(4,2)+'.'+d.substr(6,2);}
+ function yr(d){return d?String(d).substr(0,4):'';}
+ function card(x){
+  var cat=x.cat||'school';
+  var a=document.createElement('a');a.className='d-row';a.href=encodeURI(x.folder+'/index.html');
+  var dt=document.createElement('span');dt.className='d-date';dt.textContent=fmt(x.date);
+  var ti=document.createElement('span');ti.className='d-title';ti.textContent=x.title;
+  var chip=document.createElement('span');chip.className='d-chip';chip.setAttribute('data-cat',cat);chip.textContent=(x.theme||cat);
+  a.appendChild(dt);a.appendChild(ti);a.appendChild(chip);return a;
+ }
+ function render(y){
+  GRID.innerHTML='';
+  var list=DIARY_DATA.filter(function(x){return y==='all'||yr(x.date)===y;});
+  document.getElementById('dEmpty').style.display=list.length?'none':'block';
+  list.forEach(function(x){GRID.appendChild(card(x));});
+ }
+ // 年份筛选按钮（按年份倒序，自动生成，新增年份无需改 HTML）
+ var ys={};DIARY_DATA.forEach(function(x){var y=yr(x.date);if(y)ys[y]=1;});
+ var ylist=Object.keys(ys).sort(function(a,b){return b.localeCompare(a);});
+ var html='<button class="year-filter-btn active" data-year="all">全部</button>';
+ ylist.forEach(function(y){html+='<button class="year-filter-btn" data-year="'+y+'">'+y+'</button>';});
+ TABS.innerHTML=html;
+ render('all');
+ TABS.addEventListener('click',function(e){var t=e.target.closest('.year-filter-btn');if(!t)return;
+  TABS.querySelectorAll('.year-filter-btn').forEach(function(b){b.classList.remove('active');});
+  t.classList.add('active');render(t.getAttribute('data-year'));});
+})();
+"""
+
+HTML = """<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>成长日记 · Alisa</title>
-<link rel="stylesheet" href="css/style.css">
-<style>
-.diary-container{max-width:900px;margin:0 auto}
-.cat-tabs{display:flex;justify-content:center;gap:var(--space-sm);flex-wrap:wrap;margin-bottom:var(--space-xl)}
-.cat-tab{padding:var(--space-sm) var(--space-lg);border-radius:var(--radius-full);background:var(--white);color:var(--text-light);font-size:var(--font-sm);border:1.5px solid var(--pink-light);cursor:pointer;transition:all var(--trans-fast)}
-.cat-tab:hover{border-color:var(--pink);color:var(--pink-dark)}
-.cat-tab.active{background:var(--pink);color:var(--white);border-color:var(--pink);font-weight:600}
-.diary-grid{display:grid;grid-template-columns:1fr;gap:var(--space-md);max-width:900px;margin:0 auto}
-.diary-entry{background:var(--white);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:var(--space-lg);transition:transform var(--trans-base),box-shadow var(--trans-base);display:flex;gap:var(--space-md);align-items:flex-start;text-decoration:none;color:inherit}
-.diary-entry:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.diary-entry-thumb{width:90px;height:68px;border-radius:var(--radius-sm);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;background:var(--pink-light)}
-.diary-entry-thumb img{width:100%;height:100%;object-fit:cover}
-.diary-entry-body{flex:1;min-width:0}
-.diary-entry-cat{display:inline-block;padding:1px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:600;margin-bottom:var(--space-xs)}
-.cat-school{background:var(--blue-light);color:var(--blue-dark)}
-.cat-diary{background:var(--pink-light);color:var(--pink-dark)}
-.cat-parents{background:linear-gradient(135deg,var(--pink-light),var(--yellow));color:var(--pink-dark)}
-.cat-video{background:#1a1a2e;color:#fff}
-.cat-photo{background:var(--yellow);color:#c8a040}
-.diary-entry-title{font-size:var(--font-base);font-weight:700;color:var(--text-dark);margin-bottom:var(--space-xs);line-height:1.4}
-.diary-entry-meta{font-size:var(--font-xs);color:var(--text-light);display:flex;gap:var(--space-md);flex-wrap:wrap}
-.empty-tip{text-align:center;padding:var(--space-2xl);color:var(--text-light);font-size:var(--font-base)}
-@media(min-width:768px){.diary-grid{grid-template-columns:1fr 1fr}}
-</style>
+<link rel="stylesheet" href="../css/style.css">
+<style>__CSS__</style>
 </head>
 <body>
 <nav class="topbar">
 <div class="topbar-inner">
-<a href="index.html" class="topbar-back">
+<a href="../index.html" class="topbar-back">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
 返回首页
 </a>
@@ -153,80 +294,34 @@ html = r'''<!DOCTYPE html>
 <span style="width:80px"></span>
 </div>
 </nav>
-<div class="page-content diary-container">
-<div class="cat-tabs" id="catTabs">
-<button class="cat-tab active" data-cat="all">全部</button>
-<button class="cat-tab" data-cat="school">校园报道</button>
-<button class="cat-tab" data-cat="diary">个人日记</button>
-<button class="cat-tab" data-cat="parents">父母期许</button>
-<button class="cat-tab" data-cat="video">视频记录</button>
-<button class="cat-tab" data-cat="photo">图片记录</button>
+
+<div class="d-wrap">
+<div class="year-filter" id="dTabs"></div>
+<div class="d-list" id="diaryGrid"></div>
+<p class="empty-tip" id="dEmpty" style="display:none">该年份暂无日记</p>
 </div>
-<p style="text-align:center;color:var(--text-light);margin-bottom:var(--space-lg);font-size:var(--font-sm)" id="diaryDesc">共 0 篇记录</p>
-<div class="diary-grid" id="diaryGrid"></div>
-<div class="empty-tip" id="emptyTip" style="display:none">暂无内容，敬请期待</div>
-</div>
+
 <footer class="footer">
 <div class="footer-hearts">&#10084; &#10084; &#10084;</div>
 <p class="footer-quote">"每一篇文章，都是成长的足迹"</p>
 <p class="footer-copy">&copy; Alisa 成长纪念册</p>
 </footer>
-<script>
-'''
 
-# Append the data and JS
-DATA_SCRIPT = data_js + r'''
-(function(){
-var g=document.getElementById("diaryGrid"),t=document.getElementById("catTabs"),d=document.getElementById("diaryDesc"),e=document.getElementById("emptyTip"),
-L={school:"校园报道",diary:"个人日记",parents:"父母期许",video:"视频记录",photo:"图片记录"},
-I={school:"\ud83d\udcf0",diary:"\u270f\ufe0f",parents:"\u2764\ufe0f",video:"\ud83c\udfac",photo:"\ud83d\udcf7"};
-function r(c){
-g.innerHTML="";
-var a=c==="all"?DIARY_DATA:DIARY_DATA.filter(function(x){return x.cat===c});
-d.textContent="共 "+a.length+" 篇记录";
-e.style.display=a.length===0?"block":"none";
-a.forEach(function(x){
-var dd=x.date;
-if(x.date.length===8)dd=x.date.substr(0,4)+"-"+x.date.substr(4,2)+"-"+x.date.substr(6,2);
-else if(x.date.length===6)dd=x.date.substr(0,4)+"-"+x.date.substr(4,2);
-var thumbHTML;
-if(x.thumb){
-thumbHTML='<img src="'+x.thumb+'" alt="" loading="lazy">';
-}else{
-thumbHTML='<span>'+(I[x.cat]||"\ud83d\udcc4")+'</span>';
-}
-var el=document.createElement("a");
-el.className="diary-entry";
-el.href=encodeURI(x.folder)+"/index.html";
-el.innerHTML='<div class="diary-entry-thumb">'+thumbHTML+'</div>'+
-'<div class="diary-entry-body">'+
-'<span class="diary-entry-cat cat-'+(x.cat||"school")+'">'+(L[x.cat]||"")+'</span>'+
-'<div class="diary-entry-title">'+x.title+'</div>'+
-'<div class="diary-entry-meta"><span>'+dd+'</span><span>\ud83d\uddbc '+(x.imgs||0)+'张</span></div>'+
-'</div>';
-g.appendChild(el);
-});
-}
-r("all");
-t.addEventListener("click",function(ev){
-if(!ev.target.classList.contains("cat-tab"))return;
-t.querySelectorAll(".cat-tab").forEach(function(x){x.classList.remove("active")});
-ev.target.classList.add("active");
-r(ev.target.dataset.cat);
-});
-})();
-</script>
+<script>__DATA____JS__</script>
 </body>
-</html>'''
+</html>
+"""
 
-html_final = html + DATA_SCRIPT
+html_out = (HTML
+            .replace('__CSS__', CSS)
+            .replace('__DATA__', data_js + '\n')
+            .replace('__JS__', JS))
 
-with open(r'D:\github\homepage\Chears77.github.io\mumu\4diaries\diary.html', 'w', encoding='utf-8') as f:
-    f.write(html_final)
+with open(os.path.join(DIARY_DIR, 'diary.html'), 'w', encoding='utf-8') as f:
+    f.write(html_out)
 
-# 额外输出 diary-data.js，供首页 index.html 通过 script 标签动态加载
-with open(r'D:\github\homepage\Chears77.github.io\mumu\4diaries\diary-data.js', 'w', encoding='utf-8') as f:
+with open(os.path.join(DIARY_DIR, 'diary-data.js'), 'w', encoding='utf-8') as f:
     f.write(data_js + '\n')
 
-print('OK - diary.html with image thumbnails')
-print('OK - diary-data.js written')
+print('OK - diary.html  (%d 篇)' % len(entries))
+print('OK - diary-data.js')
