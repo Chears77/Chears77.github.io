@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 """生成 4diaries/diary.html（美化的成长日记列表）与 4diaries/diary-data.js（供首页调用）
 
-元数据优先级：
-  文章 index.html 内的 <meta name="diary-*">  >  文件夹名解析兜底
-这样未来 AI 按模板生成文章时，只要在 <meta> 写好信息，列表会自动正确归类、取封面。
-兼容两种文件夹命名：
-  旧：20260606_作文—待业啄木鸟
-  新：20260606待业啄木鸟（作文）
+日期 / 主题 / 标题 三者权威来源统一 = 文件夹名「时间-主题-标题」：
+  文件夹名  >  文章 index.html 内的 <h1>/<meta>（仅作兜底）
+  用户会手动改文件夹名上的日期、主题词、标题，故一律以文件夹名为最高优先级。
+  仅当文件夹名缺对应段（如旧式命名无日期前缀）时，才退回 meta diary-date / H1 / 解析兜底。
+分类机器码（仅用于配色/筛选）由主题词推导（theme_to_cat），不依赖 meta diary-cat。
 """
 import os, re, json, html
 from PIL import Image
@@ -21,7 +20,7 @@ CAT_LABEL = {
     'school':  '校园',
     'parents': '父母期许',
     'video':   '视频记录',
-    'photo':   '图片记录',
+    'photo':   '图片',
 }
 
 def score_image(img_path, file_size):
@@ -71,11 +70,141 @@ def infer_cat_from_title(title, folder=''):
     if any(k in t for k in ['幼儿园', '学校', '小学', '中学', '班', '活动', '典礼', '节', '运动会', '演练', '毕业']): return 'school'
     return 'school'
 
+def theme_to_cat(theme):
+    """由主题词推导分类机器码（仅用于配色 / 筛选）。未知主题返回 'other'。"""
+    t = theme or ''
+    if '作文' in t: return 'essay'
+    if any(k in t for k in ['日记', '游记', '穿越', '出游', '爬山', '露营', '旅行']): return 'diary'
+    if any(k in t for k in ['父母', '期许', '寄语', '写给']): return 'parents'
+    if '视频' in t: return 'video'
+    if any(k in t for k in ['图片', '照片', '相册', '影集']): return 'photo'
+    if any(k in t for k in ['校园', '幼儿园', '学校', '小学', '中学', '班', '活动', '典礼', '节', '运动会', '演练', '毕业']): return 'school'
+    return 'other'
+
 def clean_text(s):
     """去标签 + 解码 HTML 实体（&ldquo; &mdash; 等）"""
     if not s:
         return ''
     return html.unescape(re.sub(r'<[^>]+>', '', s)).strip()
+
+def fmt_cn_date(d):
+    """YYYYMMDD -> 2026年3月16日（文章内「日期·主题」显示用）"""
+    if not d or len(d) < 8:
+        return d or ''
+    try:
+        y, m, day = int(d[0:4]), int(d[4:6]), int(d[6:8])
+    except ValueError:
+        return d
+    return '{}年{}月{}日'.format(y, m, day)
+
+def fmt_iso_date(d):
+    """YYYYMMDD -> 2026-03-16（<meta diary-date> 用）"""
+    if not d or len(d) < 8:
+        return d or ''
+    return '{}-{}-{}'.format(d[0:4], d[4:6], d[6:8])
+
+def sync_article_html(html_text, folder_date, folder_theme, folder_title, cat):
+    """把单篇文章 index.html 的 日期/主题/标题 同步为文件夹名的值。
+
+    单数据源 = 文件夹名；仅当文件夹采用「时间-主题-标题」规范命名时才同步。
+    兼容两种内部写法：
+      · 新模板：<span class="article-date">中文日期</span><span class="article-theme">主题</span>
+      · 老校园：<p   class="article-date">ISO日期<span class="article-theme">主题</span></p>
+    保护 <!-- --> 注释，避免误改模板里的示例 meta。
+    """
+    # 保护注释，避免改到模板头部说明里的示例 meta
+    comments = re.findall(r'<!--.*?-->', html_text, re.S)
+    for i, c in enumerate(comments):
+        html_text = html_text.replace(c, '\x00CMT%d\x00' % i, 1)
+    orig = html_text
+
+    # meta: diary-cat / diary-date / diary-theme
+    html_text = re.sub(r'(<meta\s+name=["\']diary-cat["\']\s+content=["\'])[^"\']*(["\'])',
+                       lambda m: m.group(1) + cat + m.group(2), html_text, flags=re.I)
+    html_text = re.sub(r'(<meta\s+name=["\']diary-date["\']\s+content=["\'])[^"\']*(["\'])',
+                       lambda m: m.group(1) + fmt_iso_date(folder_date) + m.group(2), html_text, flags=re.I)
+    html_text = re.sub(r'(<meta\s+name=["\']diary-theme["\']\s+content=["\'])[^"\']*(["\'])',
+                       lambda m: m.group(1) + folder_theme + m.group(2), html_text, flags=re.I)
+
+    # <title>
+    html_text = re.sub(r'<title>.*?</title>',
+                       lambda m: '<title>' + folder_title + ' · Alisa 成长日记</title>',
+                       html_text, flags=re.I | re.S)
+
+    # <h1 class="article-title">
+    html_text = re.sub(r'<h1[^>]*class=["\']article-title["\'][^>]*>.*?</h1>',
+                       lambda m: '<h1 class="article-title">' + folder_title + '</h1>',
+                       html_text, flags=re.I | re.S)
+
+    # 日期+主题标签：统一规范为
+    #   <span class="article-date">中文日期</span><span class="article-theme">主题</span>
+    # 兼容两类历史写法：
+    #   ① 主题平级（新模板）：日期容器闭合后，可能夹一段「填这里」注释，再跟主题 span
+    #   ② 主题嵌套（旧校园 <p> 写法）：主题 span 在日期容器内部
+    def repl_a(m):  # 主题平级（保留中间可能夹的注释占位）
+        cmt = m.group(2) or ''
+        return '<span class="article-date">' + fmt_cn_date(folder_date) + '</span>' \
+               + cmt + '<span class="article-theme">' + folder_theme + '</span>'
+    def repl_b(m):  # 主题嵌套（旧 <p> 写法，无平级主题 span）
+        return '<span class="article-date">' + fmt_cn_date(folder_date) + '</span>' \
+               + '<span class="article-theme">' + folder_theme + '</span>'
+    # ① 先处理「主题平级」：日期容器闭合 → 可选注释占位 → 主题 span
+    html_text = re.sub(
+        r'<(span|p)[^>]*class=["\']article-date["\'][^>]*>.*?</\1>'
+        r'\s*(\x00CMT\d+\x00)?\s*'
+        r'<span[^>]*class=["\']article-theme["\'][^>]*>.*?</span>',
+        repl_a, html_text, flags=re.I | re.S)
+    # ② 再处理「主题嵌套」：主题 span 在日期容器内部（旧 <p> 写法）
+    html_text = re.sub(
+        r'<(span|p)[^>]*class=["\']article-date["\'][^>]*>'
+        r'.*?<span[^>]*class=["\']article-theme["\'][^>]*>.*?</span>'
+        r'.*?</\1>',
+        repl_b, html_text, flags=re.I | re.S)
+
+    # ===== 老文章结构规范化：日期+主题未居中、字号不一 → 包进 flex 居中容器 =====
+    html_text = normalize_legacy_meta(html_text)
+
+    # 还原注释
+    for i, c in enumerate(comments):
+        html_text = html_text.replace('\x00CMT%d\x00' % i, c)
+    return html_text
+
+
+def normalize_legacy_meta(html_text):
+    """老文章（日期+主题未居中、字体大小不一）的结构规范化。
+
+    仅对「尚无 .article-meta 容器」的文章生效（已规范的新文章不改动）：
+      · 把平级的「日期 / 主题」两个 span 包进 <div class="article-meta">（flex 居中）
+      · CSS：新增 .article-meta 居中规则；.article-theme 补 font-size 与日期一致；
+             去掉 .article-date 上无效的 text-align:center 与多余 margin-bottom。
+    兼容日期与主题之间可能夹的注释占位（形如 \\x00CMT0\\x00）。
+    """
+    if '<div class="article-meta">' in html_text:
+        return html_text
+
+    META_CSS = ('.article-meta{display:flex;align-items:center;justify-content:center;'
+                'gap:8px;margin-bottom:var(--space-xl);font-size:var(--font-sm);color:var(--text-light)}')
+
+    # HTML：包一层居中容器（兼容主题与日期之间可能夹的注释占位）
+    html_text = re.sub(
+        r'(<span[^>]*class=["\']article-date["\'][^>]*>.*?</span>)'
+        r'(\s*\x00CMT\d+\x00)?'
+        r'(<span[^>]*class=["\']article-theme["\'][^>]*>.*?</span>)',
+        r'<div class="article-meta">\1\2\3</div>',
+        html_text, flags=re.S)
+
+    # CSS：清理 .article-date 旧写法 + 紧跟新增 .article-meta 规则
+    html_text = re.sub(
+        r'\s*\.article-date\{font-size:var\(--font-sm\);color:var\(--text-light\);margin-bottom:var\(--space-xl\);text-align:center\}',
+        '.article-date{font-size:var(--font-sm);color:var(--text-light)}\n ' + META_CSS,
+        html_text)
+
+    # CSS：.article-theme 补字号（与日期一致）
+    html_text = re.sub(
+        r'\s*\.article-theme\{margin-left:6px;color:var\(--text-light\)\}',
+        ' .article-theme{margin-left:6px;color:var(--text-light);font-size:var(--font-sm)}',
+        html_text)
+    return html_text
 
 def parse_folder_name(folder):
     """兜底：从文件夹名解析 日期 / 标题 / （主题）"""
@@ -105,6 +234,7 @@ def normalize_date(raw):
     return '00000000'
 
 entries = []
+synced = 0
 for f in sorted(os.listdir(DIARY_DIR)):
     full = os.path.join(DIARY_DIR, f)
     if not os.path.isdir(full):
@@ -119,29 +249,33 @@ for f in sorted(os.listdir(DIARY_DIR)):
         html_content = hf.read()
     meta = read_meta(html_content)
 
-    # 日期
-    date_part = normalize_date(meta.get('diary-date', ''))
+    # ===== 文件夹名是 日期 / 主题 / 标题 的权威来源（用户会手动改文件夹名）=====
+    # 命名约定：时间-主题-标题（如 20260406-日记-夬石峡谷穿越）
+    # 三者均优先取文件夹名；仅当文件夹缺失对应段时，才退回 meta / 文章 H1。
+    folder_parts = f.split('-')
+    folder_has_prefix = (len(folder_parts) >= 3 and folder_parts[0].isdigit() and len(folder_parts[0]) == 8)
+    folder_date = folder_parts[0] if folder_has_prefix else ''
+    folder_theme = folder_parts[1].strip() if folder_has_prefix else ''
+    folder_title = '-'.join(folder_parts[2:]).strip() if folder_has_prefix else ''
+
+    # 日期：文件夹前缀 > meta diary-date
+    date_part = normalize_date(folder_date) if folder_date else '00000000'
     if date_part == '00000000':
-        date_part, _, _ = parse_folder_name(f)
+        date_part = normalize_date(meta.get('diary-date', ''))
 
-    # 标题
+    # 标题：文件夹末段 > 文章 H1 > 解析兜底
     hm = re.search(r'<h1[^>]*class=["\']article-title["\'][^>]*>(.*?)</h1>', html_content, re.I | re.S)
-    title = hm.group(1).strip() if hm else ''
-    if not title:
-        _, title, _ = parse_folder_name(f)
-    title = clean_text(title)
+    h1_title = clean_text(hm.group(1)) if hm else ''
+    title = clean_text(folder_title) or h1_title or clean_text(parse_folder_name(f)[1])
 
-    # 分类
-    cat = meta.get('diary-cat', '')
-    if cat not in CAT_LABEL:
-        cat = infer_cat_from_title(title, f)
-        if cat == 'school':  # 再试文件夹名里的（主题）
-            _, _, theme_in_name = parse_folder_name(f)
-            if theme_in_name in CAT_LABEL.values():
-                cat = [k for k, v in CAT_LABEL.items() if v == theme_in_name][0]
+    # 主题：文件夹中段 > meta diary-theme > 按标题推断
+    theme = clean_text(folder_theme) or clean_text(meta.get('diary-theme', ''))
+    if not theme:  # 异常兜底：按标题推断分类再取中文标签
+        cat_fb = infer_cat_from_title(title, f)
+        theme = CAT_LABEL.get(cat_fb, cat_fb)
 
-    # 主题中文标签
-    theme = clean_text(meta.get('diary-theme', '')) or CAT_LABEL.get(cat, cat)
+    # 分类机器码（仅用于配色 / 筛选），由主题词推导；未知主题归 'other'
+    cat = theme_to_cat(theme)
 
     # 摘要
     excerpt = clean_text(meta.get('diary-excerpt', ''))
@@ -182,6 +316,14 @@ for f in sorted(os.listdir(DIARY_DIR)):
         'excerpt': excerpt,
         'thumb':  thumb,
     })
+
+    # ===== 同步文章内部 日期/主题/标题 为文件夹值（单数据源 = 文件夹）=====
+    if folder_has_prefix and folder_title:
+        new_html = sync_article_html(html_content, folder_date, folder_theme, folder_title, cat)
+        if new_html != html_content:
+            with open(html_path, 'w', encoding='utf-8') as wf:
+                wf.write(new_html)
+            synced += 1
 
 entries.sort(key=lambda e: e['date'], reverse=True)
 data_js = 'var DIARY_DATA = ' + json.dumps(entries, ensure_ascii=True) + ';'
@@ -236,7 +378,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 .d-chip[data-cat="school"]{background:var(--blue-light);color:var(--blue-dark)}
 .d-chip[data-cat="parents"]{background:#F1E9FB;color:#9A78C8}
 .d-chip[data-cat="video"]{background:#1a1a2e;color:#fff}
-.d-chip[data-cat="photo"]{background:var(--yellow);color:#c8a040}
+.d-chip[data-cat="photo"]{background:#E8F5E9;color:#5BA16F}
+.d-chip[data-cat="other"]{background:#EDE7F6;color:#7E6AA8}
 @media(max-width:560px){.d-title{font-size:14px}.d-chip{display:none}.d-row{padding:7px 10px}}
 .empty-tip{text-align:center;padding:var(--space-xl);color:var(--text-light);font-size:var(--font-base)}
 """
@@ -325,3 +468,4 @@ with open(os.path.join(DIARY_DIR, 'diary-data.js'), 'w', encoding='utf-8') as f:
 
 print('OK - diary.html  (%d 篇)' % len(entries))
 print('OK - diary-data.js')
+print('OK - 同步文章内部标签 %d 篇（日期/主题/标题 已对齐文件夹名）' % synced)

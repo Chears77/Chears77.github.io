@@ -402,7 +402,7 @@
   // 4. 成长日记（日期 + 名称 + 主题底纹，点击进入对应文章/图片页）
   var dp = document.getElementById('diaryPreviewList');
   if (dp && typeof DIARY_DATA !== 'undefined') {
-    var catLabel = {school:'校园报道', essay:'作文', diary:'个人日记', parents:'父母期许', video:'视频', photo:'图片'};
+    var catLabel = {school:'校园', essay:'作文', diary:'日记', parents:'父母期许', video:'视频', photo:'图片', other:'其他'}; // 仅兜底，主题优先取 x.theme
     // 去掉标题里已隐含的主题前缀（如“作文—”“作文：”“作文”），避免与末尾主题重复
     function stripTopic(title, topic) {
       if (!topic) return title;
@@ -413,16 +413,21 @@
       }
       return title;
     }
+    function fmtDate(d){ if(!d||d.length<8) return d||''; return d.substr(0,4)+'.'+d.substr(4,2)+'.'+d.substr(6,2); } // 须与 diary.html 的 fmt() 保持一致
     DIARY_DATA.slice(0,3).forEach(function(x){
-      var topic = catLabel[x.cat] || x.cat || '';
+      var topic = x.theme || catLabel[x.cat] || x.cat || ''; // 主题以文件夹词为准，与 diary.html 列表一致
       var name = stripTopic(x.title || '', topic);
       if (name.length > 12) name = name.substr(0,12) + '\u2026';
-      // 主题底纹：作文=粉、个人日记=粉黄渐变、其余=蓝
-      var subStyle = 'background:var(--blue-light);color:var(--blue-dark)';
+      // 主题底纹配色（与 diary.html 列表 chip 一致）：作文=粉、日记=琥珀、校园=蓝、父母期许=紫、图片=绿、视频=深、未知=中性
+      var subStyle = 'background:#EDE7F6;color:#7E6AA8';
       if (x.cat === 'essay') subStyle = 'background:var(--pink-light);color:var(--pink-dark)';
       else if (x.cat === 'diary') subStyle = 'background:linear-gradient(135deg,var(--pink-light),var(--yellow));color:var(--pink-dark)';
+      else if (x.cat === 'school') subStyle = 'background:var(--blue-light);color:var(--blue-dark)';
+      else if (x.cat === 'parents') subStyle = 'background:#F1E9FB;color:#9A78C8';
+      else if (x.cat === 'photo') subStyle = 'background:#E8F5E9;color:#5BA16F';
+      else if (x.cat === 'video') subStyle = 'background:#1a1a2e;color:#fff';
       var href = '4diaries/' + (x.folder || '') + '/index.html';
-      dp.appendChild(item(x.date + ' ' + name, href, topic, subStyle));
+      dp.appendChild(item(fmtDate(x.date) + ' ' + name, href, topic, subStyle));
     });
   }
 })();
