@@ -315,7 +315,13 @@ button { font-family:inherit; cursor:pointer; border:none; }
 }
 .type-honor { background:var(--yellow); color:var(--text-dark); }
 .type-gallery { background:var(--blue-light); color:var(--blue-dark); }
-.type-diary { background:var(--pink-light); color:var(--pink-dark); }
+.type-diary { background:#FFF3D6; color:#C5912F; }
+.type-essay { background:var(--pink-light); color:var(--pink-deep); }
+.type-school { background:var(--blue-light); color:var(--blue-dark); }
+.type-photo { background:#E8F5E9; color:#5BA16F; }
+.type-parents { background:#F1E9FB; color:#9A78C8; }
+.type-video { background:#1a1a2e; color:#fff; }
+.type-other { background:#EDE7F6; color:#7E6AA8; }
 .timeline-event-date {
   font-size:var(--font-xs);
   color:var(--pink-dark);

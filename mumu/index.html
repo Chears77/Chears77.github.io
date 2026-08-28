@@ -322,10 +322,10 @@
 </footer>
 
 <!-- 各专题数据（由对应 bat / 生成器实时产出，首页动态渲染） -->
-<script src="2rongyuqiang/honor-photos.js?v=1787759844104"></script>
-<script src="3gallery/gallery-photos.js?v=1787759844104"></script>
-<script src="4diaries/diary-data.js?v=1787759844104"></script>
-<script src="1timeline/timeline-summary.js?v=1787759844104"></script>
+<script src="2rongyuqiang/honor-photos.js?v=1787879621459"></script>
+<script src="3gallery/gallery-photos.js?v=1787879621459"></script>
+<script src="4diaries/diary-data.js?v=1787879621459"></script>
+<script src="1timeline/timeline-summary.js?v=1787879621459"></script>
 <script src="js/main.js"></script>
 <script>
 // Hamburger menu
@@ -413,7 +413,7 @@
       }
       return title;
     }
-    function fmtDate(d){ if(!d||d.length<8) return d||''; return d.substr(0,4)+'.'+d.substr(4,2)+'.'+d.substr(6,2); } // 须与 diary.html 的 fmt() 保持一致
+    function fmtDate(d){ return d||''; } // 日期显示原始 YYYYMMDD，须与 diary.html 的 fmt() 保持一致
     DIARY_DATA.slice(0,3).forEach(function(x){
       var topic = x.theme || catLabel[x.cat] || x.cat || ''; // 主题以文件夹词为准，与 diary.html 列表一致
       var name = stripTopic(x.title || '', topic);

@@ -20,9 +20,14 @@ EARLY_YEARS = {
 }
 
 TYPE_META = {
-    "honor": {"label": "荣誉", "icon": "🏆"},
-    "gallery": {"label": "相册", "icon": "📷"},
-    "diary": {"label": "日记", "icon": "📝"},
+    "honor":   {"label": "荣誉", "icon": "🏆", "verb": "荣获"},
+    "gallery": {"label": "相册", "icon": "📷", "verb": "定格"},
+    "essay":   {"label": "作文", "icon": "📝", "verb": "写下"},
+    "diary":   {"label": "日记", "icon": "📝", "verb": "写下"},
+    "school":  {"label": "校园", "icon": "🏫", "verb": "经历"},
+    "photo":   {"label": "图片", "icon": "🖼️", "verb": "留下"},
+    "parents": {"label": "父母期许", "icon": "💌", "verb": "收到"},
+    "video":   {"label": "视频", "icon": "🎬", "verb": "记录"},
 }
 
 
@@ -84,16 +89,19 @@ def collect_events():
             "link": "../3gallery/gallery.html",
         })
 
-    # 成长日记
+    # 成长日记（含作文/日记/校园/图片等，按 cat 区分类型，避免全都标成“日记”）
     for d in load_diary_data(BASE / "4diaries" / "diary.html"):
         date = d["date"]
         thumb = d.get("thumb", "")
+        cat = d.get("cat", "diary")
+        if cat not in TYPE_META:
+            cat = "diary"
         events.append({
             "year": int(date[:4]),
             "date": date,
             "date_str": fmt_date(date),
             "title": d["title"],
-            "type": "diary",
+            "type": cat,
             "thumb": f"../4diaries/{thumb}" if thumb else "",
             "link": f"../4diaries/{d['folder']}/index.html",
         })
@@ -109,28 +117,31 @@ def collect_events():
 
 
 def build_summary(year: int, events: list) -> str:
-    """年度说明完全依据真实资料（荣誉/相册/日记）自动生成，绝不凭空想象。"""
+    """年度说明完全依据真实资料（荣誉/相册/作文/日记/校园/图片…）自动生成，绝不凭空想象。
+    按类型归类，用词贴合事实：荣誉‘荣获’、相册‘定格’、作文/日记‘写下’、校园‘经历’、图片‘留下’ 等。
+    """
     if not events:
         return EARLY_YEARS.get(year, "更多成长的故事还在书写，敬请期待。")
-    honors = [e["title"] for e in events if e["type"] == "honor"]
-    galleries = [e["title"] for e in events if e["type"] == "gallery"]
-    diaries = [e["title"] for e in events if e["type"] == "diary"]
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for e in events:
+        groups[e["type"]].append(e["title"])
+
+    ORDER = ["honor", "gallery", "essay", "diary", "school", "photo", "parents", "video"]
     segs = []
-    if honors:
-        names = "、".join(honors[:3])
-        if len(honors) > 3:
-            names += f" 等{len(honors)}项"
-        segs.append("荣获 " + names)
-    if galleries:
-        names = "、".join(galleries[:3])
-        if len(galleries) > 3:
-            names += f" 等{len(galleries)}个精彩瞬间"
-        segs.append("定格 " + names)
-    if diaries:
-        names = "、".join(diaries[:3])
-        if len(diaries) > 3:
-            names += f" 等{len(diaries)}篇"
-        segs.append("写下《" + names + "》")
+    for t in ORDER:
+        titles = groups.get(t)
+        if not titles:
+            continue
+        meta = TYPE_META[t]
+        names = "、".join(titles[:3])
+        if len(titles) > 3:
+            unit = "篇" if t in ("essay", "diary", "school", "photo", "parents", "video") else "项"
+            names += f" 等{len(titles)}{unit}"
+        if t in ("honor", "gallery"):
+            segs.append(f"{meta['verb']} {names}")
+        else:
+            segs.append(f"{meta['verb']}《{names}》")
     return "；".join(segs) + "。"
 
 

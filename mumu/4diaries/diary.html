@@ -89,7 +89,7 @@ button{font-family:inherit;cursor:pointer;border:none}
 (function(){
  var GRID=document.getElementById('diaryGrid');
  var TABS=document.getElementById('dTabs');
- function fmt(d){if(!d||d.length<8)return d||'';return d.substr(0,4)+'.'+d.substr(4,2)+'.'+d.substr(6,2);}
+ function fmt(d){return d||'';}  // 日期显示原始 YYYYMMDD（与文件夹命名一致）
  function yr(d){return d?String(d).substr(0,4):'';}
  function card(x){
   var cat=x.cat||'school';
