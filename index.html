@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安即是佛 · 沙溪子</title>
+<meta name="description" content="水本无痕，因风起浪。心本无事，随念生波。生而阅己，悦己，越己。">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --paper: #faf7f1;
+    --paper-2: #f3eee4;
+    --ink: #2f2b26;
+    --ink-mute: #8a8377;
+    --seal: #b03a2e;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: "KaiTi", "STKaiti", "楷体", "Noto Serif SC", "Source Han Serif SC", serif;
+    background:
+      radial-gradient(ellipse 120% 90% at 50% -10%, #fffdf8 0%, transparent 55%),
+      radial-gradient(ellipse 100% 70% at 50% 110%, var(--paper-2) 0%, transparent 60%),
+      var(--paper);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* 宣纸纹理 */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .stage {
+    position: relative;
+    text-align: center;
+    padding: 48px 24px;
+    max-width: 860px;
+  }
+
+  /* ── 圆相 · 水纹 ── */
+  .enso {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: min(72vmin, 560px);
+    height: min(72vmin, 560px);
+    transform: translate(-50%, -56%);
+    pointer-events: none;
+  }
+  .enso .ripple {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(47, 43, 38, .10);
+    animation: ripple 7s ease-out infinite;
+  }
+  .enso .ripple:nth-child(2) { animation-delay: 2.3s; }
+  .enso .ripple:nth-child(3) { animation-delay: 4.6s; }
+  @keyframes ripple {
+    0%   { transform: scale(.55); opacity: 0; }
+    18%  { opacity: 1; }
+    100% { transform: scale(1.12); opacity: 0; }
+  }
+  .enso svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    animation: breathe 9s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50%      { transform: scale(1.015) rotate(0deg); }
+  }
+
+  /* ── 入场动画 ── */
+  .rise { opacity: 0; animation: rise 1.4s cubic-bezier(.22,.8,.3,1) forwards; }
+  .d1 { animation-delay: .15s } .d2 { animation-delay: .55s }
+  .d3 { animation-delay: .95s } .d4 { animation-delay: 1.35s }
+  .d5 { animation-delay: 1.75s }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* ── 站名 + 印章 ── */
+  .title-row {
+    position: relative;
+    display: inline-block;
+  }
+  h1 {
+    font-size: clamp(58px, 11vw, 96px);
+    font-weight: 700;
+    letter-spacing: .18em;
+    margin-left: .18em; /* 抵消末字间距 */
+    line-height: 1.15;
+  }
+  .seal {
+    position: absolute;
+    right: -58px; bottom: 12px;
+    width: 44px; height: 44px;
+    background: var(--seal);
+    border-radius: 7px;
+    box-shadow: 0 2px 10px rgba(176,58,46,.35);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(4deg);
+  }
+  .seal span {
+    color: #f6efe4;
+    font-size: 17px;
+    line-height: 1.05;
+    letter-spacing: 1px;
+    writing-mode: vertical-rl;
+  }
+
+  /* ── 诗句 ── */
+  .poem {
+    margin-top: 42px;
+    font-size: clamp(18px, 2.6vw, 23px);
+    line-height: 2.2;
+    letter-spacing: .14em;
+    color: #45403a;
+  }
+
+  /* ── 分隔 ── */
+  .divider {
+    margin: 34px auto 0;
+    width: 220px;
+    display: flex; align-items: center; gap: 12px;
+    color: var(--ink-mute);
+  }
+  .divider::before, .divider::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(47,43,38,.35));
+  }
+  .divider::after { background: linear-gradient(270deg, transparent, rgba(47,43,38,.35)); }
+  .divider i {
+    width: 6px; height: 6px;
+    background: var(--seal);
+    transform: rotate(45deg);
+    opacity: .85;
+  }
+
+  /* ── 落款 ── */
+  .sign {
+    margin-top: 30px;
+    font-size: 16px;
+    letter-spacing: .22em;
+    color: var(--ink-mute);
+  }
+  .sign a {
+    color: var(--ink-mute);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(138,131,119,.4);
+    padding-bottom: 2px;
+    transition: color .25s, border-color .25s;
+  }
+  .sign a:hover { color: var(--seal); border-color: var(--seal); }
+
+  /* ── 子站入口 ── */
+  .portal {
+    margin-top: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    border: 1px solid rgba(47, 43, 38, .28);
+    border-radius: 3px;
+    color: #45403a;
+    text-decoration: none;
+    font-size: 17px;
+    letter-spacing: .28em;
+    text-indent: .28em;
+    transition: color .3s, border-color .3s, background .3s, box-shadow .3s;
+  }
+  .portal .dot {
+    width: 6px; height: 6px;
+    background: var(--seal);
+    transform: rotate(45deg);
+    flex: none;
+  }
+  .portal:hover {
+    color: var(--seal);
+    border-color: var(--seal);
+    background: rgba(176, 58, 46, .05);
+    box-shadow: 0 4px 18px rgba(176, 58, 46, .16);
+  }
+
+  /* ── 移动端 ── */
+  @media (max-width: 560px) {
+    .seal { right: -46px; width: 36px; height: 36px; }
+    .seal span { font-size: 14px; }
+    .poem { letter-spacing: .1em; line-height: 2.05; }
+    .portal { font-size: 15px; padding: 10px 24px; margin-top: 36px; letter-spacing: .2em; text-indent: .2em; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enso .ripple, .enso svg, .rise { animation: none; }
+    .rise { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <div class="enso" aria-hidden="true">
+      <span class="ripple"></span><span class="ripple"></span><span class="ripple"></span>
+      <svg viewBox="0 0 560 560" fill="none">
+        <path d="M 280 42
+                 C 150 42, 40 150, 40 282
+                 C 40 412, 148 518, 282 518
+                 C 408 518, 518 414, 518 284
+                 C 518 160, 420 56, 296 44
+                 C 276 42.5, 258 44, 250 48"
+              stroke="#2f2b26" stroke-opacity=".16"
+              stroke-width="7" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="title-row rise d1">
+      <h1>安即是佛</h1>
+      <span class="seal" aria-hidden="true"><span>沙溪子印</span></span>
+    </div>
+
+    <p class="poem rise d2">水本无痕，因风起浪。心本无事，随念生波。<br>生而阅己，悦己，越己。</p>
+
+    <div class="divider rise d3" aria-hidden="true"><i></i></div>
+
+    <p class="sign rise d4">沙溪子 · <a href="mailto:Chears77@163.com">Chears77@163.com</a></p>
+
+    <div class="rise d5">
+      <a class="portal" href="./gongchengfagui/index.html">工程建设法规库</a>
+    </div>
+  </main>
+</body>
+</html>

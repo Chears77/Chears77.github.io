@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+
+<!--
+  ═══════════════════════════════════════════════════════
+  模板 · 笔记阅读风（多主题版 v6 · 定稿增强）
+   ① 顶栏干净渐变；滚动越过标题区后，文章标题淡入顶栏中间吸顶显示（随主题变色）
+   ② 右上角色点切换 蓝白/书卷/暗黑（默认蓝白）并记忆选择
+   ③ 页脚一行式「— 沙溪子 · Chears77@163.com —」，68%宽长分隔线
+   ④ 图片灯箱增强：点击放大后可滚轮/按钮缩放(+−)、按住拖动平移、双击放大或复位
+   ⑤ 引用块独立配色（蓝白/书卷/暗黑各有侧重），字号较正文缩一号
+  ⑥ 左右悬浮导航（v7）：鼠标靠右边缘感应出「本文大纲」（滚动高亮、可折叠子标题）；
+     鼠标靠左边缘感应出「全部文章」列表；顶部阅读进度条；窄屏改左右浮钮抽屉
+  用法：复制整个文件夹 → 改名 YYYYMMDD主题 → 改内容 → node generate-index.js
+  替换点：title / h1标题 / 日期 / 正文 / 图片(images/) / 落款文案
+  ═══════════════════════════════════════════════════════
+-->
+<html data-back="../articles.html" data-home="../../index.html" data-rp="../" data-theme="blue" data-x="rlRyQVUf9vEJKnwiEhS8F1" lang="zh-CN">
+<head data-x="d1S8go38cVMIEJbpnTL0Gp">
+<meta charset="utf-8" data-x="xHvo65jm5qQ3abM5lwYmIg"/>
+<meta content="width=device-width, initial-scale=1.0" data-x="XgiRaWtXt0vCYxnSTE3sif" name="viewport"/>
+<title>个人主页开发探索 - 安即是佛</title>
+<script>
+/* 提前恢复上次的主题，避免刷新闪白；默认 蓝白 */
+try{var t=localStorage.getItem('axjf-note-theme-v5');
+if(['blue','book','dark'].indexOf(t)<0)t='blue';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
+<style>
+ /* ═══════════ 三套主题变量 ═══════════ */
+
+ /* ── 蓝白（默认）· 高饱和蓝 ── */
+ :root, html[data-theme="blue"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#33465e; --ink-strong:#16283f; --ink-mute:#7c8ea6;
+  --bg:#f2f7fd; --bg-glow1:#cfe3fb; --bg-glow2:#e8f2fc;
+  --card:#ffffff; --line:#cdddf1; --line-soft:#e3eefb;
+  --accent:#1f6fe0; --accent-deep:#1755b6; --accent-deeper:#0f3d86;
+  --soft:#e2edfd; --code-bg:#eaf2fe; --code-ink:#1755b6;
+  --qbg:#dfebfd; --qbar:#1f6fe0; --qink:#174a94;
+  --fig-shadow:0 2px 12px rgba(31,111,224,.15);
+  --fig-shadow-lg:0 10px 28px rgba(31,111,224,.26);
+  --bar-c1:#4a97f5; --bar-c2:#1c59c4; --bar-glare:rgba(255,255,255,.3);
+  --bar-sweep:rgba(255,255,255,.14); --bar-bottom:transparent; --bar-ink:#ffffff;
+ }
+ /* ── 书卷 · 米纸墨蓝 ── */
+ html[data-theme="book"]{
+  --font-body:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --ink:#43403a; --ink-strong:#221f18; --ink-mute:#8f897c;
+  --bg:#f5f0e4; --bg-glow1:#e8dcbf; --bg-glow2:#f7f2e8;
+  --card:#fdfaf2; --line:#cbbfa1; --line-soft:#e4dac4;
+  --accent:#4d6f96; --accent-deep:#3a5577; --accent-deeper:#273c57;
+  --soft:#e7dcc2; --code-bg:#eae1cb; --code-ink:#6b5326;
+  --qbg:#ede3cb; --qbar:#4d6f96; --qink:#3a4e6b;
+  --fig-shadow:0 2px 12px rgba(80,65,40,.14);
+  --fig-shadow-lg:0 10px 26px rgba(80,65,40,.24);
+  --bar-c1:#36517a; --bar-c2:#1f2f49; --bar-glare:rgba(255,255,255,.15);
+  --bar-sweep:rgba(255,255,255,.07); --bar-bottom:rgba(191,158,96,.5); --bar-ink:#f5eedb;
+ }
+ /* ── 暗黑 · 深空电蓝 ── */
+ html[data-theme="dark"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#b9c7da; --ink-strong:#e7eef8; --ink-mute:#71819b;
+  --bg:#0a111d; --bg-glow1:#14223a; --bg-glow2:#0d1726;
+  --card:#101b2c; --line:#1d2c44; --line-soft:#16233a;
+  --accent:#3d97ff; --accent-deep:#77b6ff; --accent-deeper:#a8cfff;
+  --soft:#162742; --code-bg:#0f1c30; --code-ink:#66aaff;
+  --qbg:#122339; --qbar:#3d97ff; --qink:#cfe2f8;
+  --fig-shadow:0 2px 14px rgba(0,0,0,.45);
+  --fig-shadow-lg:0 10px 28px rgba(0,0,0,.6);
+  --bar-c1:#1b2e4d; --bar-c2:#0b1626; --bar-glare:rgba(120,180,255,.2);
+  --bar-sweep:rgba(140,190,255,.08); --bar-bottom:rgba(90,150,255,.3); --bar-ink:#eaf2fc;
+ }
+
+ *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+ body{font-family:var(--font-body);font-size:16px;color:var(--ink);line-height:1.8;
+  background:radial-gradient(circle at 14% 4%, var(--bg-glow1) 0, transparent 36%),
+             radial-gradient(circle at 88% 3%, var(--bg-glow2) 0, transparent 32%), var(--bg);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background .35s ease,color .35s ease}
+ img{max-width:100%;display:block} a{text-decoration:none;color:inherit}
+
+ /* ═══════════ 顶栏（无斜线 · 干净渐变+柔和高光）═══════════ */
+ .topbar{position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;gap:12px;padding:0 20px;
+  color:var(--bar-ink);
+  background-color:var(--bar-c2);
+  background-image:
+   linear-gradient(120deg, transparent 20%, var(--bar-sweep) 42%, transparent 62%),
+   radial-gradient(circle at 12% -90%, var(--bar-glare), transparent 58%),
+   linear-gradient(175deg, var(--bar-c1) 0%, var(--bar-c2) 130%);
+  box-shadow:0 2px 14px rgba(20,60,130,.22);
+  border-bottom:1px solid var(--bar-bottom);}
+ .topbar .home{display:flex;align-items:center;gap:7px;color:inherit;font-weight:600;font-size:14px;
+  letter-spacing:.5px;opacity:.92;transition:opacity .2s;flex:none}
+ .topbar .home:hover{opacity:1}
+ .topbar .home svg{width:18px;height:18px;opacity:.9}
+
+ /* 滚动吸顶的文章标题：藏在顶栏中间，滚动越过标题区后淡入 */
+ .top-title{position:absolute;left:50%;top:0;height:58px;line-height:58px;
+  transform:translate(-50%,5px);max-width:min(560px,54vw);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:14.5px;font-weight:600;letter-spacing:.5px;color:var(--bar-ink);
+  opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+ body.scrolled-title .top-title{opacity:.97;transform:translate(-50%,0)}
+
+ /* ═══════════ 右上 · 极简色点切换器 ═══════════ */
+ .theme-switch{margin-left:auto;display:flex;align-items:center;gap:10px}
+ .ts-dots{display:flex;align-items:center;gap:8px}
+ .ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  opacity:.45;transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s;flex:none}
+ .ts-dot:hover{opacity:.95}
+ .ts-dot.on{opacity:1;transform:scale(1.28);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18)}
+ /* 三个色点固定配色，一眼对应三套主题 */
+ .ts-dot[data-t="blue"] {background:#9fd0ff}
+ .ts-dot[data-t="book"] {background:#d4b97e}
+ .ts-dot[data-t="dark"] {background:#8aa7cc}
+ .ts-name{font-size:12px;letter-spacing:2px;color:var(--bar-ink);opacity:.95;
+  font-variant-numeric:tabular-nums;min-width:34px;text-align:left}
+
+ /* ═══════════ 文章主体 ═══════════ */
+ .article-page{max-width:740px;margin:0 auto;padding:40px 24px 46px}
+ .article-head{text-align:center;margin-bottom:18px}
+ .article-title{font-size:25px;color:var(--ink-strong);font-weight:700;line-height:1.4;letter-spacing:.5px;transition:color .35s}
+ .article-meta{margin-top:9px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;color:var(--ink-mute)}
+ .article-date{font-variant-numeric:tabular-nums}
+
+ .article-body{font-size:16px;color:var(--ink);line-height:1.85;transition:color .35s}
+ .article-body p{margin-bottom:14px;text-indent:2em;text-align:justify}
+ .article-body p.noindent{text-indent:0}
+ .article-body h2{font-size:17.5px;color:var(--accent-deep);font-weight:700;margin:24px 0 10px;
+  padding-left:12px;border-left:4px solid var(--accent);line-height:1.4}
+ .article-body h3{font-size:15.5px;color:var(--accent-deep);font-weight:700;margin:20px 0 8px;
+  padding-left:10px;border-left:3px solid var(--accent);line-height:1.5;opacity:.94}
+ .article-body h4{font-size:14.5px;color:var(--ink-strong);font-weight:700;margin:15px 0 6px;line-height:1.5}
+ .article-body a{color:var(--accent-deep);text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1px;text-underline-offset:3px;overflow-wrap:anywhere;transition:opacity .15s}
+ .article-body a:hover{opacity:.72}
+ .article-body blockquote{margin:16px 0;padding:10px 16px;background:var(--qbg);border-left:4px solid var(--qbar);
+  border-radius:2px 10px 10px 2px;color:var(--qink);font-size:14px;line-height:1.8;
+  border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  box-shadow:0 2px 10px rgba(30,80,160,.07)}
+ .article-body strong{color:var(--accent-deeper)}
+ .article-body .fmt{font-family:Consolas,monospace;background:var(--code-bg);padding:1.5px 7px;border-radius:6px;
+  color:var(--code-ink);font-weight:600;font-size:14px}
+ .article-body figure{margin:18px 0;text-align:center}
+ .article-body figure img{cursor:zoom-in;border-radius:12px;box-shadow:var(--fig-shadow);
+  max-width:100%;display:inline-block;border:1px solid var(--line-soft);
+  transition:transform .3s,box-shadow .3s}
+ .article-body figure img:hover{transform:translateY(-2px);box-shadow:var(--fig-shadow-lg)}
+ .article-body figure figcaption{margin-top:8px;font-size:13px;color:var(--ink-mute)}
+ .article-body ul,.article-body ol{margin:0 0 14px 2em;line-height:1.85}
+ .article-body li{margin:4px 0}
+
+ /* ═══════════ 页脚 · 一行落款 + 长分隔线 ═══════════ */
+ .article-footer{margin-top:48px;text-align:center}
+ .footer-rule{width:min(340px,68%);height:1px;margin:0 auto 16px;border:0;
+  background:linear-gradient(90deg,transparent,var(--line) 16%,var(--line) 84%,transparent)}
+ .colophon{font-size:14px;color:var(--ink-mute);letter-spacing:1px;line-height:1.8}
+.colophon .dash{color:var(--ink-mute)}
+.colophon .co-name{color:var(--ink-strong);font-weight:600}
+.colophon .co-mail{color:inherit;text-decoration:none;cursor:pointer}
+
+ /* 灯箱（可缩放：滚轮/按钮缩放 + 拖动平移） */
+ .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(16,26,40,.94);
+  flex-direction:column;padding:64px 20px 96px;overflow:hidden}
+ .lightbox.active{display:flex}
+ .lb-stage{position:relative;flex:1;min-height:0;width:100%;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+ .lightbox img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.45);
+  transform-origin:center center;will-change:transform;cursor:grab;
+  user-select:none;-webkit-user-drag:none;touch-action:none}
+ .lightbox img.panning{cursor:grabbing}
+ .lightbox .lb-cap{color:#cfd8e3;margin-top:12px;font-size:13.5px;text-align:center;max-width:100%;
+  padding:0 4px;line-height:1.7}
+ .lightbox .lb-close{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s}
+ .lightbox .lb-close:hover{background:rgba(255,255,255,.34)}
+ /* 底部工具条：− 百分比 + 复位 */
+ .lb-tools{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:5;
+  display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:999px;
+  background:rgba(18,28,42,.74);border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 6px 20px rgba(0,0,0,.35)}
+ .lb-tools button{min-width:32px;height:32px;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.13);color:#fff;font-size:19px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:inherit}
+ .lb-tools button:hover{background:rgba(255,255,255,.38)}
+ .lb-tools button:active{transform:scale(.94)}
+ .lb-tools .lb-scale{min-width:52px;text-align:center;font-size:12.5px;letter-spacing:.5px;
+  color:#e2ecf7;font-variant-numeric:tabular-nums}
+
+ @media(max-width:600px){
+  .article-title{font-size:20.5px}.article-page{padding:28px 16px 40px}
+  .article-body{font-size:15px;line-height:1.8}
+  .article-body p{margin-bottom:12px}
+  .topbar{padding:0 12px}
+  .ts-dots{gap:11px}
+  .ts-dot{width:15px;height:15px} /* 手机端色点略放大，方便点按 */
+  .ts-name{display:none} /* 手机上只留色点，更省地 */
+  .top-title{max-width:44vw;font-size:13px}
+  .article-body blockquote{padding:9px 13px;font-size:13.5px}
+  .article-body h2{font-size:16.5px}
+  .article-body h3{font-size:15px}
+  .article-body h4{font-size:14px}
+  .lightbox{padding:56px 12px 88px}
+  .lb-tools button{min-width:30px;height:30px;font-size:17px}
+ }
+
+
+/* ══ 老文章正文扩展样式（换壳注入，模板源文件不含）══ */
+.article-body h3{font-size:15.5px;color:var(--accent-deep);font-weight:700;margin:20px 0 8px;
+ padding-left:10px;border-left:3px solid var(--accent);line-height:1.5;opacity:.94}
+.article-body h4{font-size:14.5px;color:var(--ink-strong);font-weight:700;margin:15px 0 6px;line-height:1.5}
+.article-body li p{text-indent:0;margin-bottom:4px}
+.article-body ol,.article-body ul{margin-bottom:12px}
+.article-body li{margin:3px 0}
+.article-body code{font-family:Consolas,"Courier New",monospace;background:var(--code-bg);
+ color:var(--code-ink);padding:1px 5px;border-radius:5px;font-size:.9em}
+.article-body pre{background:#0f1b2d;color:#d7e3f4;border:1px solid #24344d;border-radius:10px;
+ padding:12px 14px;overflow-x:auto;line-height:1.6;font-size:13.5px;margin:14px 0;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.article-body pre code{background:transparent;color:inherit;padding:0;border-radius:0;font-size:13.5px}
+.article-body .table-scroll{overflow-x:auto;margin:14px 0;border-radius:10px;
+ border:1px solid var(--line-soft)}
+.article-body table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px;line-height:1.7}
+.article-body th,.article-body td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.article-body thead th{background:var(--soft);color:var(--accent-deep);font-weight:700;
+ white-space:nowrap}
+.article-body tbody tr:nth-child(even){background:var(--bg-glow2)}
+.article-body hr{border:0;height:1px;background:var(--line);margin:22px 0;width:60%;margin-left:auto;margin-right:auto}
+.article-body img{max-width:100%;border-radius:10px;margin:4px auto}
+.article-body ol[start]{list-style-type:decimal}
+
+/* ══ 旧文组件兜底样式（仅含这些类的老文章生效，普通文章无影响）══ */
+.article-body .hero{background:var(--soft);border:1px solid var(--line-soft);
+ border-left:4px solid var(--accent);border-radius:4px 12px 12px 4px;padding:13px 18px;margin:0 0 18px}
+.article-body .hero .hero-icon{display:none}
+.article-body .hero .sub{font-size:15px;font-weight:600;color:var(--ink-strong);
+ text-indent:0;margin:0 0 8px;line-height:1.7}
+.article-body .hero .meta{font-size:13px;color:var(--ink-mute);text-indent:0;margin:0;line-height:1.8}
+.article-body .hero .meta span{margin-right:14px;white-space:nowrap}
+.article-body .feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));
+ gap:12px;margin:16px 0}
+.article-body .feature-card{background:var(--card);border:1px solid var(--line-soft);
+ border-radius:12px;padding:13px 16px;box-shadow:0 2px 10px rgba(20,60,130,.06)}
+.article-body .fc-icon{font-size:24px;line-height:1;margin-bottom:8px}
+.article-body .fc-title{font-weight:700;color:var(--accent-deep);font-size:15px;margin-bottom:5px}
+.article-body .fc-desc{font-size:14px;line-height:1.75;color:var(--ink);text-indent:0}
+.article-body .stat-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.article-body .stat-box{flex:1 1 132px;background:var(--card);border:1px solid var(--line-soft);
+ border-radius:12px;padding:13px 10px;text-align:center;box-shadow:0 2px 10px rgba(20,60,130,.05)}
+.article-body .stat-box .num{font-size:26px;font-weight:800;color:var(--accent);line-height:1.2;
+ font-variant-numeric:tabular-nums}
+.article-body .stat-box .label{font-size:12.5px;color:var(--ink-mute);margin-top:4px}
+.article-body .steps{margin:16px 0}
+.article-body .step-item{display:flex;gap:12px;background:var(--card);border:1px solid var(--line-soft);
+ border-radius:12px;padding:11px 16px;margin-bottom:10px;align-items:flex-start}
+.article-body .step-num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--soft);
+ color:var(--accent-deep);font-weight:800;font-size:14px;display:flex;align-items:center;
+ justify-content:center;margin-top:2px}
+.article-body .step-text{font-size:15px;line-height:1.8;color:var(--ink);flex:1;text-indent:0}
+.article-body .problem-list{margin:16px 0}
+.article-body .problem-item{background:var(--card);border:1px solid var(--line-soft);
+ border-left:3px solid var(--accent);border-radius:2px 10px 10px 2px;padding:10px 16px;margin-bottom:9px}
+.article-body .problem-item .icon{margin-right:8px}
+.article-body .problem-item .text{color:var(--ink);font-size:14.5px;line-height:1.75;text-indent:0}
+.article-body .highlight-box,.article-body .tip-box,.article-body .conclusion,.article-body .pain-box{
+ background:var(--qbg);border:1px solid var(--line);border-left:4px solid var(--qbar);
+ border-radius:2px 12px 12px 2px;padding:11px 16px;margin:16px 0}
+.article-body .highlight-box p,.article-body .tip-box p,.article-body .conclusion p,
+.article-body .pain-box p{margin-bottom:8px}
+.article-body .pain-box .pb-title{font-weight:700;color:var(--accent-deep);margin-bottom:6px}
+.article-body .dialog-box{margin:14px 0;padding:11px 16px;background:var(--card);
+ border:1px solid var(--line-soft);border-radius:12px}
+.article-body .dialog-box .user{font-size:13px;color:var(--ink-mute);margin-bottom:4px}
+.article-body .divider{height:1px;background:var(--line);width:60%;margin:20px auto;border:0}
+.article-body .table-wrap{overflow-x:auto;margin:14px 0}
+.article-body .img-placeholder{background:var(--bg-glow2);border:1.5px dashed var(--line);
+ border-radius:12px;padding:18px;text-align:center;margin:16px 0}
+.article-body .img-placeholder .iph{font-size:30px;line-height:1;margin-bottom:8px}
+.article-body .img-placeholder .ipt{font-size:13px;color:var(--ink-mute);font-weight:600;margin-bottom:4px}
+.article-body .img-placeholder p{text-indent:0;margin:4px 0 0;font-size:13px;color:var(--ink-mute)}
+.article-body .card-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+ gap:10px;margin:14px 0}
+.article-body .card-gallery img{border-radius:8px;border:1px solid var(--line-soft);margin:0}
+.article-body .img-caption{margin-top:6px;font-size:12.5px;color:var(--ink-mute);text-align:center;text-indent:0}
+.article-body .ending-quote{background:var(--soft);border-radius:14px;padding:20px 22px;
+ margin:20px 0;text-align:center}
+.article-body .ending-quote p{text-indent:0;line-height:2;font-size:15px;color:var(--ink-strong);
+ font-weight:600;margin-bottom:6px}
+.article-body .ending-quote .sig{margin-top:10px;font-size:13px;color:var(--ink-mute);
+ font-weight:400;line-height:1.6}
+.article-body .tags{margin:18px 0 4px}
+.article-body .tags span{display:inline-block;background:var(--soft);border:1px solid var(--line-soft);
+ color:var(--accent-deep);border-radius:999px;padding:3px 12px;font-size:12.5px;margin:0 8px 8px 0}
+.article-body .article-end-note{margin:24px 0 6px;padding:11px 16px;background:var(--soft);
+ border-radius:12px;text-align:center}
+.article-body .article-end-note p{text-indent:0;margin:4px 0;font-size:13.5px;color:var(--ink-mute)}
+</style>
+<style>
+/* ═══════════ 左右悬浮导航(模板v7.1)═══════════ */
+.rail-edge{position:fixed;top:0;bottom:0;width:16px;z-index:170;cursor:default;background:transparent}
+.rail-edge.eL{left:0}
+.rail-edge.eR{right:0}
+.rpanel{position:fixed;top:58px;bottom:0;width:250px;background:var(--card);
+ border:1px solid var(--line);box-shadow:0 0 34px rgba(10,30,60,.18);z-index:200;
+ display:flex;flex-direction:column;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.rpanel .rph{flex:0 0 auto;display:flex;align-items:center;gap:7px;
+ padding:11px 12px 9px;border-bottom:1px solid var(--line)}
+.rpanel .rph-t{font-size:12.5px;font-weight:800;letter-spacing:1.5px;color:var(--acc-d,var(--ink-strong))}
+ .rpanel .rph-c{font-size:11px;color:var(--ink-mute);background:var(--soft);
+ padding:0 7px;border-radius:999px;font-weight:600}
+ .rpanel .rph-gap{flex:1}
+ .rpanel .rph-b.wide{width:auto;height:20px;padding:0 8px;font-size:10.5px;letter-spacing:.4px}
+.rpanel .rph-x,.rpanel .rph-b{margin-left:auto;border:0;background:var(--soft);color:var(--ink-mute);
+ width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:11px;line-height:1;
+ display:inline-flex;align-items:center;justify-content:center;font-family:inherit;transition:all .15s}
+.rpanel .rph-x{margin-left:0}
+.rpanel .rph-x:hover,.rpanel .rph-b:hover,.rpanel .rph-b.on{background:var(--accent);color:#fff}
+.rpanel.pL{left:0;transform:translateX(-105%);border-left:0;border-radius:0 16px 16px 0}
+.rpanel.pR{right:0;transform:translateX(105%);border-right:0;border-radius:16px 0 0 16px}
+.rpanel.open{transform:none}
+/* 左 · 全部文章（时间已取消，紧凑行） */
+.rpl{flex:1;overflow-y:auto;list-style:none;padding:6px 6px 18px}
+.rpl .it a{display:flex;align-items:center;gap:8px;padding:4.5px 9px;border-radius:7px;
+ transition:background .14s;text-decoration:none}
+.rpl .it a:hover{background:var(--soft)}
+.rpl .it .t{flex:1;min-width:0;font-size:12.6px;color:var(--ink-strong);line-height:1.4;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.rpl .it.cur a{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.rpl .it.cur .t{color:var(--acc-d);font-weight:800}
+/* 右 · 本文大纲（带子标题的 h2 三角折叠，默认收起） */
+.rpt{flex:1;overflow-y:auto;padding:6px 0 18px}
+.rpt .ti{display:block;padding:5px 12px 5px 16px;font-size:12.4px;color:var(--ink);text-decoration:none;
+ line-height:1.5;border-left:3px solid transparent;cursor:pointer;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .13s}
+.rpt .ti:hover{color:var(--acc-d);background:var(--soft);border-left-color:var(--line)}
+.rpt .ti.l2{font-weight:700;color:var(--ink-strong);padding:6px 12px 6px 25px}
+.rpt .ti.l3{padding-left:36px;font-size:12.2px}
+.rpt .ti.l4{padding-left:48px;font-size:11.8px;color:var(--ink-mute)}
+.rpt .ti.cur{color:var(--acc-d);background:var(--soft);border-left-color:var(--accent);font-weight:700}
+.rpt .tg{position:relative}
+.rpt .tg-arr{position:absolute;left:7px;top:7px;width:15px;height:16px;padding:0;border:0;background:none;
+ color:var(--ink-mute);cursor:pointer;font-size:8px;line-height:1;display:flex;align-items:center;justify-content:center;
+ font-family:inherit;transition:color .15s,transform .18s}
+.rpt .tg-arr:hover{color:var(--acc-d)}
+.rpt .tg.open .tg-arr{transform:rotate(90deg)}
+.rpt .tg-c{display:none}
+.rpt .tg.open .tg-c{display:block}
+.rpt .tempty{font-size:12.5px;color:var(--ink-mute);padding:18px 16px;text-align:center}
+/* 顶部阅读进度 */
+.rail-prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:260;opacity:0;
+ background:linear-gradient(90deg,var(--accent),var(--acc-d));
+ box-shadow:0 0 6px var(--accent);transition:opacity .25s;pointer-events:none}
+.rail-prog.on{opacity:1}
+/* 移动端抽屉浮钮 */
+.rfab{display:none}
+.rscrim{display:none}
+.article-body h2,.article-body h3,.article-body h4{scroll-margin-top:84px}
+@media(max-width:900px){
+ .rail-edge{display:none}
+ .rfab{display:inline-flex;position:fixed;top:50%;transform:translateY(-50%);z-index:230;
+  width:30px;height:64px;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
+  color:var(--acc-d);background:var(--card);border:1px solid var(--line2);
+  box-shadow:var(--sh,0 2px 10px rgba(0,0,0,.12));transition:color .15s}
+ .rfab.fL{left:0;border-left:0;border-radius:0 14px 14px 0}
+ .rfab.fR{right:0;border-right:0;border-radius:14px 0 0 14px}
+ .rfab:hover{color:var(--accent)}
+ .rfab.hide{opacity:0;pointer-events:none}
+ .rpanel{width:min(86vw,330px)}
+ .rpanel.pL{transform:translateX(-105%)}
+ .rpanel.pR{transform:translateX(105%)}
+ .rscrim{position:fixed;inset:0;background:rgba(12,20,32,.42);z-index:190;display:none;backdrop-filter:blur(2px)}
+ .rscrim.show{display:block}
+}
+</style>
+</head>
+<body data-x="GKItPUqSchWeZSpWEfSWqM">
+<!-- 顶栏：左侧返回 + 右上极简色点主题切换（默认蓝白，一般不用改）-->
+<nav class="topbar" data-x="em3D5xY02R2EnvkFx0F70N">
+<a class="home" data-x="yEZNMzVaZnlXHlFE38tswT" href="../articles.html">
+<svg data-x="SlhBXeNqEXEX0TJFtfzYdI" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24"><polyline data-x="AnYfPVEnjoQGv1nNbQNmLv" points="15 18 9 12 15 6"></polyline></svg>
+  文章列表
+ </a>
+<span aria-hidden="true" class="top-title" id="topTitle"></span>
+<div aria-label="切换主题" class="theme-switch" data-x="wfzozHDDRIdQIeG1J6bWLn" role="group">
+<div class="ts-dots" data-x="YFtOKhJQWReYxert7lpphd">
+<button aria-label="蓝白" class="ts-dot" data-t="blue" data-x="4IAkEIaIVWxsSvLHBMf99f" title="蓝白" type="button"></button>
+<button aria-label="书卷" class="ts-dot" data-t="book" data-x="7qAX59yjQZV4Qtnu48BvLm" title="书卷" type="button"></button>
+<button aria-label="暗黑" class="ts-dot" data-t="dark" data-x="wQi3BC6JMxE1zjHgAA9BXL" title="暗黑" type="button"></button>
+</div>
+<span class="ts-name" data-x="Qn2mPw3rDvNXdVA7M5U3Zd" id="tsName">蓝白</span>
+</div>
+</nav>
+<article class="article-page" data-x="PrBRD0dyZMVKMIeBpSJ61z">
+<header class="article-head" data-x="BdEIurcoMAqZHRz4sPC0hX">
+<!-- 填这里：文章标题 / 日期 -->
+<h1 class="article-title" data-x="om5ca8C8O8AdccIuudcIGD">个人主页开发探索</h1>
+<div class="article-meta" data-x="UyorfxPljUyc9pw2w0CUed">
+<span class="article-date" data-x="c7nnhluerB783EAIONF7nF">2026年6月15日</span>
+</div>
+</header>
+<!-- 正文：段落写 <p>（自动首行缩进），强调用 <strong>，
+      格式示例用 <span class="fmt">，金句用 <blockquote>，
+      图片用 <figure><img src="images/xx.jpg" data-cap="图注"><figcaption>图注</figcaption></figure> -->
+<div class="article-body" data-x="Tkdj9CET6Rsz9EpTHO5gAO">
+
+<p>很早以前就想搭建一个个人主页，基于两个方面考虑，一直没有实现。一个是学习成本比较高，以前尝试过用 PHP，但是需要很强的代码能力，包括前端和后端。第二方面是没有一个站点可以免费发布。也就是说当时用 PHP 通过模板生成的网站只能在本地运行，不能够放在网上让别人可观可看。随着 AI 的崛起，我又重新将这个事情纳入了考虑。于是我通过豆包和 GitHub 实现了我之前的想法，我做的网页如下图。我把我的尝试过程和解决方案发出来，方便大家学习。</p><figure><img alt="image" src="images/image-20260616152130-3sw67bw.png"/></figure><h2>一、和豆包对话过程（不断迭代和试错）</h2><h3>迭代1：选择托管平台</h3><p><strong>我的问题：</strong>帮我找找免费静态网页托管平台。</p><p><strong>豆包回答：</strong>国内可用 Gitee Pages、Zeabur 免费托管静态网页，海外选 GitHub Pages、Cloudflare、Netlify，均无需备案，支持直接上传部署。</p><p><strong>我的尝试：</strong>我选择了GitHub。</p><h3>迭代2：通过GitHub搭建个人网页完整过程</h3><p><strong>我的问题：</strong>我想用我的github做我的一个个人主页，你帮我实现，教我。我已经注册并登录了github了，进入主页后需要做什么。</p><p><strong>豆包回答：</strong></p><p>GitHub Pages 搭建个人主页完整手把手教程（你已登录 GitHub，从首页开始操作）</p><p><strong>一、第一步：创建专属网站仓库（最关键，名字不能错）</strong></p><figure><img alt="Snipaste_2026-06-16_16-03-52" src="images/Snipaste_2026-06-16_16-03-52-20260616160537-3cbg5kz.png"/><figcaption>▲ 新建仓库填写页面</figcaption></figure><ol>
+<li>
+<p>页面右上角，点 <strong>+ 下拉箭头 → New repository（新建仓库）</strong></p>
+</li>
+<li>
+<p>仓库名称严格填写：<strong>你的 GitHub 用户名.github.io</strong></p>
+<ul start="0">
+<li>
+<p>举例：你 GitHub 账号叫 <code>lisi123</code>，仓库名必须是 <code>lisi123.github.io</code>，一字不差、大小写匹配</p>
+</li>
+</ul>
+</li>
+<li>
+<p>配置选项：</p>
+<ul start="0">
+<li>
+<p>Visibility（可见性）：选 <strong>Public（公开）</strong>（私有仓库免费版不能开 Pages）</p>
+</li>
+<li>
+<p>Add a README file：可以勾选（方便备注）</p>
+</li>
+<li>
+<p>Add .gitignore/ License：全部选 None 不用管</p>
+</li>
+</ul>
+</li>
+<li>
+<p>点击最下方 <strong>Create repository</strong>创建仓库</p>
+</li>
+</ol><p><strong>二、第二步：上传首页文件 index.html（两种方法，新手推荐网页上传）</strong></p><p>方式 1：网页直接创建文件（不用装 Git 软件，零门槛）</p><figure><img alt="image" src="images/tplva9rns2rl98pc_smart_face_cropv1512384.png"/><figcaption>▲ 仓库内添加文件按钮</figcaption></figure><ol>
+<li>
+<p>进入刚建好的 <code>xxx.github.io</code> 仓库主页</p>
+</li>
+<li>
+<p>点击绿色按钮 <strong>Add file → Create new file</strong></p>
+</li>
+<li>
+<p>文件名输入：<strong>index.html</strong>（必须叫这个，网站默认打开它）</p>
+</li>
+<li>
+<p>下方大编辑框粘贴下面基础测试代码：</p>
+</li>
+</ol><pre class="code-block"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;我的个人主页&lt;/title&gt;
+    &lt;style&gt;
+        body{text-align:center;margin-top:100px;font-family:微软雅黑;}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;欢迎来到我的个人主页&lt;/h1&gt;
+    &lt;p&gt;这是用GitHub Pages免费搭建的网站&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre><ol start="5">
+<li>
+<p>滑到最底部，Commit changes（提交），直接点 <strong>Commit new file</strong>保存文件</p>
+</li>
+</ol><p>方式 2：本地写好文件批量上传（适合后续多文件：css、图片、js）</p><ol>
+<li>
+<p>本地电脑建好文件夹，里面放 <code>index.html</code>、样式 css、图片等所有网页素材</p>
+</li>
+<li>
+<p>仓库页面点 Add file → Upload files</p>
+</li>
+<li>
+<p>把本地文件夹里全部文件拖进上传框，底部提交保存</p>
+</li>
+</ol><p><strong>三、第三步：开启 GitHub Pages 部署功能</strong></p><ol>
+<li>
+<p>在仓库顶部导航栏，点击 <strong>Settings（设置）</strong></p>
+</li>
+<li>
+<p>左侧菜单栏往下滑，找到 <strong>Pages</strong>点开配置页</p>
+</li>
+<li>
+<p>Build and deployment（部署来源）设置：</p>
+<ul start="0">
+<li>
+<p>Source 选择：<strong>Deploy from a branch</strong></p>
+</li>
+<li>
+<p>Branch（分支）：选 <strong>main</strong></p>
+</li>
+<li>
+<p>Folder（文件夹）：选 <strong>/(root) 根目录</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p>点击蓝色 <strong>Save</strong>保存配置</p>
+</li>
+</ol><p><strong>四、第四步：访问你的个人网站</strong></p><ol>
+<li>
+<p>保存后等待 <strong>1–3 分钟</strong>（GitHub 后台打包部署）</p>
+</li>
+<li>
+<p>浏览器打开地址：<code>https://你的用户名.github.io</code></p>
+</li>
+<li>
+<p>刷新页面就能看到你写的 index.html 内容；如果 404，多等一会再刷新</p>
+</li>
+</ol><p><strong>五、后续美化 &amp; 更新网站</strong></p><ol>
+<li>
+<p><strong>修改页面内容</strong></p>
+<ul start="0">
+<li>
+<p>网页端：点开 index.html，点铅笔编辑图标，改完提交</p>
+</li>
+<li>
+<p>熟练后可以装 Git，本地改完一键推送更新</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>套好看模板（不用手写 HTML）</strong>
+网上搜 GitHub Pages 免费模板（Jekyll 模板、静态 HTML 模板），下载全部文件替换仓库里的文件，重新提交即可一键换皮肤</p>
+<ol>
+<li>
+<p><strong>区分两个 “主页” 别搞混</strong></p>
+<ul start="0">
+<li>
+<ol>
+<li>
+<p><code>xxx.github.io</code> 是<strong>独立网站</strong>（浏览器打开的完整网页站点）</p>
+</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>
+<p>和用户名同名仓库的 README，是你 GitHub 账号头像下面的简介卡片（只是资料展示，不是独立网址网站）</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol><p><strong>常见踩坑提醒</strong></p><ol>
+<li>
+<p>仓库名字写错、少 <code>.github.io</code> → 网站无法生成</p>
+</li>
+<li>
+<p>文件不叫 index.html、放在子文件夹里 → 打开 404 空白</p>
+</li>
+<li>
+<p>仓库设为 Private 私有 → Pages 功能直接不可用</p>
+</li>
+<li>
+<p>刚保存配置立刻访问大概率 404，一定要等几分钟部署完成</p>
+</li>
+</ol><p>需要我给你一份可直接复制、带头像 / 技能 / 项目展示的完整美化 HTML 主页代码吗？</p><p><strong>我的尝试：</strong>我用他的方法实现我的第一个互联网可以访问的个人网页。但是我想做得更漂亮。</p><h3>迭代3：找好用的模板</h3><p><strong>我的问题：</strong>我想搭建个人主页，完全不会写代码，网上模板乱七八糟，很多收费、带广告、不能用在GitHub，请问哪里有靠谱的免费模板？</p><p><strong>豆包回答：</strong>专门适配GitHub/Gitee Pages的<strong>纯静态HTML免费模板站</strong>，无后端、无版权、解压即用，推荐3个优质合集：HTML5 UP：极简高级、代码干净、无冗余；模板之家：国内海量免费静态模板，中文分类、下载不限速；Templatemo：上千套自适应模板，支持电脑手机双端。</p><p><strong>我的尝试：</strong>我试了下里面的，在HTML5 UP（https://html5up.net/）这个网站上有很多模板，我选择了自己喜欢的模板，并免费下载。</p><p><strong>关键避坑优化</strong>：只下载「纯静态HTML模板」，坚决避开PHP、动态后端模板，从源头避免无法部署、网站报错的问题。</p><h3>迭代4：将模板部署到我的github上</h3><p><strong>我的问题：</strong>我已经下载了一个模板，解压里面内容如图，我如何将他部署到我的github主页上呢，一步一步教我，我是小白。</p><p>　　<strong>豆包回答：</strong>你的 GitHub 仓库名字必须是：<code>你的github用户名.github.io</code>，仓库是<strong>Public 公开</strong>，没有的话先按第一步新建仓库</p><p><strong>步骤 1：新建 / 确认专属网站仓库</strong></p><ol>
+<li>
+<p>登录 GitHub 网页，右上角点 <code>+</code> → <code>New repository</code></p>
+</li>
+<li>
+<p>Repository name 严格填写：<code>你的用户名.github.io</code>（一个字符都不能错）</p>
+</li>
+<li>
+<p>勾选 <code>Public</code>（私有免费版无法开启 Pages）</p>
+</li>
+<li>
+<p>不用勾选 README、gitignore，直接点底部 <strong>Create repository</strong></p>
+</li>
+</ol><p><strong>步骤 2：上传全部模板文件到仓库（网页拖拽上传，不用装 Git 软件）</strong></p><ol>
+<li>
+<p>进入刚创建好的 <code>xxx.github.io</code> 仓库主页</p>
+</li>
+<li>
+<p>点击绿色按钮 <code>Add file</code> → <code>Upload files</code></p>
+</li>
+<li>
+<p>打开你电脑里的 <code>MeFamily</code> 文件夹</p>
+</li>
+<li>
+<p><strong>全选里面所有内容</strong>：</p>
+<ul start="0">
+<li>
+<p>两个文件夹：<code>assets</code>、<code>forms</code></p>
+</li>
+<li>
+<p>所有<code>.html</code>文件、Readme.txt  
+✅ 不要只上传 MeFamily 文件夹本身，要上传文件夹<strong>里面的全部东西</strong></p>
+</li>
+</ul>
+<ol>
+<li>
+<p>把选中的一堆文件 / 文件夹，直接拖到 GitHub 网页的上传虚线框里</p>
+</li>
+<li>
+<p>滑到页面最底部：</p>
+<ul start="0">
+<li>
+<p>Commit message 随便写：<code>上传个人主页模板文件</code></p>
+</li>
+<li>
+<p>直接点 <strong>Commit changes</strong>等待上传完成</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol><p><strong>步骤 3：开启 GitHub Pages 部署服务</strong></p><ol>
+<li>
+<p>仓库顶部导航栏，点 <strong>Settings</strong>（设置）</p>
+</li>
+<li>
+<p>左侧菜单栏往下滚动，找到并点开 <strong>Pages</strong></p>
+</li>
+<li>
+<p>在 Build and deployment 区域配置：</p>
+<ul start="0">
+<li>
+<p>Source：选择 <code>Deploy from a branch</code></p>
+</li>
+<li>
+<p>Branch：下拉选 <code>main</code></p>
+</li>
+<li>
+<p>Folder：选根目录 <code>/(root)</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>点击蓝色 <strong>Save</strong>保存设置</p>
+</li>
+</ol><p><strong>步骤 4：等待生效，打开你的网站</strong></p><ol>
+<li>
+<p>保存后耐心等待 <strong>2\~5 分钟</strong>（GitHub 后台编译部署）</p>
+</li>
+<li>
+<p>浏览器访问地址：<code>https://你的用户名.github.io</code></p>
+</li>
+<li>
+<p>刷新页面就能看到这个 MeFamily 家庭风格主页了</p>
+<ul start="0">
+<li>
+<p>如果出现 404：多等一会再刷新；检查仓库名是否正确、文件有没有上传到根目录、分支是不是 main</p>
+</li>
+</ul>
+</li>
+</ol><p><strong>小白修改内容简易教程（改名字、图片、文字）</strong></p><ol>
+<li>
+<p>回到仓库文件列表，点 <code>index.html</code>（首页文件）</p>
+</li>
+<li>
+<p>点右上角铅笔图标（编辑）</p>
+</li>
+<li>
+<p>里面可以直接改文字、电话、介绍；图片都存在<code>assets</code>文件夹里</p>
+</li>
+<li>
+<p>改完滑到底点 Commit changes 保存，几分钟后网站自动更新</p>
+</li>
+</ol><p><strong>关键避坑 3 点</strong></p><ol>
+<li>
+<p>❌ 错误：把整个 MeFamily 文件夹拖上去  
+✅ 正确：打开 MeFamily，选中里面所有子文件子文件夹再上传</p>
+<ol>
+<li>
+<p>❌ 仓库名少打.github.io、大小写写错</p>
+<p>✅ 必须和用户名完全一致：用户名.github.io</p>
+<ol>
+<li>
+<p>❌ 仓库设为 Private 私有</p>
+<p>✅ 免费 GitHub 账号只有 Public 仓库能用 Pages</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol><p><strong>我的尝试：</strong>我按照上面方法尝试后，提示：Yowza, that’s a lot of files. Try uploading fewer than 100 at a time.文豆包发现是文件夹中子文件不能超过100个。豆包给了我两个解决方法：方案一：分 2~3 批分批网页上传（零安装，推荐小白）；方案二：本地压缩打包一次性上传（更快）。我试了这两个方法都很繁琐。</p><h3>迭代5：使用git工具将模板部署到我的github上</h3><p><strong>我的问题：</strong>有没有方法本地修改我的主页程序后自动上传呢，让线上和本地同步修改，有没有这个功能。</p><p><strong>豆包回答：</strong>有的，用 Git 工具就能实现<strong>本地改完一键同步线上</strong>，本地和 GitHub 仓库双向同步，改完敲两行命令就自动上传更新，下面给小白一套全程傻瓜安装配置步骤。</p><p><strong>一、第一步：安装 Git 软件（Windows 系统）</strong></p><ol>
+<li>
+<p>打开 Git 官网下载：<a href="https://link.wtturl.cn/?target=https%3A%2F%2Fgit-scm.com%2Fdownload%2Fwin&amp;scene=im&amp;aid=582478&amp;lang=zh" rel="noopener" target="_blank">https://git-scm.com/download/win</a></p>
+</li>
+<li>
+<p>运行安装包，全程<strong>全部点下一步默认安装</strong>，不用修改任何设置</p>
+</li>
+<li>
+<p>安装完成后，在电脑空白处右键，能看到两个新选项：<code>Git Bash Here</code>、<code>Git GUI Here</code>，代表安装成功</p>
+</li>
+</ol><h2><strong>二、第二步：配置你的 GitHub 账号信息（只做一次）</strong></h2><ol>
+<li>
+<p>随便找一个电脑空白文件夹，右键 → <code>Git Bash Here</code>，弹出黑色命令窗口</p>
+</li>
+<li>
+<p>依次复制粘贴下面两行，分别替换成你自己的信息，每行输完按回车</p>
+</li>
+</ol><pre class="code-block"><code>git config --global user.name "Chears77"
+</code></pre><pre class="code-block"><code>git config --global user.email "你注册GitHub用的邮箱"
+</code></pre><p>这一步是绑定你的提交身份，只需要设置一次。</p><h2><strong>三、第三步：把线上仓库完整克隆下载到本地</strong></h2><ol>
+<li>
+<p>回到你的 <code>Chears77.github.io</code> 仓库主页，点绿色 <strong>Code</strong> 按钮</p>
+</li>
+<li>
+<p>复制 HTTPS 地址：<code>https://github.com/Chears77/Chears77.github.io.git</code></p>
+</li>
+<li>
+<p>在电脑里新建一个专门放网站的文件夹（比如命名 <code>本地主页文件</code>），进入文件夹，右键打开 <code>Git Bash Here</code></p>
+</li>
+<li>
+<p>粘贴克隆命令，回车下载全部文件：</p>
+</li>
+</ol><pre class="code-block"><code>git clone https://github.com/Chears77/Chears77.github.io.git
+</code></pre><ol start="5">
+<li>
+<p>下载完成，文件夹里会多出一个 <code>Chears77.github.io</code> 文件夹，里面就是完整网站源码（和线上仓库一模一样）</p>
+</li>
+</ol><h2><strong>四、日常：本地修改 → 一键同步线上（核心操作）</strong></h2><p>1. 本地修改内容</p><p>　　打开 <code>Chears77.github.io</code> 文件夹，用记事本 / VS Code 打开 html、图片随便修改，所有改动只在本地电脑，不会影响线上网站。</p><p>2. 改完三步命令推送线上同步</p><ol>
+<li>
+<p>在 <code>Chears77.github.io</code> 文件夹内部空白处，右键打开 <code>Git Bash Here</code></p>
+</li>
+<li>
+<p>第一步：标记所有改动文件</p>
+</li>
+</ol><pre class="code-block"><code>git add .
+</code></pre><ol start="3">
+<li>
+<p>第二步：写本次修改备注（随便写，比如 “修改首页自我介绍”）</p>
+</li>
+</ol><pre class="code-block"><code>git commit -m "修改首页自我介绍文字"
+</code></pre><ol start="4">
+<li>
+<p>第三步：推送到 GitHub 线上仓库，网站自动更新</p>
+</li>
+</ol><pre class="code-block"><code>git push
+</code></pre><p>　　推送成功后，等待 1-3 分钟，你的 <code>https://chears77.github.io</code> 网站就刷新成修改后的内容。</p><h2><strong>五、反向同步：线上改了内容，拉回本地</strong></h2><p>如果有时候你在 GitHub 网页在线改了文件，本地文件落后了，打开 Git Bash 输入拉取命令一键同步：</p><pre class="code-block"><code>git pull
+</code></pre><p>执行完本地文件就和线上完全一致。</p><h2><strong>六、极简通俗总结</strong></h2><ol>
+<li>
+<p><code>git clone</code>：第一次把线上整个网站下载到电脑（只运行 1 次）</p>
+</li>
+<li>
+<p>平时改内容：本地改文件 → <code>git add .</code> → <code>git commit -m "备注"</code> → <code>git push</code> 三步上传</p>
+</li>
+<li>
+<p>线上更新过：<code>git pull</code> 拉最新文件到本地</p>
+</li>
+</ol><p><strong>新手补充小便利</strong></p><ol>
+<li>
+<p>推荐安装轻量代码编辑器 VS Code：<a href="https://link.wtturl.cn/?target=https%3A%2F%2Fcode.visualstudio.com%2F&amp;scene=im&amp;aid=582478&amp;lang=zh" rel="noopener" target="_blank">https://code.visualstudio.com/</a>
+打开本地网站文件夹，改 html、css 有颜色标注，比记事本好看好改；VS Code 自带图形化 Git 按钮，甚至可以不用敲命令，点鼠标就能提交推送。</p>
+<ol>
+<li>
+<p>首次<code>git push</code>可能弹窗让你登录 GitHub 账号，输入账号 + 个人访问令牌（替代密码），令牌获取教程我可以发给你。</p>
+</li>
+<li>
+<p>不用担心改错：所有提交都有记录，随时可以回退到任意历史版本。</p>
+</li>
+</ol>
+</li>
+</ol><p>需要我给你一份 VS Code 图形化同步的鼠标点击操作（完全不用敲命令）吗？</p><p>我的尝试：我下载安装了VS Code，修改我的本地html后，通过git工具可以很迅速上传更改后的程序。但是有的时候网络不是很好，太大的话容易上传不成功。</p><h3>零基础搭建个人主页【完整实操步骤】</h3><p>全程无门槛，跟着步骤一步步操作，人人都能成功！</p><h3>步骤1：准备工具与账号</h3><ol>
+<li>
+<p>注册GitHub账号（免费）；</p>
+</li>
+<li>
+<p>电脑安装Git工具（用于文件推送同步）；</p>
+</li>
+<li>
+<p>下载一套<strong>纯静态HTML响应式主页模板</strong>。</p>
+</li>
+</ol><h3>步骤2：创建专属主页仓库（核心关键）</h3><ol>
+<li>
+<p>GitHub右上角点击「New repository」新建仓库；</p>
+</li>
+<li>
+<p>仓库名称<strong>必须严格填写：用户名.github.io</strong>（例如：chears77.github.io）；</p>
+</li>
+<li>
+<p>选择 Public 公开仓库，勾选初始化文件；</p>
+</li>
+<li>
+<p>创建完成后，复制仓库HTTPS地址。</p>
+</li>
+</ol><h3>步骤3：本地搭建网站文件夹</h3><ol>
+<li>
+<p>电脑新建专属文件夹，作为本地网站根目录；</p>
+</li>
+<li>
+<p>Git克隆远程仓库到本地：<code>git clone 仓库地址</code>；</p>
+</li>
+<li>
+<p>将下载好的模板<strong>内层所有文件</strong>，全部复制粘贴到本地根目录（保证index.html在最外层）。</p>
+</li>
+</ol><h3>步骤4：自定义修改主页内容</h3><ol>
+<li>
+<p>用记事本/VS Code打开 index.html；</p>
+</li>
+<li>
+<p>自由修改主页文字、介绍、个人信息、页脚、配色；</p>
+</li>
+<li>
+<p>替换images文件夹内的图片，自定义专属主页素材；</p>
+</li>
+<li>
+<p>可自由新增页面按钮、功能模块，布局完全自定义。</p>
+</li>
+</ol><h3>步骤5：Git推送文件到线上仓库</h3><ol>
+<li>
+<p>文件夹内打开Git Bash；</p>
+</li>
+<li>
+<p>依次输入三步指令完成推送：</p>
+</li>
+</ol><p>　　<code>git add .</code></p><p>　　<code>git commit -m "更新个人主页内容"</code></p><p>　　<code>git push</code></p><h3>步骤6：开启GitHub Pages部署网站</h3><ol>
+<li>
+<p>打开GitHub对应仓库，进入 Settings；</p>
+</li>
+<li>
+<p>下滑找到 Pages 部署选项；</p>
+</li>
+<li>
+<p>部署来源选择：Deploy from a branch；</p>
+</li>
+<li>
+<p>分支选择 main，目录选择根目录 /(root)；</p>
+</li>
+<li>
+<p>保存设置，等待2-5分钟自动部署完成。</p>
+</li>
+</ol><h3>最终成型：网站仓库树状结构（标准规范版）</h3><p>这是搭建完成后、可直接正常运行的<strong>标准主页文件结构</strong>，新手直接对照复刻即可，无报错、无错乱：</p><pre class="code-block"><code>Chears77.github.io/
+├─ index.html                # 网站首页（核心主页面）
+├─ left-sidebar.html         # 侧边栏子页面
+├─ right-sidebar.html        # 侧边栏子页面
+├─ no-sidebar.html           # 空白布局子页面
+├─ LICENSE.txt               # 开源协议文件
+├─ assets/                   # 网站核心资源文件夹
+│  ├─ css/                   # 样式文件（页面配色、布局）
+│  ├─ js/                    # 脚本文件（页面动画、交互）
+│  ├─ sass/                  # 样式源文件
+│  └─ webfonts/              # 网页字体文件
+├─ images/                   # 所有主页图片素材文件夹
+│  ├─ header.jpg
+│  ├─ pic01.jpg
+│  ├─ pic02.jpg
+│  └─ 各类展示图片
+└─ 静态模板自带页面文件
+</code></pre><h3>最终实现效果</h3><ol>
+<li>
+<p>✅ <strong>永久免费</strong>：无需服务器、无需域名、无需备案，零成本搭建；</p>
+</li>
+<li>
+<p>✅ 双端自适应：电脑、手机打开自动适配屏幕，无错位、无滚动错乱；</p>
+</li>
+<li>
+<p>✅ 完全自定义：文字、图片、布局、配色全部可自行修改；</p>
+</li>
+<li>
+<p>✅ 稳定可更新：后续随时修改内容、更换模板，一键推送更新；</p>
+</li>
+<li>
+<p>✅ 公开可访问：生成专属公开网址，任何人都能打开浏览个人主页；</p>
+</li>
+<li>
+<p>✅ 零基础友好：全程无需写代码，套用模板即可完成搭建。</p>
+</li>
+</ol><h3>新手总结避坑指南（必看）</h3><ol>
+<li>
+<p>所有文件<strong>禁止中文命名</strong>，是图片空白、样式错乱的最大原因；</p>
+</li>
+<li>
+<p>index.html 必须在根目录，绝对不能嵌套文件夹；</p>
+</li>
+<li>
+<p>大批量更新模板优先使用Git缓存配置，避免推送超时；</p>
+</li>
+<li>
+<p>页面更新不生效，一定用 <strong>Ctrl+F5强制清缓存</strong>；</p>
+</li>
+<li>
+<p>追求稳定优先用Gitee Pages，国内访问秒开，无推送报错。</p>
+</li>
+</ol><h2>七、下步考虑</h2><p>由于github上传速度慢，网速不稳定，下步尝试在国内托管平台Gitee Pages上搭建个人主页（Gitee Pages上搭建个人主页需要使命认证）。</p><p>后续写20260616用Gitee Pages搭建个人主页（github上传网页数据太慢）</p>
+</div>
+<!-- 页脚：长分隔线 + 一行落款 -->
+<footer class="article-footer" data-x="V8VtpgsEXEz29KuCcPKISH">
+<div class="footer-rule" data-x="3mSRhC9BvYTjoJ8vFkQyIF"></div>
+<div class="colophon" data-x="hYxeLEhSeVi1wXudlMdzMk">
+<span class="dash" data-x="DSG9AqLIg2Nb7Fef4oIFNQ">—</span> <span class="co-name" data-x="40san0UbCGAw2fVssCMmQC">沙溪子</span> · <a class="co-mail" data-x="yjx2zwif7CHEguoTIqdfG7" href="mailto:Chears77@163.com">Chears77@163.com</a> <span class="dash" data-x="VUoaW6yROFGAfeUDVjgxj9">—</span>
+</div>
+</footer>
+</article>
+<!-- 灯箱：点击放大，之后滚轮/按钮缩放、按住拖动、双击复位（保留即可不用改）-->
+<div class="lightbox" id="lightbox">
+<div class="lb-close" onclick="closeLb()" title="关闭">×</div>
+<div class="lb-stage" id="lbStage">
+<img alt="" draggable="false" id="lbImg" src=""/>
+</div>
+<div class="lb-cap" id="lbCap"></div>
+<div class="lb-tools">
+<button id="lbZo" title="缩小（或滚轮向下）" type="button">−</button>
+<span class="lb-scale" id="lbScale">100%</span>
+<button id="lbZi" title="放大（或滚轮向上）" type="button">+</button>
+<button id="lbR" title="复位（双击也可）" type="button">⟲</button>
+</div>
+</div>
+<!-- ═══════ 左右悬浮导航:左侧文章目录 / 右侧本文大纲(模板v7.1)═══════ -->
+<aside aria-label="全部文章" class="rpanel pL" id="panelL">
+<div class="rph">
+<span class="rph-t">全部文章</span><span class="rph-c" id="cntL">0</span>
+<button class="rph-b" id="pinL" title="停靠：让面板常驻" type="button">钉</button>
+<button class="rph-x" id="xL" title="关闭" type="button">×</button>
+</div>
+<ul class="rpl" id="listL"></ul>
+</aside>
+<aside aria-label="本文大纲" class="rpanel pR" id="panelR">
+<div class="rph">
+<span class="rph-t">本文大纲</span>
+<span class="rph-gap"></span>
+<button class="rph-b wide" id="expR" title="展开全部子标题" type="button">全展</button>
+<button class="rph-b" id="pinR" title="停靠：让面板常驻" type="button">钉</button>
+<button class="rph-x" id="xR" title="关闭" type="button">×</button>
+</div>
+<nav class="rpt" id="tocR"></nav>
+</aside>
+<div class="rail-edge eL" id="edgeL" title="全部文章"></div>
+<div class="rail-edge eR" id="edgeR" title="本文大纲"></div>
+<button class="rfab fL" id="fabL" title="全部文章" type="button">☰</button>
+<button class="rfab fR" id="fabR" title="本文大纲" type="button">≡</button>
+<div class="rscrim" id="scrimRails"></div>
+<div class="rail-prog" id="railProg"></div>
+<script>
+/* 主题切换（色点）：存 localStorage，默认蓝白 */
+(function(){
+ var KEY='axjf-note-theme-v5', VALID=['blue','book','dark'];
+ var NAME={blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var dots=document.querySelectorAll('.ts-dot');
+ var nameEl=document.getElementById('tsName');
+ function apply(t){
+  if(VALID.indexOf(t)<0)t='blue';
+  document.documentElement.setAttribute('data-theme',t);
+  if(nameEl) nameEl.textContent=NAME[t];
+  dots.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t);});
+  try{localStorage.setItem(KEY,t);}catch(e){}
+ }
+ dots.forEach(function(d){d.addEventListener('click',function(){apply(d.getAttribute('data-t'));});});
+ var saved='blue';
+ try{saved=localStorage.getItem(KEY)||'blue';}catch(e){}
+ apply(saved);
+})();
+
+/* 滚动吸顶标题：正文标题滚出可视区后，淡入顶栏中间显示（取自 h1） */
+(function(){
+ var bar=document.getElementById('topTitle'); if(!bar)return;
+ var h1=document.querySelector('.article-title');
+ var head=document.querySelector('.article-head');
+ if(h1 && h1.textContent.trim()) bar.textContent=h1.textContent.trim();
+ function upd(){
+  if(!head) return;
+  var limit=head.offsetTop+head.offsetHeight-70; /* 标题区底部接近顶栏下缘时显示 */
+  document.body.classList.toggle('scrolled-title', window.scrollY>limit);
+ }
+ var ticking=false;
+ function onScroll(){ if(ticking)return; ticking=true;
+  requestAnimationFrame(function(){ upd(); ticking=false; }); }
+ window.addEventListener('scroll', onScroll, {passive:true});
+ window.addEventListener('resize', upd);
+ upd();
+})();
+
+/* 灯箱增强：点击放大 · 滚轮/按钮缩放（以指针为中心）· 按住拖动平移 · 双击复位 */
+(function(){
+ var lb=document.getElementById('lightbox');
+ var stage=document.getElementById('lbStage');
+ var img=document.getElementById('lbImg');
+ var cap=document.getElementById('lbCap');
+ var scEl=document.getElementById('lbScale');
+ var MIN=.5, MAX=5, s=1, tx=0, ty=0;
+
+ function applyT(anim){
+  img.style.transition=anim?'transform .2s cubic-bezier(.22,.8,.36,1)':'none';
+  img.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s.toFixed(3)+')';
+  if(scEl) scEl.textContent=Math.round(s*100)+'%';
+ }
+ function bound(){
+  var w=stage.clientWidth, h=stage.clientHeight;
+  if(s<=1.0001){ tx=0; ty=0; return; }
+  var mx=Math.max((img.clientWidth*s-w)/2,0)+40;
+  var my=Math.max((img.clientHeight*s-h)/2,0)+40;
+  tx=Math.max(-mx,Math.min(mx,tx));
+  ty=Math.max(-my,Math.min(my,ty));
+ }
+ function reset(){ s=1; tx=0; ty=0; applyT(true); }
+ function zoomBy(f,px,py,anim){
+  if(typeof px!=='number'){ px=0; py=0; }
+  var ns=Math.max(MIN,Math.min(MAX,s*f));
+  if(ns===s){ applyT(anim); return; }
+  var k=ns/s; s=ns;
+  tx=px-(px-tx)*k; ty=py-(py-ty)*k; /* 保持指针下的画面不动 */
+  bound(); applyT(anim);
+ }
+ function openLb(src,alt){
+  reset(); img.src=src; cap.textContent=alt||'';
+  lb.classList.add('active'); document.body.style.overflow='hidden';
+ }
+ window.closeLb=function(){
+  lb.classList.remove('active'); document.body.style.overflow='';
+  img.classList.remove('panning');
+ };
+ document.querySelectorAll('.article-body figure img').forEach(function(im){
+  im.addEventListener('click',function(){
+   openLb(im.src, im.getAttribute('data-cap')||im.alt||'');
+  });
+ });
+
+ /* 滚轮缩放（以鼠标位置为中心） */
+ stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var r=stage.getBoundingClientRect();
+  zoomBy(Math.exp(-e.deltaY*0.0016), e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, false);
+ }, {passive:false});
+
+ /* 鼠标拖动平移 */
+ var down=null;
+ img.addEventListener('mousedown',function(e){
+  if(e.button!==0)return;
+  e.preventDefault();
+  down={x:e.clientX,y:e.clientY,tx:tx,ty:ty};
+  img.classList.add('panning');
+ });
+ window.addEventListener('mousemove',function(e){
+  if(!down)return;
+  tx=down.tx+e.clientX-down.x; ty=down.ty+e.clientY-down.y;
+  bound(); applyT(false);
+ });
+ window.addEventListener('mouseup',function(){ down=null; img.classList.remove('panning'); });
+
+ /* 双击：放大 / 复位 */
+ img.addEventListener('dblclick',function(e){
+  if(s>1.01){ reset(); return; }
+  var r=stage.getBoundingClientRect();
+  zoomBy(2.2, e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, true);
+ });
+
+ /* 工具按钮 */
+ document.getElementById('lbZi').addEventListener('click',function(){ zoomBy(1.4,0,0,true); });
+ document.getElementById('lbZo').addEventListener('click',function(){ zoomBy(1/1.4,0,0,true); });
+ document.getElementById('lbR').addEventListener('click',reset);
+
+ /* 触屏：单指平移 · 双指捏合缩放 */
+ var touch=null;
+ stage.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  if(e.touches.length===1){
+   touch={mode:'p',x:e.touches[0].clientX,y:e.touches[0].clientY,tx:tx,ty:ty};
+  } else if(e.touches.length===2){
+   var a=e.touches[0],b=e.touches[1];
+   touch={mode:'z',d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),
+    mx:(a.clientX+b.clientX)/2,my:(a.clientY+b.clientY)/2,s:s,tx:tx,ty:ty};
+  }
+ }, {passive:false});
+ stage.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  if(!touch)return;
+  if(touch.mode==='z' && e.touches.length>=2){
+   var a=e.touches[0],b=e.touches[1];
+   var d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;
+   var mx=(a.clientX+b.clientX)/2, my=(a.clientY+b.clientY)/2;
+   var ns=Math.max(MIN,Math.min(MAX, touch.s*d/touch.d));
+   var k=ns/touch.s;
+   var r=stage.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+   s=ns;
+   /* 以两指中点为中心缩放，缩放后中点仍对准原位置 */
+   tx=(mx-cx)*(1-k)+k*touch.tx;
+   ty=(my-cy)*(1-k)+k*touch.ty;
+   bound(); applyT(false);
+  } else if(touch.mode==='p' && e.touches.length===1){
+   var t=e.touches[0];
+   tx=touch.tx+(t.clientX-touch.x); ty=touch.ty+(t.clientY-touch.y);
+   bound(); applyT(false);
+  }
+ }, {passive:false});
+ function touchEnd(){ touch=null; }
+ stage.addEventListener('touchend',touchEnd);
+ stage.addEventListener('touchcancel',touchEnd);
+
+ /* 点击图片周边空白关闭 · 键盘快捷键 */
+ lb.addEventListener('click',function(e){
+  if(e.target===stage || e.target===lb) closeLb();
+ });
+ document.addEventListener('keydown',function(e){
+  if(!lb.classList.contains('active'))return;
+  if(e.key==='Escape') closeLb();
+  else if(e.key==='+'||e.key==='=') zoomBy(1.4,0,0,true);
+  else if(e.key==='-'||e.key==='_') zoomBy(1/1.4,0,0,true);
+  else if(e.key==='0') reset();
+ });
+ window.addEventListener('resize',function(){ bound(); applyT(false); });
+})();
+</script>
+<script src="../articles.data.js"></script>
+<script>
+/* ═══════════ 左右悬浮导航逻辑(模板v7.1)═══════════ */
+(function(){
+ if(!window.__AXJF) window.__AXJF=[];
+ var edgeL=document.getElementById('edgeL'),edgeR=document.getElementById('edgeR');
+ var pL=document.getElementById('panelL'),pR=document.getElementById('panelR');
+ var fabL=document.getElementById('fabL'),fabR=document.getElementById('fabR');
+ var scrim=document.getElementById('scrimRails');
+ var prog=document.getElementById('railProg');
+ var pinL=document.getElementById('pinL'),pinR=document.getElementById('pinR');
+ var rp=document.documentElement.getAttribute('data-rp')||'../';
+ var isMob=function(){return window.innerWidth<=900;};
+ var t1=t2=null;
+  function savePins(){try{localStorage.setItem('axjf-rail-pin',JSON.stringify({L:pL.classList.contains('pin'),R:pR.classList.contains('pin')}))}catch(e){}}
+ function clearT(){clearTimeout(t1);clearTimeout(t2);}
+ function syncPin(btn,p){
+  if(!btn)return;
+  var on=p.classList.contains('pin');
+  btn.classList.toggle('on',on);
+  btn.textContent=on?'浮':'钉';
+  btn.title=on?'取消停靠（恢复悬浮自动隐藏）':'停靠：让面板常驻';
+ }
+ function showL(){clearT();pL.classList.add('open');if(scrim)scrim.classList.add('show');setFab(false);}
+ function showR(){clearT();pR.classList.add('open');if(scrim)scrim.classList.add('show');setFab(false);}
+ function hideL(force){if(!force&&pL.classList.contains('pin'))return;clearT();pL.classList.remove('open','pin');syncPin(pinL,pL);savePins();if(!isMob()&&scrim)scrim.classList.remove('show');setFab(true);}
+ function hideR(force){if(!force&&pR.classList.contains('pin'))return;clearT();pR.classList.remove('open','pin');syncPin(pinR,pR);savePins();if(!isMob()&&scrim)scrim.classList.remove('show');setFab(true);}
+ function closeAll(){clearT();hideL(true);hideR(true);}
+ function setFab(show){
+  var h=show?'':'hide';
+  if(fabL)fabL.classList.toggle('hide',!show&&!pL.classList.contains('open'));
+  if(fabR)fabR.classList.toggle('hide',!show&&!pR.classList.contains('open'));
+ }
+ function togglePin(p,pin){
+  if(!p.classList.contains('open'))p.classList.add('open');
+  p.classList.toggle('pin');
+  savePins();
+  syncPin(pin,p);
+ }
+ /* 边缘感应(桌面) */
+ if(edgeL&&edgeR){
+  edgeL.addEventListener('mouseenter',function(){if(isMob())return;showL();});
+  edgeL.addEventListener('mouseleave',function(){if(isMob())return;t2=setTimeout(function(){hideL();},220);});
+  edgeR.addEventListener('mouseenter',function(){if(isMob())return;showR();});
+  edgeR.addEventListener('mouseleave',function(){if(isMob())return;t2=setTimeout(function(){hideR();},220);});
+  pL.addEventListener('mouseenter',function(){clearT();});
+  pL.addEventListener('mouseleave',function(){if(isMob())return;t1=setTimeout(function(){hideL();},220);});
+  pR.addEventListener('mouseenter',function(){clearT();});
+  pR.addEventListener('mouseleave',function(){if(isMob())return;t1=setTimeout(function(){hideR();},220);});
+ }
+ /* 停靠 / 浮钮 / 关闭 / 蒙层 */
+ if(pinL)pinL.addEventListener('click',function(){togglePin(pL,pinL);});
+ if(pinR)pinR.addEventListener('click',function(){togglePin(pR,pinR);});
+ if(fabL)fabL.addEventListener('click',function(){if(pL.classList.contains('open'))hideL(true);else showL();});
+ if(fabR)fabR.addEventListener('click',function(){if(pR.classList.contains('open'))hideR(true);else showR();});
+ if(scrim)scrim.addEventListener('click',closeAll);
+ var xL=document.getElementById('xL'),xR=document.getElementById('xR');
+
+ /* 恢复上次钉住状态（仅桌面端） */
+ try{var _pin=JSON.parse(localStorage.getItem('axjf-rail-pin')||'{}');
+  if(!isMob()){
+   if(_pin.L&&pL){pL.classList.add('open','pin');syncPin(pinL,pL);}
+   if(_pin.R&&pR){pR.classList.add('open','pin');syncPin(pinR,pR);}
+  }
+ }catch(e){}
+if(xL)xL.addEventListener('click',function(){hideL(true);});
+ if(xR)xR.addEventListener('click',function(){hideR(true);});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAll();});
+ /* 左侧 · 全部文章（无日期，紧凑标题行） */
+ (function(){
+  var ul=document.getElementById('listL'),cnt=document.getElementById('cntL');
+  if(!ul)return;
+  var loc=decodeURIComponent(location.pathname).split('/');
+  var curDir=loc.length?loc[loc.length-2]:'';
+  var html='';__AXJF.forEach(function(x){
+   var dir=(x.p||'').split('/')[0];
+   var isCur=dir&&dir===curDir;
+   html+='<li class="it'+(isCur?' cur':'')+'"><a href="'+rp+(x.p||'')+'" title="'+x.t+'">'+
+    '<span class="t">'+x.t+'</span></a></li>';
+  });
+  ul.innerHTML=html||'<li style="color:var(--ink-mute);font-size:12px;padding:8px">暂无文章</li>';
+  if(cnt)cnt.textContent=__AXJF.length;
+ })();
+ /* 右侧 · 本文大纲：带子标题的 h2 三角折叠（默认收起） */
+ var tocR=document.getElementById('tocR');
+ (function(){
+  if(!tocR)return;
+  var body=document.querySelector('.article-body');
+  var heads=[];if(body){
+   body.querySelectorAll('h2,h3,h4').forEach(function(h,i){
+    if(h.querySelector('.article-title'))return;
+    if(!h.id)h.id='sec-'+i;
+    heads.push({el:h,lvl:parseInt(h.tagName.charAt(1),10)});
+   });
+  }
+  if(!heads.length){tocR.innerHTML='<div class="tempty">本篇未设置小节标题</div>';return;}
+  var minLvl=4;heads.forEach(function(x){if(x.lvl<minLvl)minLvl=x.lvl;});
+  var roots=[],cur=-1;
+  heads.forEach(function(x,idx){
+   if(x.lvl===minLvl||cur<0){roots.push({idx:idx,children:[]});cur=roots.length-1;}
+   else roots[cur].children.push(idx);
+  });
+  function dLvl(lvl){var v=lvl-minLvl+2;return v<2?2:(v>4?4:v);}
+  function paint(){
+   var html='';
+   roots.forEach(function(r,ri){
+    var h0=heads[r.idx],kids=r.children;
+    if(!kids.length){
+     html+='<a class="ti l2" href="#'+h0.el.id+'" data-i="'+r.idx+'">'+h0.el.textContent+'</a>';
+    }else{
+     html+='<div class="tg" data-g="'+ri+'"><button class="tg-arr" type="button" title="展开/折叠子标题" aria-label="展开/折叠">▶</button>'+
+      '<a class="ti l2" href="#'+h0.el.id+'" data-i="'+r.idx+'">'+h0.el.textContent+'</a><div class="tg-c">';
+     kids.forEach(function(k){
+      var h=heads[k];
+      html+='<a class="ti l'+dLvl(h.lvl)+'" href="#'+h.el.id+'" data-i="'+k+'">'+h.el.textContent+'</a>';
+     });
+     html+='</div></div>';
+    }
+   });
+   tocR.innerHTML=html;
+  }
+  paint();
+  var anchors={};
+  [].slice.call(tocR.querySelectorAll('.ti')).forEach(function(a){anchors[a.getAttribute('data-i')]=a;});
+  var groups={};
+  [].slice.call(tocR.querySelectorAll('.tg')).forEach(function(box){var g=+box.getAttribute('data-g');groups[g]={box:box,anchor:box.querySelector('.ti')};});
+  var grpOf={};
+  roots.forEach(function(r,ri){r.children.forEach(function(k){grpOf[k]=ri;});});
+  /* 全部展开/收起（无分组时隐藏按钮） */
+  var expR=document.getElementById('expR');
+  function expEls(){return [].slice.call(tocR.querySelectorAll('.tg'));}
+  function syncExp(){
+   if(!expR)return;
+   var gs=expEls();
+   if(!gs.length){expR.style.display='none';return;}
+   expR.style.display='';
+   var allOpen=gs.every(function(b){return b.classList.contains('open');});
+   expR.textContent=allOpen?'全收':'全展';
+   expR.title=allOpen?'收起全部子标题':'展开全部子标题';
+  }
+  if(expR)expR.addEventListener('click',function(){
+   var gs=expEls();if(!gs.length)return;
+   var allOpen=gs.every(function(b){return b.classList.contains('open');});
+   gs.forEach(function(b){b.classList.toggle('open',!allOpen);});
+   syncExp();
+  });
+  function anchorFor(h){
+   var g=grpOf[h];
+   if(g!==undefined&&groups[g]&&!groups[g].box.classList.contains('open'))return groups[g].anchor;
+   return anchors[h];
+  }
+  function setCur(h){
+   [].slice.call(tocR.querySelectorAll('.ti')).forEach(function(a){a.classList.remove('cur');});
+   var a=anchorFor(h);if(a)a.classList.add('cur');
+  }
+  function locate(){
+   var y=window.scrollY+140,idx=-1;
+   heads.forEach(function(x,i){if(x.el.offsetTop<=y)idx=i;});
+   setCur(idx);
+  }
+  tocR.addEventListener('click',function(e){
+   var arr=e.target.closest?e.target.closest('.tg-arr'):null;
+   if(arr){var box=arr.closest('.tg');box.classList.toggle('open');syncExp();return;}
+   var a=e.target.closest?e.target.closest('.ti'):null;if(!a)return;
+   var h=heads[+a.getAttribute('data-i')];if(!h)return;
+   clearT();
+   if(h.el.scrollIntoView){h.el.scrollIntoView({behavior:'smooth',block:'start'});}
+   if(isMob())hideR(true);
+  });
+  var rAF=false;
+  function onSc(){if(rAF)return;rAF=true;requestAnimationFrame(function(){locate();rAF=false;});}
+  window.addEventListener('scroll',onSc,{passive:true});
+  window.addEventListener('resize',onSc);
+  locate();syncExp();
+ })();
+ /* 顶部阅读进度 */
+ (function(){
+  var body=document.body,dEl=document.documentElement;
+  function upd(){
+   var h=Math.max(body.scrollHeight,dEl.scrollHeight,body.offsetHeight)-window.innerHeight;
+   var p=h>0?Math.min(1,window.scrollY/h):0;
+   if(prog){prog.style.width=(p*100).toFixed(2)+'%';
+    prog.classList.toggle('on',window.scrollY>80);}
+  }
+  var rAF=false;
+  function onSc(){if(rAF)return;rAF=true;requestAnimationFrame(function(){upd();rAF=false;});}
+  window.addEventListener('scroll',onSc,{passive:true});
+  window.addEventListener('resize',upd);upd();
+ })();
+ /* 调试/直达:?rail=right 打开大纲,?rail=left 打开文章列表 */
+ (function(){var m=(location.search||'').match(/[?&]rail=(right|left)/);
+  if(m){if(m[1]==='right')showR();else showL();}})();
+})();
+</script>
+</body>
+</html>

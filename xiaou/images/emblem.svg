@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="四川商务职业学院 商字徽标">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9E2A2B"/>
+      <stop offset="1" stop-color="#6E1414"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="94" height="94" rx="20" fill="url(#g)"/>
+  <rect x="3" y="3" width="94" height="94" rx="20" fill="none" stroke="#C8A04A" stroke-width="2.5"/>
+  <text x="50" y="54" font-family="'PingFang SC','Microsoft YaHei',serif" font-size="60" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">商</text>
+</svg>

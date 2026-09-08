@@ -1,0 +1,230 @@
+/* ========== 设计变量（配色参考四川商务职业学院 VI：褐红 + 金字） ========== */
+:root{
+  --c-primary:#9E2A2B;        /* 川商褐红（校徽主色） */
+  --c-primary-dark:#6E1414;
+  --c-deep:#5A1010;           /* 深褐红标题 */
+  --c-accent:#C8A04A;         /* 校徽金字 暖金点缀 */
+  --c-accent-soft:#F7EEDC;
+  --c-warn:#C0392B;           /* 警示红（略亮于主色，便于区分）*/
+  --c-warn-soft:#FBEAE8;
+  --bg:#FBF6F4;               /* 暖白底，略带米调 */
+  --card:#ffffff;
+  --text:#33242A;
+  --text-soft:#6E5A5E;
+  --border:#F0E0DC;
+  --shadow:0 8px 24px rgba(110,20,20,.08);
+  --shadow-hover:0 12px 30px rgba(110,20,20,.16);
+  --radius:16px;
+  --radius-sm:10px;
+  --maxw:1080px;
+}
+
+/* ========== 基础 ========== */
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block;}
+a{color:var(--c-primary);text-decoration:none;}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 20px;}
+
+/* ========== 按钮 ========== */
+.btn{
+  display:inline-block;padding:11px 20px;border-radius:999px;font-size:15px;font-weight:600;
+  transition:.2s;cursor:pointer;border:2px solid transparent;
+}
+.btn-primary{background:var(--c-primary);color:#fff;}
+.btn-primary:hover{background:var(--c-primary-dark);transform:translateY(-2px);}
+.btn-ghost{background:rgba(255,255,255,.16);color:#fff;border-color:rgba(255,255,255,.65);}
+.btn-ghost:hover{background:rgba(255,255,255,.3);}
+.btn-block{display:block;text-align:center;margin-top:14px;}
+
+/* ========== 顶部导航 ========== */
+.site-header{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.nav-brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{
+  width:38px;height:38px;border-radius:11px;overflow:hidden;flex:none;
+  box-shadow:0 2px 8px rgba(110,20,20,.25);
+}
+.brand-mark img{width:100%;height:100%;object-fit:cover;}
+.brand-text{display:flex;flex-direction:column;line-height:1.15;}
+.brand-text strong{font-size:16px;color:var(--c-deep);}
+.brand-text small{font-size:12px;color:var(--text-soft);}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap;}
+.nav-links a{
+  padding:8px 12px;border-radius:8px;color:var(--text);font-size:14.5px;font-weight:500;
+}
+.nav-links a:hover{background:var(--bg);color:var(--c-primary);}
+.nav-toggle{
+  display:none;background:none;border:none;font-size:24px;color:var(--c-deep);cursor:pointer;
+}
+
+/* ========== Hero（褐红渐变 + 商字水印，呼应川商校徽） ========== */
+.hero{
+  position:relative;color:#fff;overflow:hidden;
+  background:
+    radial-gradient(120% 120% at 80% 0%, rgba(200,160,74,.25) 0%, rgba(200,160,74,0) 45%),
+    linear-gradient(125deg,var(--c-deep) 0%, var(--c-primary) 60%, #7a1f20 100%);
+}
+.hero-emblem{
+  position:absolute;right:-4%;top:50%;transform:translateY(-50%);
+  font-family:'PingFang SC','Microsoft YaHei',serif;
+  font-size:340px;font-weight:800;line-height:1;
+  color:rgba(255,255,255,.06);user-select:none;pointer-events:none;
+}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(120deg,rgba(90,16,16,.55),rgba(158,42,43,.25));}
+.hero-inner{
+  position:relative;display:grid;grid-template-columns:1.6fr .9fr;gap:40px;align-items:center;
+  padding:72px 20px 80px;
+}
+.hero-tag{
+  display:inline-block;background:rgba(255,255,255,.18);padding:6px 14px;border-radius:999px;
+  font-size:13px;letter-spacing:.5px;margin-bottom:16px;
+}
+.hero-title{font-size:34px;line-height:1.3;margin:0 0 16px;font-weight:800;}
+.hero-sub{font-size:16px;opacity:.92;max-width:540px;margin:0 0 26px;}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-card{
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+  backdrop-filter:blur(6px);border-radius:var(--radius);padding:26px;text-align:center;
+}
+.hero-avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 14px;border:3px solid rgba(200,160,74,.8);}
+.hero-card h2{margin:0;font-size:24px;}
+.hero-role{margin:4px 0 4px;font-size:14px;opacity:.9;}
+.hero-motto{font-size:13.5px;opacity:.85;margin:0;font-style:italic;color:#f3ddb0;}
+.hero-motto-xun{font-size:12px;opacity:.7;margin:8px 0 0;letter-spacing:1px;}
+
+/* ========== 区块 ========== */
+.section{padding:56px 0;border-bottom:1px solid var(--border);}
+.section:last-of-type{border-bottom:none;}
+.section-head{margin-bottom:30px;}
+.section-title{font-size:26px;color:var(--c-deep);margin:0 0 8px;font-weight:800;position:relative;padding-left:14px;}
+.section-title::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:5px;border-radius:3px;background:linear-gradient(var(--c-primary),var(--c-accent));}
+.section-desc{margin:0;color:var(--text-soft);font-size:15px;}
+
+/* ========== 卡片网格 ========== */
+.grid{display:grid;gap:18px;}
+.grid-2{grid-template-columns:repeat(2,1fr);}
+.grid-3{grid-template-columns:repeat(3,1fr);}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;box-shadow:var(--shadow);transition:.22s;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover);border-color:#e6c9c4;}
+.card--warn{border-left:4px solid var(--c-warn);background:var(--c-warn-soft);}
+.card-icon{font-size:30px;margin-bottom:10px;}
+.card-title{font-size:18px;margin:0 0 10px;color:var(--c-deep);}
+.card-text{margin:0;color:var(--text-soft);font-size:14.5px;}
+.card-list{margin:0;padding-left:18px;color:var(--text-soft);font-size:14.5px;}
+.card-list li{margin-bottom:6px;}
+
+/* ========== 通知公告 ========== */
+.notice{display:flex;flex-direction:column;gap:14px;}
+.notice-item{
+  display:flex;gap:14px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:18px 20px;box-shadow:var(--shadow);
+}
+.notice-item h3{margin:0 0 6px;font-size:16.5px;color:var(--c-deep);}
+.notice-item p{margin:0 0 6px;color:var(--text-soft);font-size:14.5px;}
+.notice-item time{font-size:12.5px;color:#b79e9b;}
+.notice-badge{
+  flex:none;align-self:flex-start;background:var(--c-primary);color:#fff;font-size:12px;
+  padding:3px 10px;border-radius:999px;font-weight:600;
+}
+.notice-badge--date{background:var(--c-accent-soft);color:var(--c-primary-dark);}
+.notice-pin{border-left:4px solid var(--c-accent);background:var(--c-accent-soft);}
+
+/* ========== 表格 ========== */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+table.service{width:100%;border-collapse:collapse;background:var(--card);min-width:640px;}
+table.service th{
+  background:var(--c-primary);color:#fff;text-align:left;padding:14px 16px;font-size:14.5px;font-weight:600;
+}
+table.service td{padding:13px 16px;border-top:1px solid var(--border);font-size:14.5px;color:var(--text);vertical-align:top;}
+table.service tbody tr:nth-child(even){background:#fdf8f6;}
+
+/* ========== 链接卡 ========== */
+.links-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.link-card{
+  display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:18px 20px;font-weight:600;color:var(--c-deep);
+  box-shadow:var(--shadow);transition:.2s;font-size:15px;
+}
+.link-card span{font-size:15px;}
+.link-card:hover{border-color:var(--c-primary);color:var(--c-primary);transform:translateY(-3px);}
+
+/* ========== 联系方式 ========== */
+.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.contact-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;text-align:center;box-shadow:var(--shadow);transition:.2s;
+}
+.contact-card:hover{transform:translateY(-3px);border-color:#e6c9c4;}
+.contact-card h3{margin:8px 0 6px;font-size:16px;color:var(--c-deep);}
+.contact-card p{margin:0;color:var(--text-soft);font-size:14px;}
+
+/* ========== FAQ ========== */
+.faq{display:flex;flex-direction:column;gap:10px;}
+.faq details{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:4px 18px;box-shadow:var(--shadow);
+}
+.faq summary{
+  cursor:pointer;padding:14px 0;font-weight:600;color:var(--c-deep);font-size:15.5px;
+  list-style:none;position:relative;padding-right:24px;
+}
+.faq summary::-webkit-details-marker{display:none;}
+.faq summary::after{content:"+";position:absolute;right:0;top:14px;color:var(--c-primary);font-size:20px;font-weight:700;}
+.faq details[open] summary::after{content:"−";}
+.faq details p{margin:0 0 14px;color:var(--text-soft);font-size:14.5px;}
+
+/* ========== 页脚 ========== */
+.site-footer{background:var(--c-deep);color:#e7cfd0;padding:36px 0;margin-top:0;}
+.footer-inner{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}
+.footer-brand{margin:0;font-weight:700;color:#fff;font-size:16px;}
+.footer-sub{margin:4px 0 0;font-size:13px;opacity:.8;}
+.footer-xun{margin:6px 0 0;font-size:13px;color:var(--c-accent);letter-spacing:2px;font-weight:600;}
+.footer-note{margin:0;font-size:12.5px;opacity:.7;line-height:1.6;}
+.footer-top{color:#fff;font-weight:600;font-size:14px;white-space:nowrap;}
+.footer-top:hover{color:var(--c-accent);}
+
+/* ========== 占位提示 ========== */
+.placeholder-tip{font-size:12.5px;color:#b79e9b;margin-top:14px;font-style:italic;}
+.placeholder-tip code{background:#f6ece9;padding:1px 5px;border-radius:4px;color:var(--c-primary-dark);}
+
+/* ========== 响应式 ========== */
+@media (max-width:860px){
+  .hero-inner{grid-template-columns:1fr;gap:28px;padding:56px 20px 60px;}
+  .hero-title{font-size:28px;}
+  .hero-emblem{font-size:240px;right:-10%;}
+  .hero-card{max-width:320px;}
+  .grid-3{grid-template-columns:repeat(2,1fr);}
+  .links-grid,.contact-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:620px){
+  .nav-toggle{display:block;}
+  .nav-links{
+    display:none;position:absolute;top:64px;left:0;right:0;flex-direction:column;
+    background:#fff;border-bottom:1px solid var(--border);padding:8px 16px;gap:2px;
+    box-shadow:0 10px 20px rgba(0,0,0,.06);
+  }
+  .nav-links.open{display:flex;}
+  .nav-links a{padding:11px 8px;border-radius:8px;}
+  .hero-title{font-size:25px;}
+  .hero-emblem{font-size:180px;}
+  .grid-2,.grid-3,.links-grid,.contact-grid{grid-template-columns:1fr;}
+  .section{padding:42px 0;}
+  .section-title{font-size:22px;}
+  .footer-inner{flex-direction:column;align-items:flex-start;}
+}

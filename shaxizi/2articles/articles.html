@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="blue" data-page-node-id="wSFs6cOYvdzMTuPR8vjCh4">
+<head data-page-node-id="WlIGdlpAwnDGAAPWlOd2jt">
+<meta charset="utf-8" data-page-node-id="iqRtapWyBNqT6Cq8ttosKW">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="4GOj7di5bMHp33lY2TcyiJ">
+<title>文章 - 安即是佛</title>
+<script>try{var t=localStorage.getItem("axjf-note-theme-v5");if(["blue","book","dark"].indexOf(t)<0)t="blue";document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* ═══ 三主题变量 · 与文章模板同源 ═══ */
+:root,html[data-theme="blue"]{
+ --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+ --ink:#33465e;--ink-strong:#16283f;--ink-mute:#7c8ea6;
+ --bg:#f2f7fd;--glow1:#cfe3fb;--glow2:#e8f2fc;
+ --card:#fff;--line:#cdddf1;--line2:#e3eefb;
+ --accent:#1f6fe0;--acc-d:#1755b6;--acc-x:#0f3d86;--soft:#e2edfd;--row-hov:#c7ddfc;
+ --bar-c1:#4a97f5;--bar-c2:#1c59c4;--bar-g:rgba(255,255,255,.3);
+ --bar-sw:rgba(255,255,255,.14);--bar-bt:transparent;--bar-ink:#fff;
+ --sh:0 2px 12px rgba(31,111,224,.10);--sh-h:0 6px 18px rgba(31,111,224,.17);
+}
+html[data-theme="book"]{
+ --font-body:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+ --ink:#43403a;--ink-strong:#221f18;--ink-mute:#8f897c;
+ --bg:#f5f0e4;--glow1:#e8dcbf;--glow2:#f7f2e8;
+ --card:#fdfaf2;--line:#cbbfa1;--line2:#e4dac4;
+ --accent:#4d6f96;--acc-d:#3a5577;--acc-x:#273c57;--soft:#e7dcc2;--row-hov:#e2d2a8;
+ --bar-c1:#36517a;--bar-c2:#1f2f49;--bar-g:rgba(255,255,255,.15);
+ --bar-sw:rgba(255,255,255,.07);--bar-bt:rgba(191,158,96,.5);--bar-ink:#f5eedb;
+ --sh:0 2px 12px rgba(80,65,40,.12);--sh-h:0 6px 18px rgba(80,65,40,.18);
+}
+html[data-theme="dark"]{
+ --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+ --ink:#b9c7da;--ink-strong:#e7eef8;--ink-mute:#71819b;
+ --bg:#0a111d;--glow1:#14223a;--glow2:#0d1726;
+ --card:#101b2c;--line:#1d2c44;--line2:#16233a;
+ --accent:#3d97ff;--acc-d:#77b6ff;--acc-x:#a8cfff;--soft:#162742;--row-hov:#1e3c6b;
+ --bar-c1:#1b2e4d;--bar-c2:#0b1626;--bar-g:rgba(120,180,255,.2);
+ --bar-sw:rgba(140,190,255,.08);--bar-bt:rgba(90,150,255,.3);--bar-ink:#eaf2fc;
+ --sh:0 2px 14px rgba(0,0,0,.35);--sh-h:0 8px 22px rgba(0,0,0,.5);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);font-size:16px;color:var(--ink);line-height:1.8;
+ background:radial-gradient(circle at 14% 4%,var(--glow1) 0,transparent 36%),
+  radial-gradient(circle at 88% 3%,var(--glow2) 0,transparent 32%),var(--bg);
+ -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;
+ transition:background .35s,color .35s}
+a{text-decoration:none;color:inherit}
+.topbar{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:12px;padding:0 20px;
+ color:var(--bar-ink);background-color:var(--bar-c2);
+ background-image:linear-gradient(120deg,transparent 20%,var(--bar-sw) 42%,transparent 62%),
+  radial-gradient(circle at 12% -90%,var(--bar-g),transparent 58%),
+  linear-gradient(175deg,var(--bar-c1) 0%,var(--bar-c2) 130%);
+ box-shadow:0 2px 14px rgba(20,60,130,.22);border-bottom:1px solid var(--bar-bt)}
+.topbar .home{display:flex;align-items:center;gap:7px;color:inherit;font-weight:600;font-size:14px;
+ letter-spacing:.5px;opacity:.92;transition:opacity .2s}
+.topbar .home:hover{opacity:1}
+.topbar .home svg{width:17px;height:17px;opacity:.9}
+.top-title{position:absolute;left:50%;top:0;height:56px;line-height:56px;
+ transform:translate(-50%,5px);max-width:min(480px,52vw);white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis;font-size:15px;font-weight:600;letter-spacing:2px;color:var(--bar-ink);
+ opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:2}
+body.scrolled .top-title{opacity:1;transform:translate(-50%,0)}
+.ts{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ts-dots{display:flex;align-items:center;gap:8px}
+.ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;opacity:.45;
+ transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s}
+.ts-dot:hover{opacity:.95}
+.ts-dot.on{opacity:1;transform:scale(1.28);box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18)}
+.ts-dot[data-t="blue"]{background:#9fd0ff}.ts-dot[data-t="book"]{background:#d4b97e}.ts-dot[data-t="dark"]{background:#8aa7cc}
+.ts-name{font-size:12px;letter-spacing:2px;color:var(--bar-ink);opacity:.95;min-width:34px}
+.page-head{max-width:760px;margin:0 auto;padding:26px 24px 2px;text-align:center}
+.page-title{font-size:29px;color:var(--ink-strong);font-weight:800;line-height:1.3;letter-spacing:1px}
+.page-sub{margin-top:6px;font-size:14px;color:var(--ink-mute);letter-spacing:1px}
+.page-sub b{color:var(--acc-d);font-weight:700}
+.filters{max-width:760px;margin:12px auto 0;padding:0 24px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.fbtn{font-family:inherit;font-size:13px;color:var(--ink-mute);background:var(--card);
+ border:1px solid var(--line2);border-radius:999px;padding:5px 18px;cursor:pointer;transition:all .18s}
+.fbtn:hover{color:var(--acc-d);border-color:var(--accent)}
+.fbtn.on{color:#fff;background:var(--accent);border-color:var(--accent);font-weight:600}
+.foot{max-width:760px;margin:52px auto 0;padding:0 24px 44px;text-align:center}
+.foot .rule{width:min(300px,60%);height:1px;margin:0 auto 16px;border:0;
+ background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent)}
+.foot .co{font-size:13.5px;color:var(--ink-mute);letter-spacing:1px}
+.empty{display:none;text-align:center;padding:42px 0;color:var(--ink-mute)}
+@media(max-width:600px){
+ .page-head{padding:20px 16px 2px}.page-title{font-size:24px}
+ .topbar{padding:0 12px}.ts-dots{gap:11px}.ts-dot{width:15px;height:15px}.ts-name{display:none}
+}
+.listwrap{max-width:740px;margin:18px auto 0;padding:0 24px}
+.rows{display:flex;flex-direction:column;gap:5px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);
+ border-radius:8px;padding:8px 13px;box-shadow:var(--sh);transition:background .15s}
+.row:hover{background:var(--row-hov)}
+.row .dt{flex:none;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:var(--acc-d);
+ background:var(--soft);padding:3px 9px;border-radius:999px;letter-spacing:.3px;white-space:nowrap}
+.row .tt{flex:1;min-width:0;font-size:14.2px;font-weight:600;color:var(--ink-strong);line-height:1.55;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .arr{flex:none;color:var(--accent);font-size:15px;opacity:0;transform:translateX(-4px);transition:all .18s}
+.row:hover .arr{opacity:1;transform:none}
+@media(max-width:600px){.row{gap:10px;padding:7px 10px}.row .tt{font-size:13.6px}.row .dt{font-size:11px}}
+</style>
+</head>
+<body data-page-node-id="xBHHuvoB1KbzUYViZLwOo3">
+<nav class="topbar" data-page-node-id="9vUoSEGlgB9PEFUodnmY7s">
+ <a class="home" href="../index.html" data-page-node-id="rDzaUzSvtsFCMysDD1jSJ1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="AcbB4Ga7jMYeFEcRkdM2Hr"><polyline points="15 18 9 12 15 6" data-page-node-id="HsGTDkcUArHMblnNGnMfwa"></polyline></svg>返回首页</a>
+ <span class="top-title" id="topTitle" aria-hidden="true" data-page-node-id="6pURF2gkBirndou5xlenDw">文章</span>
+ <div class="ts" role="group" aria-label="切换主题" data-page-node-id="W7SafPdj42wQZEYxT5ijAo">
+  <div class="ts-dots" data-page-node-id="6vuZcrOaXKNIgOVXliynvD">
+   <button type="button" class="ts-dot" data-t="blue" title="蓝白" aria-label="蓝白" data-page-node-id="U9bAMKPDXkL4oC0dXcz3oI"></button>
+   <button type="button" class="ts-dot" data-t="book" title="书卷" aria-label="书卷" data-page-node-id="1Ca2IDGpGtjB2MNxHmb3W0"></button>
+   <button type="button" class="ts-dot" data-t="dark" title="暗黑" aria-label="暗黑" data-page-node-id="LVlAvbWrc4zZm4dg30GilN"></button>
+  </div>
+  <span class="ts-name" id="tsName" data-page-node-id="mlSY4OmwmVomkUyEGZDniz">蓝白</span>
+ </div>
+</nav>
+
+<section class="page-head" data-page-node-id="f45d6JGQF1AYvTtdMp1LfX">
+ <h1 class="page-title" data-page-node-id="qP5WtjX7j9R7INl8Zf50hn">文章</h1>
+ <p class="page-sub" id="pageSub" data-page-node-id="ZElh23DTPMmUEFFF2aCUAr">共 <b id="subCnt" data-page-node-id="nAqtqu6Q5DGme8NFrrYSph">0</b> 篇手记</p>
+</section>
+
+<div class="filters" id="filters" data-page-node-id="nGCxb6BvDyx3z2zFBX0dKh"></div>
+<p class="empty" id="emptyTip" data-page-node-id="ngulwmhvXpkfiCYGJppiuq">该年份暂无文章</p>
+<div class="listwrap rows" id="listWrap" data-page-node-id="NapgL09Ect7qnXHaXiUaut"></div>
+
+<footer class="foot" data-page-node-id="isLIBp7i6E2browbcleZXd">
+ <div class="rule" data-page-node-id="08fkflvYEGhGXqCr3KwCbV"></div>
+ <div class="co" data-page-node-id="JG9rbVSxuDq2B7v9g1yqDM">— 沙溪子 · <a href="mailto:Chears77@163.com" data-page-node-id="frS57jp0L1UhhJe6q6D8yO">Chears77@163.com</a> —</div>
+</footer>
+
+<script>
+/* 数据由 generate-index.js 注入（勿改此占位行格式） */
+var __D = [{"ymd":"20260908","y":"2026","t":"我的记账历程","p":"20260908我的记账历程/index.html"},{"ymd":"20260709","y":"2026","t":"轻识记账微信小程序开发手记","p":"20260709轻识记账微信小程序开发手记/index.html"},{"ymd":"20260627","y":"2026","t":"代建网站副业尝试","p":"20260627代建网站副业尝试/index.html"},{"ymd":"20260627","y":"2026","t":"我在成都，想帮老人出一本自己的书","p":"20260627我在成都，想帮老人出一本自己的书/index.html"},{"ymd":"20260626","y":"2026","t":"我是怎么用 AI + 智能手表 + 体检报告，给自己搭建了一个私人医生的（AI管理身体健康）","p":"20260626我是怎么用 AI + 智能手表 + 体检报告，给自己搭建了一个私人医生的（AI管理身体健康）/index.html"},{"ymd":"20260624","y":"2026","t":"AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex","p":"20260624AI 工具选型心路历程：从 OpenClaw （小龙虾）到workbuddy到 Codex/index.html"},{"ymd":"20260623","y":"2026","t":"AI图文自动生成探索历程","p":"20260623AI图文自动生成探索历程/article.html"},{"ymd":"20260623","y":"2026","t":"我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的","p":"20260623我是怎么用 AI，把一个自媒体创意变成 124 张自动生成卡片的/index.html"},{"ymd":"20260622","y":"2026","t":"一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的","p":"20260622一个普通人的AI探索之路：我是如何让AI帮我自动发布抖音的/index.html"},{"ymd":"20260615","y":"2026","t":"个人主页开发探索","p":"20260615个人主页开发探索/index.html"},{"ymd":"20260615","y":"2026","t":"军队采购网爬虫获取采购信息","p":"20260615军队采购网爬虫获取采购信息/index.html"},{"ymd":"20260615","y":"2026","t":"用github搭建个人主页","p":"20260615用github搭建个人主页/index.html"},{"ymd":"20260610","y":"2026","t":"Windows系统OpenClaw（龙虾）超详细完整安装配置手册（适配锐龙5 4600U 16G轻薄本）","p":"20260610Windows系统OpenClaw（龙虾）超详细完整安装配置手册（适配锐龙5 4600U 16G轻薄本）/index.html"}];
+</script>
+<script>
+(function(){
+ var WRAP=document.getElementById('listWrap'),EMP=document.getElementById('emptyTip');
+ var FIL=document.getElementById('filters');
+ function esc(s){var d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
+ function fmt(ymd){return ymd.slice(0,4)+'.'+ymd.slice(4,6)+'.'+ymd.slice(6);}
+ function rowsHtml(list){
+  var h='';
+  list.forEach(function(x){
+   h+='<a class="row" href="'+x.p+'" title="'+esc(x.t)+'"><span class="dt">'+fmt(x.ymd)+'</span>'+
+    '<span class="tt">'+esc(x.t)+'</span><span class="arr">&#8594;</span></a>';
+  });
+  return h;
+ }
+ function render(y){
+  var list=y==='all'?__D:__D.filter(function(x){return x.y===y;});
+  EMP.style.display=list.length?'none':'block';
+  WRAP.innerHTML=list.length?rowsHtml(list):'';
+ }
+ function buildFilters(){
+  var years=[],seen={};
+  __D.forEach(function(x){if(!seen[x.y]){seen[x.y]=1;years.push(x.y);}});
+  years.sort(function(a,b){return b.localeCompare(a);});
+  var h='<button class="fbtn on" data-y="all">全部</button>';
+  years.forEach(function(y){h+='<button class="fbtn" data-y="'+y+'">'+y+' 年</button>';});
+  FIL.innerHTML=h;
+  [].slice.call(FIL.querySelectorAll('.fbtn')).forEach(function(b){b.addEventListener('click',function(){
+   [].slice.call(FIL.querySelectorAll('.fbtn')).forEach(function(x){x.classList.remove('on')});
+   b.classList.add('on');render(b.getAttribute('data-y'));
+  });});
+ }
+ function buildHead(){
+  var cnt=document.getElementById('subCnt');
+  if(cnt)cnt.textContent=__D.length;
+  var latest='';
+  __D.forEach(function(x){if(x.ymd>latest)latest=x.ymd;});
+  var ps=document.getElementById('pageSub');
+  if(ps&&latest)ps.innerHTML='共 <b>'+__D.length+'</b> 篇手记 · 更新于 '+fmt(latest);
+ }
+ buildFilters();buildHead();render('all');
+})();
+</script>
+<script>
+(function(){
+ var KEY='axjf-note-theme-v5',V=['blue','book','dark'],N={blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var ds=document.querySelectorAll('.ts-dot'),nm=document.getElementById('tsName');
+ function ap(t){if(V.indexOf(t)<0)t='blue';document.documentElement.setAttribute('data-theme',t);
+  if(nm)nm.textContent=N[t];ds.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t)});
+  try{localStorage.setItem(KEY,t)}catch(e){}}
+ ds.forEach(function(d){d.addEventListener('click',function(){ap(d.getAttribute('data-t'))})});
+ var s='blue';try{s=localStorage.getItem(KEY)||'blue'}catch(e){}
+ ap(s);
+})();
+</script>
+<script>
+(function(){
+ var pt=document.querySelector('.page-title');
+ function upd(){
+  var on=false;
+  if(pt)on=pt.getBoundingClientRect().bottom<96;
+  if(/[?&]sticky=1/.test(location.search))on=true; /* 调试钩子 */
+  document.body.classList.toggle('scrolled',on);
+ }
+ window.addEventListener('scroll',upd,{passive:true});
+ window.addEventListener('resize',upd);upd();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="blue" data-page-node-id="jSMqOTh6ROTMHX50PFikz9">
+<head data-page-node-id="GvMAHZ9wKNMyPutZuxT3S7">
+<meta charset="utf-8" data-page-node-id="bkeDYNEue6MueQruhc2CZs">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="VcGIIiget5AHkpVTCypycL">
+<title>项目 - 安即是佛</title>
+<script>try{var t=localStorage.getItem("axjf-note-theme-v5");if(["blue","book","dark"].indexOf(t)<0)t="blue";document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<style>
+/* ═══ 三主题变量 · 与文章页 articles.html 完全同源 ═══ */
+:root,html[data-theme="blue"]{
+ --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+ --ink:#33465e;--ink-strong:#16283f;--ink-mute:#7c8ea6;
+ --bg:#f2f7fd;--glow1:#cfe3fb;--glow2:#e8f2fc;
+ --card:#fff;--line:#cdddf1;--line2:#e3eefb;
+ --accent:#1f6fe0;--acc-d:#1755b6;--acc-x:#0f3d86;--soft:#e2edfd;--row-hov:#c7ddfc;
+ --bar-c1:#4a97f5;--bar-c2:#1c59c4;--bar-g:rgba(255,255,255,.3);
+ --bar-sw:rgba(255,255,255,.14);--bar-bt:transparent;--bar-ink:#fff;
+ --sh:0 2px 12px rgba(31,111,224,.10);--sh-h:0 6px 18px rgba(31,111,224,.17);
+}
+html[data-theme="book"]{
+ --font-body:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+ --ink:#43403a;--ink-strong:#221f18;--ink-mute:#8f897c;
+ --bg:#f5f0e4;--glow1:#e8dcbf;--glow2:#f7f2e8;
+ --card:#fdfaf2;--line:#cbbfa1;--line2:#e4dac4;
+ --accent:#4d6f96;--acc-d:#3a5577;--acc-x:#273c57;--soft:#e7dcc2;--row-hov:#e2d2a8;
+ --bar-c1:#36517a;--bar-c2:#1f2f49;--bar-g:rgba(255,255,255,.15);
+ --bar-sw:rgba(255,255,255,.07);--bar-bt:rgba(191,158,96,.5);--bar-ink:#f5eedb;
+ --sh:0 2px 12px rgba(80,65,40,.12);--sh-h:0 6px 18px rgba(80,65,40,.18);
+}
+html[data-theme="dark"]{
+ --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+ --ink:#b9c7da;--ink-strong:#e7eef8;--ink-mute:#71819b;
+ --bg:#0a111d;--glow1:#14223a;--glow2:#0d1726;
+ --card:#101b2c;--line:#1d2c44;--line2:#16233a;
+ --accent:#3d97ff;--acc-d:#77b6ff;--acc-x:#a8cfff;--soft:#162742;--row-hov:#1e3c6b;
+ --bar-c1:#1b2e4d;--bar-c2:#0b1626;--bar-g:rgba(120,180,255,.2);
+ --bar-sw:rgba(140,190,255,.08);--bar-bt:rgba(90,150,255,.3);--bar-ink:#eaf2fc;
+ --sh:0 2px 14px rgba(0,0,0,.35);--sh-h:0 8px 22px rgba(0,0,0,.5);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);font-size:16px;color:var(--ink);line-height:1.8;
+ background:radial-gradient(circle at 14% 4%,var(--glow1) 0,transparent 36%),
+  radial-gradient(circle at 88% 3%,var(--glow2) 0,transparent 32%),var(--bg);
+ -webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;
+ transition:background .35s,color .35s}
+a{text-decoration:none;color:inherit}
+/* ── 顶栏（同文章页） ── */
+.topbar{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;gap:12px;padding:0 20px;
+ color:var(--bar-ink);background-color:var(--bar-c2);
+ background-image:linear-gradient(120deg,transparent 20%,var(--bar-sw) 42%,transparent 62%),
+  radial-gradient(circle at 12% -90%,var(--bar-g),transparent 58%),
+  linear-gradient(175deg,var(--bar-c1) 0%,var(--bar-c2) 130%);
+ box-shadow:0 2px 14px rgba(20,60,130,.22);border-bottom:1px solid var(--bar-bt)}
+.topbar .home{display:flex;align-items:center;gap:7px;color:inherit;font-weight:600;font-size:14px;
+ letter-spacing:.5px;opacity:.92;transition:opacity .2s}
+.topbar .home:hover{opacity:1}
+.topbar .home svg{width:17px;height:17px;opacity:.9}
+.top-title{position:absolute;left:50%;top:0;height:56px;line-height:56px;
+ transform:translate(-50%,5px);max-width:min(480px,52vw);white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis;font-size:15px;font-weight:600;letter-spacing:2px;color:var(--bar-ink);
+ opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;z-index:2}
+body.scrolled .top-title{opacity:1;transform:translate(-50%,0)}
+.ts{margin-left:auto;display:flex;align-items:center;gap:10px}
+.ts-dots{display:flex;align-items:center;gap:8px}
+.ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;opacity:.45;
+ transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s}
+.ts-dot:hover{opacity:.95}
+.ts-dot.on{opacity:1;transform:scale(1.28);box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18)}
+.ts-dot[data-t="blue"]{background:#9fd0ff}.ts-dot[data-t="book"]{background:#d4b97e}.ts-dot[data-t="dark"]{background:#8aa7cc}
+.ts-name{font-size:12px;letter-spacing:2px;color:var(--bar-ink);opacity:.95;min-width:34px}
+/* ── 页头（同文章页） ── */
+.page-head{max-width:760px;margin:0 auto;padding:26px 24px 2px;text-align:center}
+.page-title{font-size:29px;color:var(--ink-strong);font-weight:800;line-height:1.3;letter-spacing:1px}
+.page-sub{margin-top:6px;font-size:14px;color:var(--ink-mute);letter-spacing:1px}
+.page-sub b{color:var(--acc-d);font-weight:700}
+/* ── 分组标题 ── */
+.sec{max-width:760px;margin:0 auto;padding:24px 24px 0}
+.sec-h{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.sec-h .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.sec-h .dot.live{background:var(--accent);box-shadow:0 0 0 3px var(--soft)}
+.sec-h .dot.wip{background:var(--ink-mute);box-shadow:0 0 0 3px var(--line2)}
+.sec-h h2{font-size:16.5px;font-weight:700;letter-spacing:1px;color:var(--ink-strong)}
+.sec-h .cnt{font-size:11.5px;color:var(--ink-mute);letter-spacing:1.5px}
+/* ── 已上线：特色卡片（用主题变量重绘） ── */
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.hero-card{
+ position:relative;display:flex;flex-direction:column;
+ background:var(--card);border-radius:12px;padding:18px 16px 14px;
+ box-shadow:var(--sh);border:1px solid var(--line2);
+ transition:transform .2s,box-shadow .25s,border-color .2s;overflow:hidden}
+.hero-card::before{
+ content:"";position:absolute;top:0;left:0;right:0;height:3px;
+ background:linear-gradient(90deg,var(--accent),var(--acc-d))}
+.hero-card:hover{transform:translateY(-3px);box-shadow:var(--sh-h);border-color:var(--accent)}
+.hc-top{display:flex;align-items:center;gap:9px}
+.hc-ico{
+ width:38px;height:38px;border-radius:10px;flex:none;
+ display:flex;align-items:center;justify-content:center;
+ font-size:19px;background:var(--soft);color:var(--acc-d)}
+.hc-name{font-size:15.5px;font-weight:700;color:var(--ink-strong)}
+.hc-desc{margin-top:9px;font-size:12.8px;line-height:1.7;color:var(--ink-mute);flex:1}
+.hc-foot{
+ margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+ display:flex;align-items:center;justify-content:space-between}
+.hc-tag{
+ font-size:11px;font-weight:700;color:var(--acc-d);
+ background:var(--soft);padding:3px 10px;border-radius:999px}
+.hc-go{font-size:12.5px;color:var(--acc-d);font-weight:600;transition:transform .2s}
+.hero-card:hover .hc-go{transform:translateX(3px)}
+.hc-qr{width:46px;height:46px;border-radius:8px;border:1px solid var(--line);display:block;object-fit:cover}
+/* ── 推进中：紧凑行（完全同文章页 .row） ── */
+.listwrap{max-width:760px;margin:0 auto;padding:0 24px}
+.rows{display:flex;flex-direction:column;gap:5px}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);
+ border-radius:8px;padding:8px 13px;box-shadow:var(--sh);transition:background .15s}
+.row:hover{background:var(--row-hov)}
+.row .nm{flex:none;font-size:14.2px;font-weight:700;color:var(--ink-strong);white-space:nowrap}
+.row .ds{flex:1;min-width:0;font-size:12.8px;color:var(--ink-mute);line-height:1.55;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .st{flex:none;font-size:11px;font-weight:700;color:var(--ink-mute);
+ background:var(--soft);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.row .arr{flex:none;color:var(--accent);font-size:15px;opacity:0;transform:translateX(-4px);transition:all .18s}
+.row:hover .arr{opacity:1;transform:none}
+/* ── 页脚（同文章页） ── */
+.foot{max-width:760px;margin:52px auto 0;padding:0 24px 44px;text-align:center}
+.foot .rule{width:min(300px,60%);height:1px;margin:0 auto 16px;border:0;
+ background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent)}
+.foot .co{font-size:13.5px;color:var(--ink-mute);letter-spacing:1px}
+/* ── 二维码弹层 ── */
+.qr-mask{
+ position:fixed;inset:0;z-index:99;display:none;
+ align-items:center;justify-content:center;
+ background:rgba(23,42,72,.55);backdrop-filter:blur(3px)}
+.qr-mask.show{display:flex}
+.qr-box{
+ background:var(--card);border-radius:16px;padding:26px 30px 22px;
+ text-align:center;box-shadow:var(--sh-h);
+ animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{transform:scale(.86);opacity:0}}
+.qr-box img{width:230px;height:230px;border-radius:10px;display:block}
+.qr-box .t{margin-top:14px;font-size:15px;font-weight:700;color:var(--ink-strong)}
+.qr-box .s{margin-top:5px;font-size:12px;color:var(--ink-mute);letter-spacing:1px}
+/* ── 移动端 ── */
+@media(max-width:600px){
+ .page-head{padding:20px 16px 2px}.page-title{font-size:24px}
+ .topbar{padding:0 12px}.ts-dots{gap:11px}.ts-dot{width:15px;height:15px}.ts-name{display:none}
+ .sec{padding:20px 16px 0}
+ .hero-grid{grid-template-columns:1fr}
+ .listwrap{padding:0 16px}
+ .row{gap:10px;padding:7px 10px}.row .ds{display:none}.row .nm{font-size:13.6px}.row .st{font-size:10.5px}
+}
+</style>
+</head>
+<body data-page-node-id="gt5dNCJgT4WPFmAdb7BFqp">
+
+<nav class="topbar" data-page-node-id="YSFSjEE74IERSSckFkj0r8">
+ <a class="home" href="../index.html" data-page-node-id="TpHm9wcVZTH8zHPhN4MtH7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="AcbB4Ga7jMYeFEcRkdM2Hr"><polyline points="15 18 9 12 15 6" data-page-node-id="HsGTDkcUArHMblnNGnMfwa"></polyline></svg>返回首页</a>
+ <span class="top-title" data-page-node-id="7L1K24rGchTa3A9H2sgIIL">项目</span>
+ <div class="ts" role="group" aria-label="切换主题" data-page-node-id="W7SafPdj42wQZEYxT5ijAo">
+  <div class="ts-dots" data-page-node-id="6vuZcrOaXKNIgOVXliynvD">
+   <button type="button" class="ts-dot" data-t="blue" title="蓝白" aria-label="蓝白" data-page-node-id="U9bAMKPDXkL4oC0dXcz3oI"></button>
+   <button type="button" class="ts-dot" data-t="book" title="书卷" aria-label="书卷" data-page-node-id="1Ca2IDGpGtjB2MNxHmb3W0"></button>
+   <button type="button" class="ts-dot" data-t="dark" title="暗黑" aria-label="暗黑" data-page-node-id="LVlAvbWrc4zZm4dg30GilN"></button>
+  </div>
+  <span class="ts-name" id="tsName" data-page-node-id="mlSY4OmwmVomkUyEGZDniz">蓝白</span>
+ </div>
+</nav>
+
+<header class="page-head" data-page-node-id="eHBUd12BOmGCfkFwZ23Oip">
+ <h1 class="page-title" data-page-node-id="LQQCXQaXjy6rJSW4y7P3Hl">项目</h1>
+ <p class="page-sub" data-page-node-id="TlWyS9McHHI7w4lYXvGa8a">已上线 <b data-page-node-id="Q0eOlyARnzhh5Vk88FoG0G">3</b> 个 · 推进中 <b data-page-node-id="YYfCUPeaiZXXreYzWJ6zFI">5</b> 个 · 持续折腾中</p>
+</header>
+
+<section class="sec" data-page-node-id="YsNuC47YMayyzga9F7VD1E">
+ <div class="sec-h" data-page-node-id="syC4bWShlRnDo2VrBWteUX"><span class="dot live" data-page-node-id="TuAtTM1cRBz0edx9N7zG2O"></span><h2 data-page-node-id="DVWFAomVUFe3qXlrjdGtgz">已上线</h2><span class="cnt" data-page-node-id="Qi7itsBGgailGUxUWHiLRh">LIVE</span></div>
+ <div class="hero-grid" data-page-node-id="3o7NnB9FJv00DMBZx5j01C">
+
+  <a class="hero-card" href="../../gongchengfagui/index.html" data-page-node-id="ZUawZ9gINqjwyIHF4b6HV5">
+   <div class="hc-top" data-page-node-id="dfAcsULKY5R9AplZeH0o74"><span class="hc-ico" data-page-node-id="HpkmRHmCla37ogttDNEmfH">§</span><span class="hc-name" data-page-node-id="wvokrP1AanhFFfvx4zRLOE">工程建设法规库</span></div>
+   <p class="hc-desc" data-page-node-id="AAYiiVYKmuCcoKloIr0P6X">工程建设法律法规在线检索与阅读站，覆盖国家法律、行政法规、地方条例与标准规范，持续收录更新。</p>
+   <div class="hc-foot" data-page-node-id="Ms7N5LsC5FDFNyb3BsSeQB"><span class="hc-tag" data-page-node-id="nLTpVjUIet0r5FrUNgULFn">在线使用</span><span class="hc-go" data-page-node-id="YbpLaR67fg5ovFAc0gCoZq">进入 ›</span></div>
+  </a>
+
+  <a class="hero-card" href="川藏线网站/川藏线旅游指南.html" data-page-node-id="vkUaLmgWlRcnQ2aNIQXITC">
+   <div class="hc-top" data-page-node-id="uoHgCEq6nx9ZInn92vDCTk"><span class="hc-ico" data-page-node-id="eczrZ9pNukzb7UCeBrrNlg">⛰</span><span class="hc-name" data-page-node-id="JeuAvYpcFsjWwUJ9VXOfgE">川藏线旅游指南</span></div>
+   <p class="hc-desc" data-page-node-id="syfYdzuSCQ8woiY2fXAhiF">川藏线路书网页：行程规划、沿途景点、海拔与实用攻略，给准备进藏的你一份可执行的参考。</p>
+   <div class="hc-foot" data-page-node-id="N9C3Chgc9aUPTLy1mSMjIb"><span class="hc-tag" data-page-node-id="fTuZIwwU1NLB12tIV3OVuJ">在线浏览</span><span class="hc-go" data-page-node-id="Wxa8pQRHgImNHvpNGEd96Y">进入 ›</span></div>
+  </a>
+
+  <a class="hero-card" href="轻识记账微信小程序/轻识记账二维码.jpg" data-qr data-page-node-id="yddcRakYr6KH3Io1I9lolx">
+   <div class="hc-top" data-page-node-id="uuzTiQm0yrKEce2p9Z5UA6"><span class="hc-ico" data-page-node-id="SPfvjMaSPckoB6w2PxpJU9">¥</span><span class="hc-name" data-page-node-id="ZSnrT3psLCwGvBU54QY1y7">轻识记账</span></div>
+   <p class="hc-desc" data-page-node-id="fBIlASKAGrt88iiwaIcHpY">微信小程序：一句文本自动记账，收支分类一目了然，账单一键导出 Excel，让记账轻到不能再轻。</p>
+   <div class="hc-foot" data-page-node-id="gC9Yeo6j9mNXQdgigxyRjX">
+    <span class="hc-tag" data-page-node-id="QmIcS3AqrqVEvBVk3kfTQh">扫码使用</span>
+    <img class="hc-qr" src="轻识记账微信小程序/轻识记账二维码.jpg" alt="轻识记账小程序码" data-page-node-id="J8XZY6wmMba2cU4qqi5Z59">
+   </div>
+  </a>
+
+ </div>
+</section>
+
+<section class="sec" data-page-node-id="j2VoNaalrSTAqVZt7OE0Vw">
+ <div class="sec-h" data-page-node-id="3HSbuQYIrMACQ7M6yFCiux"><span class="dot wip" data-page-node-id="FowNwoDgmPvyDxVWep8Tq7"></span><h2 data-page-node-id="PVf3mjnTvppDktdy70K0mh">推进中</h2><span class="cnt" data-page-node-id="Un2Hv2sGyVFYHAArKkZkAU">WORK IN PROGRESS</span></div>
+ <div class="listwrap rows" data-page-node-id="M5SEJ4SLUQUN0cHUXDQXPK" style="padding:0">
+
+  <a class="row" href="回忆录代写/memoir.html" data-page-node-id="nJD5BtHNEHP87FnvBa8Iry">
+   <span class="nm" data-page-node-id="d7UxtVtxydKmvubKQ3GNbz">回忆录代写</span>
+   <span class="ds" data-page-node-id="BiFHpOBqGqC9ZrnKKYgpta">面向成都的银发自传代写与成书服务，帮老人把一辈子的故事留下来</span>
+   <span class="st" data-page-node-id="lY0rFBKUqucMDjg99ndjkt">副业主线</span>
+   <span class="arr" data-page-node-id="Wc138g5or3EiAw6eC51PCQ">&#8594;</span>
+  </a>
+
+  <a class="row" href="军队采购网公告采集系统/plap-scraper.html" data-page-node-id="8xxF6lA3qYD0nvy6HY74Qx">
+   <span class="nm" data-page-node-id="Z31lLvPNpH0WKstGgMkV2P">军队采购信息采集</span>
+   <span class="ds" data-page-node-id="si7EpTrmZQCsBJSYyYgc19">自动采集军队采购网四川地区工程公告，生成每日报告并同步上线</span>
+   <span class="st" data-page-node-id="0Y5LgNulfeF9M6iKiJF321">开发中</span>
+   <span class="arr" data-page-node-id="d7nVXm5RquYo519S2DtdZt">&#8594;</span>
+  </a>
+
+  <a class="row" href="WorkBuddy 实操手册/workbuddy-manual.html" data-page-node-id="8B6iyLgnreVAMrHXORFfOB">
+   <span class="nm" data-page-node-id="Jf26QDVFgP2s2XDo5867Fv">WorkBuddy 实操手册</span>
+   <span class="ds" data-page-node-id="xgjYQzzDfoAFunhcQqpivF">AI 智能工作台从入门到实操的图文手册，案例驱动、拿来即用</span>
+   <span class="st" data-page-node-id="yExvzgsFS0mpOpMsNofbeZ">编写中</span>
+   <span class="arr" data-page-node-id="iQ8JTjzUVbY9Y415uZBSWu">&#8594;</span>
+  </a>
+
+  <a class="row" href="网页代建服务/website-service.html" data-page-node-id="t9RwtZAaEikKtEGKZiy3QX">
+   <span class="nm" data-page-node-id="geQUisfq4lqS2NmB86m9Ai">个人网页代建</span>
+   <span class="ds" data-page-node-id="BaHPh3h6SDS1kvKICo9BrA">为个人与小商家快速搭建展示型网站，一站式上线</span>
+   <span class="st" data-page-node-id="NNOmNlAiKBQHmuRO99ci3b">接单中</span>
+   <span class="arr" data-page-node-id="xjuZATOEztabgDmLz64CYF">&#8594;</span>
+  </a>
+
+  <a class="row" href="大学专属 PPT 模板/ppt-template.html" data-page-node-id="ISu52cXQ16o9d3DxpSJcqC">
+   <span class="nm" data-page-node-id="ZIWztgLepweR2bs0b6nCS5">大学 PPT 模板</span>
+   <span class="ds" data-page-node-id="AbUCkNoWWOmUsYK2MAs5N3">面向大学生的 PPT 模板资源，主打高频课程场景</span>
+   <span class="st" data-page-node-id="K2pS0CdcuHEHN2fLgd3JVU">筹备中</span>
+   <span class="arr" data-page-node-id="dFjFwQTgKPLOTkAZCE9hvt">&#8594;</span>
+  </a>
+
+ </div>
+</section>
+
+<footer class="foot" data-page-node-id="QsXkI8RoYntH5sWSlPN64n">
+ <div class="rule" data-page-node-id="08fkflvYEGhGXqCr3KwCbV"></div>
+ <div class="co" data-page-node-id="JG9rbVSxuDq2B7v9g1yqDM">— 沙溪子 · <a href="mailto:Chears77@163.com" data-page-node-id="lVwdd1vAVKvhSjYblODERQ">Chears77@163.com</a> —</div>
+</footer>
+
+<div class="qr-mask" id="qrMask" data-page-node-id="1LG2epZmVmxENDv9cGpG45">
+ <div class="qr-box" data-page-node-id="7PxDTAtACvb6HIs6YW72Fg">
+  <img src="轻识记账微信小程序/轻识记账二维码.jpg" alt="轻识记账小程序码" data-page-node-id="R51aPRT9aQoliFRgyozkAL">
+  <p class="t" data-page-node-id="AIWc9Dv0Z1JZ2eCiwIUGAu">轻识记账 · 微信小程序</p>
+  <p class="s" data-page-node-id="vRHVQ3LYO9lVMbFihOSehE">微信扫码，轻装记账 · 点击任意处关闭</p>
+ </div>
+</div>
+
+<script>
+  var mask = document.getElementById('qrMask');
+  document.querySelectorAll('[data-qr]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      mask.classList.add('show');
+    });
+  });
+  mask.addEventListener('click', function(){ mask.classList.remove('show'); });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') mask.classList.remove('show');
+  });
+</script>
+<script>
+(function(){
+ var pt=document.querySelector('.page-title');
+ function upd(){
+  var on=false;
+  if(pt)on=pt.getBoundingClientRect().bottom<96;
+  document.body.classList.toggle('scrolled',on);
+ }
+ window.addEventListener('scroll',upd,{passive:true});
+ window.addEventListener('resize',upd);upd();
+})();
+</script>
+<script>
+(function(){
+ var KEY='axjf-note-theme-v5',V=['blue','book','dark'],N={blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var ds=document.querySelectorAll('.ts-dot'),nm=document.getElementById('tsName');
+ function ap(t){if(V.indexOf(t)<0)t='blue';document.documentElement.setAttribute('data-theme',t);
+  if(nm)nm.textContent=N[t];ds.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t)});
+  try{localStorage.setItem(KEY,t)}catch(e){}}
+ ds.forEach(function(d){d.addEventListener('click',function(){ap(d.getAttribute('data-t'))})});
+ var s='blue';try{s=localStorage.getItem(KEY)||'blue'}catch(e){}
+ ap(s);
+})();
+</script>
+
+</body>
+</html>

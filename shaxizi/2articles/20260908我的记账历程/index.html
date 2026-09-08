@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<!--
+  ═══════════════════════════════════════════════════════
+  模板 · 笔记阅读风（多主题版 v6 · 定稿增强）
+   ① 顶栏干净渐变；滚动越过标题区后，文章标题淡入顶栏中间吸顶显示（随主题变色）
+   ② 右上角色点切换 蓝白/书卷/暗黑（默认蓝白）并记忆选择
+   ③ 页脚一行式「— 沙溪子 · Chears77@163.com —」，68%宽长分隔线
+   ④ 图片灯箱增强：点击放大后可滚轮/按钮缩放(+−)、按住拖动平移、双击放大或复位
+   ⑤ 引用块独立配色（蓝白/书卷/暗黑各有侧重），字号较正文缩一号
+  ⑥ 左右悬浮导航（v7）：鼠标靠右边缘感应出「本文大纲」（滚动高亮、可折叠子标题）；
+     鼠标靠左边缘感应出「全部文章」列表；顶部阅读进度条；窄屏改左右浮钮抽屉
+  用法：复制整个文件夹 → 改名 YYYYMMDD主题 → 改内容 → node generate-index.js
+  替换点：title / h1标题 / 日期 / 正文 / 图片(images/) / 落款文案
+  ═══════════════════════════════════════════════════════
+-->
+<html lang="zh-CN" data-rp="../" data-back="../articles.html" data-home="../../index.html" data-theme="blue" data-page-node-id="rlRyQVUf9vEJKnwiEhS8F1">
+<head data-page-node-id="d1S8go38cVMIEJbpnTL0Gp">
+<meta charset="utf-8" data-page-node-id="xHvo65jm5qQ3abM5lwYmIg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="XgiRaWtXt0vCYxnSTE3sif">
+<title>我的记账历程 - 安即是佛</title>
+<script>
+/* 提前恢复上次的主题，避免刷新闪白；默认 蓝白 */
+try{var t=localStorage.getItem('axjf-note-theme-v5');
+if(['blue','book','dark'].indexOf(t)<0)t='blue';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
+<style>
+ /* ═══════════ 三套主题变量 ═══════════ */
+
+ /* ── 蓝白（默认）· 高饱和蓝 ── */
+ :root, html[data-theme="blue"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#33465e; --ink-strong:#16283f; --ink-mute:#7c8ea6;
+  --bg:#f2f7fd; --bg-glow1:#cfe3fb; --bg-glow2:#e8f2fc;
+  --card:#ffffff; --line:#cdddf1; --line-soft:#e3eefb;
+  --accent:#1f6fe0; --accent-deep:#1755b6; --accent-deeper:#0f3d86;
+  --soft:#e2edfd; --code-bg:#eaf2fe; --code-ink:#1755b6;
+  --qbg:#dfebfd; --qbar:#1f6fe0; --qink:#174a94;
+  --fig-shadow:0 2px 12px rgba(31,111,224,.15);
+  --fig-shadow-lg:0 10px 28px rgba(31,111,224,.26);
+  --bar-c1:#4a97f5; --bar-c2:#1c59c4; --bar-glare:rgba(255,255,255,.3);
+  --bar-sweep:rgba(255,255,255,.14); --bar-bottom:transparent; --bar-ink:#ffffff;
+ }
+ /* ── 书卷 · 米纸墨蓝 ── */
+ html[data-theme="book"]{
+  --font-body:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --ink:#43403a; --ink-strong:#221f18; --ink-mute:#8f897c;
+  --bg:#f5f0e4; --bg-glow1:#e8dcbf; --bg-glow2:#f7f2e8;
+  --card:#fdfaf2; --line:#cbbfa1; --line-soft:#e4dac4;
+  --accent:#4d6f96; --accent-deep:#3a5577; --accent-deeper:#273c57;
+  --soft:#e7dcc2; --code-bg:#eae1cb; --code-ink:#6b5326;
+  --qbg:#ede3cb; --qbar:#4d6f96; --qink:#3a4e6b;
+  --fig-shadow:0 2px 12px rgba(80,65,40,.14);
+  --fig-shadow-lg:0 10px 26px rgba(80,65,40,.24);
+  --bar-c1:#36517a; --bar-c2:#1f2f49; --bar-glare:rgba(255,255,255,.15);
+  --bar-sweep:rgba(255,255,255,.07); --bar-bottom:rgba(191,158,96,.5); --bar-ink:#f5eedb;
+ }
+ /* ── 暗黑 · 深空电蓝 ── */
+ html[data-theme="dark"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#b9c7da; --ink-strong:#e7eef8; --ink-mute:#71819b;
+  --bg:#0a111d; --bg-glow1:#14223a; --bg-glow2:#0d1726;
+  --card:#101b2c; --line:#1d2c44; --line-soft:#16233a;
+  --accent:#3d97ff; --accent-deep:#77b6ff; --accent-deeper:#a8cfff;
+  --soft:#162742; --code-bg:#0f1c30; --code-ink:#66aaff;
+  --qbg:#122339; --qbar:#3d97ff; --qink:#cfe2f8;
+  --fig-shadow:0 2px 14px rgba(0,0,0,.45);
+  --fig-shadow-lg:0 10px 28px rgba(0,0,0,.6);
+  --bar-c1:#1b2e4d; --bar-c2:#0b1626; --bar-glare:rgba(120,180,255,.2);
+  --bar-sweep:rgba(140,190,255,.08); --bar-bottom:rgba(90,150,255,.3); --bar-ink:#eaf2fc;
+ }
+
+ *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+ body{font-family:var(--font-body);font-size:16px;color:var(--ink);line-height:1.8;
+  background:radial-gradient(circle at 14% 4%, var(--bg-glow1) 0, transparent 36%),
+             radial-gradient(circle at 88% 3%, var(--bg-glow2) 0, transparent 32%), var(--bg);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background .35s ease,color .35s ease}
+ img{max-width:100%;display:block} a{text-decoration:none;color:inherit}
+
+ /* ═══════════ 顶栏（无斜线 · 干净渐变+柔和高光）═══════════ */
+ .topbar{position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;gap:12px;padding:0 20px;
+  color:var(--bar-ink);
+  background-color:var(--bar-c2);
+  background-image:
+   linear-gradient(120deg, transparent 20%, var(--bar-sweep) 42%, transparent 62%),
+   radial-gradient(circle at 12% -90%, var(--bar-glare), transparent 58%),
+   linear-gradient(175deg, var(--bar-c1) 0%, var(--bar-c2) 130%);
+  box-shadow:0 2px 14px rgba(20,60,130,.22);
+  border-bottom:1px solid var(--bar-bottom);}
+ .topbar .home{display:flex;align-items:center;gap:7px;color:inherit;font-weight:600;font-size:14px;
+  letter-spacing:.5px;opacity:.92;transition:opacity .2s;flex:none}
+ .topbar .home:hover{opacity:1}
+ .topbar .home svg{width:18px;height:18px;opacity:.9}
+
+ /* 滚动吸顶的文章标题：藏在顶栏中间，滚动越过标题区后淡入 */
+ .top-title{position:absolute;left:50%;top:0;height:58px;line-height:58px;
+  transform:translate(-50%,5px);max-width:min(560px,54vw);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:14.5px;font-weight:600;letter-spacing:.5px;color:var(--bar-ink);
+  opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+ body.scrolled-title .top-title{opacity:.97;transform:translate(-50%,0)}
+
+ /* ═══════════ 右上 · 极简色点切换器 ═══════════ */
+ .theme-switch{margin-left:auto;display:flex;align-items:center;gap:10px}
+ .ts-dots{display:flex;align-items:center;gap:8px}
+ .ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  opacity:.45;transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s;flex:none}
+ .ts-dot:hover{opacity:.95}
+ .ts-dot.on{opacity:1;transform:scale(1.28);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18)}
+ /* 三个色点固定配色，一眼对应三套主题 */
+ .ts-dot[data-t="blue"] {background:#9fd0ff}
+ .ts-dot[data-t="book"] {background:#d4b97e}
+ .ts-dot[data-t="dark"] {background:#8aa7cc}
+ .ts-name{font-size:12px;letter-spacing:2px;color:var(--bar-ink);opacity:.95;
+  font-variant-numeric:tabular-nums;min-width:34px;text-align:left}
+
+ /* ═══════════ 文章主体 ═══════════ */
+ .article-page{max-width:740px;margin:0 auto;padding:40px 24px 46px}
+ .article-head{text-align:center;margin-bottom:18px}
+ .article-title{font-size:25px;color:var(--ink-strong);font-weight:700;line-height:1.4;letter-spacing:.5px;transition:color .35s}
+ .article-meta{margin-top:9px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;color:var(--ink-mute)}
+ .article-date{font-variant-numeric:tabular-nums}
+
+ .article-body{font-size:16px;color:var(--ink);line-height:1.85;transition:color .35s}
+ .article-body p{margin-bottom:14px;text-indent:2em;text-align:justify}
+ .article-body p.noindent{text-indent:0}
+ .article-body h2{font-size:17.5px;color:var(--accent-deep);font-weight:700;margin:24px 0 10px;
+  padding-left:12px;border-left:4px solid var(--accent);line-height:1.4}
+ .article-body h3{font-size:15.5px;color:var(--accent-deep);font-weight:700;margin:20px 0 8px;
+  padding-left:10px;border-left:3px solid var(--accent);line-height:1.5;opacity:.94}
+ .article-body h4{font-size:14.5px;color:var(--ink-strong);font-weight:700;margin:15px 0 6px;line-height:1.5}
+ .article-body a{color:var(--accent-deep);text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1px;text-underline-offset:3px;overflow-wrap:anywhere;transition:opacity .15s}
+ .article-body a:hover{opacity:.72}
+ .article-body blockquote{margin:16px 0;padding:10px 16px;background:var(--qbg);border-left:4px solid var(--qbar);
+  border-radius:2px 10px 10px 2px;color:var(--qink);font-size:14px;line-height:1.8;
+  border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  box-shadow:0 2px 10px rgba(30,80,160,.07)}
+ .article-body strong{color:var(--accent-deeper)}
+ .article-body .fmt{font-family:Consolas,monospace;background:var(--code-bg);padding:1.5px 7px;border-radius:6px;
+  color:var(--code-ink);font-weight:600;font-size:14px}
+ .article-body figure{margin:18px 0;text-align:center}
+ .article-body figure img{cursor:zoom-in;border-radius:12px;box-shadow:var(--fig-shadow);
+  max-width:100%;display:inline-block;border:1px solid var(--line-soft);
+  transition:transform .3s,box-shadow .3s}
+ .article-body figure img:hover{transform:translateY(-2px);box-shadow:var(--fig-shadow-lg)}
+ .article-body figure figcaption{margin-top:8px;font-size:13px;color:var(--ink-mute)}
+ .article-body ul,.article-body ol{margin:0 0 14px 2em;line-height:1.85}
+ .article-body li{margin:4px 0}
+
+ /* ═══════════ 页脚 · 一行落款 + 长分隔线 ═══════════ */
+ .article-footer{margin-top:48px;text-align:center}
+ .footer-rule{width:min(340px,68%);height:1px;margin:0 auto 16px;border:0;
+  background:linear-gradient(90deg,transparent,var(--line) 16%,var(--line) 84%,transparent)}
+ .colophon{font-size:14px;color:var(--ink-mute);letter-spacing:1px;line-height:1.8}
+.colophon .dash{color:var(--ink-mute)}
+.colophon .co-name{color:var(--ink-strong);font-weight:600}
+.colophon .co-mail{color:inherit;text-decoration:none;cursor:pointer}
+
+ /* 灯箱（可缩放：滚轮/按钮缩放 + 拖动平移） */
+ .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(16,26,40,.94);
+  flex-direction:column;padding:64px 20px 96px;overflow:hidden}
+ .lightbox.active{display:flex}
+ .lb-stage{position:relative;flex:1;min-height:0;width:100%;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+ .lightbox img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.45);
+  transform-origin:center center;will-change:transform;cursor:grab;
+  user-select:none;-webkit-user-drag:none;touch-action:none}
+ .lightbox img.panning{cursor:grabbing}
+ .lightbox .lb-cap{color:#cfd8e3;margin-top:12px;font-size:13.5px;text-align:center;max-width:100%;
+  padding:0 4px;line-height:1.7}
+ .lightbox .lb-close{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s}
+ .lightbox .lb-close:hover{background:rgba(255,255,255,.34)}
+ /* 底部工具条：− 百分比 + 复位 */
+ .lb-tools{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:5;
+  display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:999px;
+  background:rgba(18,28,42,.74);border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 6px 20px rgba(0,0,0,.35)}
+ .lb-tools button{min-width:32px;height:32px;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.13);color:#fff;font-size:19px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:inherit}
+ .lb-tools button:hover{background:rgba(255,255,255,.38)}
+ .lb-tools button:active{transform:scale(.94)}
+ .lb-tools .lb-scale{min-width:52px;text-align:center;font-size:12.5px;letter-spacing:.5px;
+  color:#e2ecf7;font-variant-numeric:tabular-nums}
+
+ @media(max-width:600px){
+  .article-title{font-size:20.5px}.article-page{padding:28px 16px 40px}
+  .article-body{font-size:15px;line-height:1.8}
+  .article-body p{margin-bottom:12px}
+  .topbar{padding:0 12px}
+  .ts-dots{gap:11px}
+  .ts-dot{width:15px;height:15px} /* 手机端色点略放大，方便点按 */
+  .ts-name{display:none} /* 手机上只留色点，更省地 */
+  .top-title{max-width:44vw;font-size:13px}
+  .article-body blockquote{padding:9px 13px;font-size:13.5px}
+  .article-body h2{font-size:16.5px}
+  .article-body h3{font-size:15px}
+  .article-body h4{font-size:14px}
+  .lightbox{padding:56px 12px 88px}
+  .lb-tools button{min-width:30px;height:30px;font-size:17px}
+ }
+</style>
+<style>
+/* ═══════════ 左右悬浮导航(模板v7.1)═══════════ */
+.rail-edge{position:fixed;top:0;bottom:0;width:16px;z-index:170;cursor:default;background:transparent}
+.rail-edge.eL{left:0}
+.rail-edge.eR{right:0}
+.rpanel{position:fixed;top:58px;bottom:0;width:250px;background:var(--card);
+ border:1px solid var(--line);box-shadow:0 0 34px rgba(10,30,60,.18);z-index:200;
+ display:flex;flex-direction:column;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.rpanel .rph{flex:0 0 auto;display:flex;align-items:center;gap:7px;
+ padding:11px 12px 9px;border-bottom:1px solid var(--line)}
+.rpanel .rph-t{font-size:12.5px;font-weight:800;letter-spacing:1.5px;color:var(--acc-d,var(--ink-strong))}
+ .rpanel .rph-c{font-size:11px;color:var(--ink-mute);background:var(--soft);
+ padding:0 7px;border-radius:999px;font-weight:600}
+ .rpanel .rph-gap{flex:1}
+ .rpanel .rph-b.wide{width:auto;height:20px;padding:0 8px;font-size:10.5px;letter-spacing:.4px}
+.rpanel .rph-x,.rpanel .rph-b{margin-left:auto;border:0;background:var(--soft);color:var(--ink-mute);
+ width:22px;height:22px;border-radius:6px;cursor:pointer;font-size:11px;line-height:1;
+ display:inline-flex;align-items:center;justify-content:center;font-family:inherit;transition:all .15s}
+.rpanel .rph-x{margin-left:0}
+.rpanel .rph-x:hover,.rpanel .rph-b:hover,.rpanel .rph-b.on{background:var(--accent);color:#fff}
+.rpanel.pL{left:0;transform:translateX(-105%);border-left:0;border-radius:0 16px 16px 0}
+.rpanel.pR{right:0;transform:translateX(105%);border-right:0;border-radius:16px 0 0 16px}
+.rpanel.open{transform:none}
+/* 左 · 全部文章（时间已取消，紧凑行） */
+.rpl{flex:1;overflow-y:auto;list-style:none;padding:6px 6px 18px}
+.rpl .it a{display:flex;align-items:center;gap:8px;padding:4.5px 9px;border-radius:7px;
+ transition:background .14s;text-decoration:none}
+.rpl .it a:hover{background:var(--soft)}
+.rpl .it .t{flex:1;min-width:0;font-size:12.6px;color:var(--ink-strong);line-height:1.4;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.rpl .it.cur a{background:var(--soft);box-shadow:inset 3px 0 0 var(--accent)}
+.rpl .it.cur .t{color:var(--acc-d);font-weight:800}
+/* 右 · 本文大纲（带子标题的 h2 三角折叠，默认收起） */
+.rpt{flex:1;overflow-y:auto;padding:6px 0 18px}
+.rpt .ti{display:block;padding:5px 12px 5px 16px;font-size:12.4px;color:var(--ink);text-decoration:none;
+ line-height:1.5;border-left:3px solid transparent;cursor:pointer;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .13s}
+.rpt .ti:hover{color:var(--acc-d);background:var(--soft);border-left-color:var(--line)}
+.rpt .ti.l2{font-weight:700;color:var(--ink-strong);padding:6px 12px 6px 25px}
+.rpt .ti.l3{padding-left:36px;font-size:12.2px}
+.rpt .ti.l4{padding-left:48px;font-size:11.8px;color:var(--ink-mute)}
+.rpt .ti.cur{color:var(--acc-d);background:var(--soft);border-left-color:var(--accent);font-weight:700}
+.rpt .tg{position:relative}
+.rpt .tg-arr{position:absolute;left:7px;top:7px;width:15px;height:16px;padding:0;border:0;background:none;
+ color:var(--ink-mute);cursor:pointer;font-size:8px;line-height:1;display:flex;align-items:center;justify-content:center;
+ font-family:inherit;transition:color .15s,transform .18s}
+.rpt .tg-arr:hover{color:var(--acc-d)}
+.rpt .tg.open .tg-arr{transform:rotate(90deg)}
+.rpt .tg-c{display:none}
+.rpt .tg.open .tg-c{display:block}
+.rpt .tempty{font-size:12.5px;color:var(--ink-mute);padding:18px 16px;text-align:center}
+/* 顶部阅读进度 */
+.rail-prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:260;opacity:0;
+ background:linear-gradient(90deg,var(--accent),var(--acc-d));
+ box-shadow:0 0 6px var(--accent);transition:opacity .25s;pointer-events:none}
+.rail-prog.on{opacity:1}
+/* 移动端抽屉浮钮 */
+.rfab{display:none}
+.rscrim{display:none}
+.article-body h2,.article-body h3,.article-body h4{scroll-margin-top:84px}
+@media(max-width:900px){
+ .rail-edge{display:none}
+ .rfab{display:inline-flex;position:fixed;top:50%;transform:translateY(-50%);z-index:230;
+  width:30px;height:64px;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
+  color:var(--acc-d);background:var(--card);border:1px solid var(--line2);
+  box-shadow:var(--sh,0 2px 10px rgba(0,0,0,.12));transition:color .15s}
+ .rfab.fL{left:0;border-left:0;border-radius:0 14px 14px 0}
+ .rfab.fR{right:0;border-right:0;border-radius:14px 0 0 14px}
+ .rfab:hover{color:var(--accent)}
+ .rfab.hide{opacity:0;pointer-events:none}
+ .rpanel{width:min(86vw,330px)}
+ .rpanel.pL{transform:translateX(-105%)}
+ .rpanel.pR{transform:translateX(105%)}
+ .rscrim{position:fixed;inset:0;background:rgba(12,20,32,.42);z-index:190;display:none;backdrop-filter:blur(2px)}
+ .rscrim.show{display:block}
+}
+</style>
+</head>
+<body data-page-node-id="GKItPUqSchWeZSpWEfSWqM">
+
+<!-- 顶栏：左侧返回 + 右上极简色点主题切换（默认蓝白，一般不用改）-->
+<nav class="topbar" data-page-node-id="em3D5xY02R2EnvkFx0F70N">
+ <a class="home" href="../articles.html" data-page-node-id="yEZNMzVaZnlXHlFE38tswT">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" data-page-node-id="SlhBXeNqEXEX0TJFtfzYdI"><polyline points="15 18 9 12 15 6" data-page-node-id="AnYfPVEnjoQGv1nNbQNmLv"/></svg>
+  文章列表
+ </a>
+ <span class="top-title" id="topTitle" aria-hidden="true"></span>
+ <div class="theme-switch" role="group" aria-label="切换主题" data-page-node-id="wfzozHDDRIdQIeG1J6bWLn">
+  <div class="ts-dots" data-page-node-id="YFtOKhJQWReYxert7lpphd">
+   <button type="button" class="ts-dot" data-t="blue" title="蓝白" aria-label="蓝白" data-page-node-id="4IAkEIaIVWxsSvLHBMf99f"></button>
+   <button type="button" class="ts-dot" data-t="book" title="书卷" aria-label="书卷" data-page-node-id="7qAX59yjQZV4Qtnu48BvLm"></button>
+   <button type="button" class="ts-dot" data-t="dark" title="暗黑" aria-label="暗黑" data-page-node-id="wQi3BC6JMxE1zjHgAA9BXL"></button>
+  </div>
+  <span class="ts-name" id="tsName" data-page-node-id="Qn2mPw3rDvNXdVA7M5U3Zd">蓝白</span>
+ </div>
+</nav>
+
+<article class="article-page" data-page-node-id="PrBRD0dyZMVKMIeBpSJ61z">
+ <header class="article-head" data-page-node-id="BdEIurcoMAqZHRz4sPC0hX">
+  <!-- 填这里：文章标题 / 日期 -->
+  <h1 class="article-title">我的记账历程</h1>
+  <div class="article-meta" data-page-node-id="UyorfxPljUyc9pw2w0CUed">
+   <span class="article-date">2026年9月8日</span>
+  </div>
+ </header>
+
+ <!-- 正文：段落写 <p>（自动首行缩进），强调用 <strong>，
+      格式示例用 <span class="fmt">，金句用 <blockquote>，
+      图片用 <figure><img src="images/xx.jpg" data-cap="图注"><figcaption>图注</figcaption></figure> -->
+ <div class="article-body" data-page-node-id="Tkdj9CET6Rsz9EpTHO5gAO">
+<p>如果不算学生时代记两页就丢的笔记本，我认认真真记账，是从组建家庭以后开始的。</p>
+  <p>起因说来简单，也很现实：<strong>两个人挣钱、一个家花钱，如果账目只有一个人心里有数，日子久了，"钱去哪了"就会从一句随口一问，变成一次次的争执。</strong>我见过也经历过那种对话——"这个月怎么又花了这么多？""我也不知道啊，没买什么啊。"两句下来，火的不是钱，是"你不透明"这四个字。</p>
+  <p>所以对我来说，记账从来不是抠门，而是一件关于<strong>信任</strong>的事：账目公开透明，家里的每一分钱去了哪里，两个人都看得见、说得清，矛盾自然就少了。</p>
+  <p>这篇文章，把我这几年记账工具的折腾史完整写下来。工具换了四五轮，但有一件事从来没变——<strong>一直在记</strong>。我越来越相信：记账这件事，方法不重要，工具不重要，坚持才重要。</p>
+
+  <h2>五年折腾，一条时间线</h2>
+  <ul>
+   <li><strong>阶段一 · Excel 单机记账（起步）</strong>——一张表打天下，格式自己定，数据最扎实，但只有我自己看得到。</li>
+   <li><strong>阶段二 · WPS 共享账本（协作）</strong>——把账本搬上云，家属终于能看了，但打开慢，体验劝退。</li>
+   <li><strong>阶段三 · 手机记事本记账（轻量）</strong>——一句"1#吃饭20"随手记，月底汇总，最土的办法反而最耐用。</li>
+   <li><strong>阶段四 · 自研「轻识记账」小程序（进化）</strong>——把记事本的规则写进代码，文字一贴，日期金额分类自动识别。</li>
+   <li><strong>阶段五 · 流水表 + 分析表自动化（沉淀）</strong>——Excel 变身数据中枢：识别结果统一入流水表，年月一点，月账单和图表自动呈现。</li>
+  </ul>
+
+  <h2>Excel 时代：一张表的孤独坚持</h2>
+  <p>和大多数人一样，我的第一本"账"就是一张 Excel 表。</p>
+  <p>列很简单：年、月、日、金额、详细、账户、用途、备注。每一笔后面我都带一个编号，比如 <span class="fmt">2#爱达乐早餐24.11</span>——几号花的、在哪花的、花了多少，一行看全。这个"编号+摘要+金额"的格式，后来跟了我很多年，成了我所有记账工具的原型。</p>
+  <blockquote>2026年账本的样子：<span class="fmt">1#收入37018.7</span>&nbsp;&nbsp;<span class="fmt">2#爱达乐早餐24.11</span>&nbsp;&nbsp;<span class="fmt">6#万科房贷2200+新都会3310.8</span></blockquote>
+  <p>Excel 的好处是<strong>完全可控</strong>：想加列就加列，想筛就筛，函数随便写。坏处也很明显——它躺在我的电脑里，<strong>家属看不到</strong>。我在电脑前记一笔要打开文件，出门在外想记更是无从下手。账目透明这件事，单机表格天生做不到。</p>
+
+  <h2>WPS 共享账本：透明了，但太慢了</h2>
+  <p>为了解决"家属看不到"的问题，我把账本搬到了 WPS 云端，做成共享文档。两个人都能打开、都能看，方向完全对了。</p>
+  <p>可现实很快泼了冷水：<strong>打开太慢了。</strong>账目一年年累积，文件越来越大，手机上点开转半天圈；有时候急着记一笔，光等加载就要一分钟，等打开的时候想记什么都忘了。体验一旦变得麻烦，记账的意愿就会被一点点磨掉——很多家庭的记账就是这样断掉的，不是不想记，是"懒得打开"。</p>
+  <blockquote>记账最大的敌人，从来不是懒，而是<strong>记录成本太高</strong>。成本一高，坚持就断了。</blockquote>
+
+  <h2>手机记事本：最土的办法，最有效</h2>
+  <p>于是我干脆"降级"：放弃在专门的工具里记账，改用手机自带的<strong>记事本</strong>。想到什么花销，打开备忘录，一行字搞定：</p>
+  <blockquote><span class="fmt">1#吃饭20</span>&nbsp;&nbsp;<span class="fmt">5#手机壳8.8</span>&nbsp;&nbsp;<span class="fmt">6#给u15000</span>　——日期#事项金额，十秒钟记完。</blockquote>
+  <p>记事本秒开、离线能用、没有任何学习成本。我和家属都这么记，<strong>月底再统一汇总到 WPS 账本里</strong>，分类、账户、用途到时候一起补齐。这样安排以后，奇妙的事情发生了：<strong>记账这件事几乎不再有心理负担</strong>，因为"记"这个动作便宜到可以忽略不计。</p>
+  <p>这个阶段让我悟了一个道理：<strong>记录和整理，应该分开。</strong>当场只需要记下最小信息（几号、干了啥、多少钱），费脑子的归类汇总，放到月底一次做完。很多记账工具失败，就是把这两件事强行捏在了一起，让"记"变得沉重。</p>
+  <p>不过土办法也有土办法的痛：月底汇总几十上百行，手工整理费时费神，还容易错。这个痛点，埋下了下一阶段的种子。</p>
+
+  <h2>轻识记账小程序：把规则写进代码</h2>
+  <p>记事本格式用了那么久，格式本身已经非常稳定——日期、编号、事项、金额，位置固定。既然如此，为什么不让程序来读懂它？</p>
+  <p>于是我动手开发了<strong>「轻识记账」微信小程序</strong>。核心就一个能力：<strong>把一段文字账目粘贴进去，自动识别出日期、金额和分类</strong>，直接变成结构化账单。比如把记事本里攒的一整段贴进去，出来就是一张整整齐齐的账单表。</p>
+  <p>后来 AI 能力越来越成熟，"识别"这件小事又多了一条路：<strong>把记事本整段流水丢给 AI，同样能拆出日期、金额、分类</strong>。平时顺手就用轻识记账，月底大批量补录直接交给 AI——两条通道，谁方便用谁。至此，"一行流水文字 → 一条结构化账单"的通路彻底跑通。</p>
+  <ul>
+   <li><strong>📝 文字识别账单</strong>——内置规则引擎 parser.js，按"日期#事项金额"等常见格式自动拆解日期、金额、分类，粘贴即入账。</li>
+   <li><strong>🗂️ 结构化管理</strong>——记账、明细、统计、设置四个页签，账目清清楚楚，月度统计自动生成。</li>
+   <li><strong>🔒 本地存储</strong>——数据存在自己手机里，支持导出导入备份，自定义分类，不绑架数据。</li>
+   <li><strong>🤝 配合 WPS</strong>——小程序管"随手记和识别"，WPS 管"月度汇总和共享"，各司其职。</li>
+  </ul>
+  <p>在这个体系里，轻识记账扮演的是<strong>辅助记录</strong>的角色：它不追求大而全，只解决"从一行文字到一条账单"这最后一步。月底汇总 WPS 的时候，也不用再手工誊抄——文字进去，账单出来。</p>
+  <figure>
+   <img src="images/轻识记账小程序截图.png" alt="轻识记账小程序四个页签截图" data-cap="「轻识记账」小程序实拍（点图可放大）">
+   <figcaption>▲ 「轻识记账」小程序实拍：记账（文字粘贴 + 智能识别）｜明细（逐笔可删改）｜统计（收支结构环形图）｜设置（导出 CSV 备份）</figcaption>
+  </figure>
+
+  <h2>Excel 变身「流水表 + 分析表」：数据开始自己说话</h2>
+  <p>最近（就是写这篇文章的这几天），我又把这份 Excel/WPS 账本重新整理了一遍：整本账从此分成<strong>两种角色</strong>——<strong>总表当"流水表"</strong>，AI 或轻识记账识别出的账单，按年月日一行行入库，只做记录不做加工；<strong>分析表负责"直观呈现"</strong>，选好年月，当月账单自动生成，收入、支出自动算好，再配上图表，钱去了哪里一眼就能看懂。</p>
+  <p>至此，我的记账闭环彻底跑通：</p>
+  <ol>
+   <li><strong>手机记事本</strong>：随手记流水，一行一句，比如 <span class="fmt">1#吃饭20</span>；</li>
+   <li><strong>AI / 轻识记账</strong>：自动识别日期、金额、分类；</li>
+   <li><strong>Excel 流水表</strong>：结构化入库，只记录，不加工；</li>
+   <li><strong>分析表直观呈现</strong>：月账单自动生成，收支统计 + 图表。</li>
+  </ol>
+  <blockquote>📱 随手：<strong>手机记事本</strong>记流水 → 🤖 识别：<strong>AI 或「轻识记账」</strong>拆出日期金额分类 → 📥 入库：<strong>Excel 流水表</strong> → 📊 呈现：<strong>分析表</strong>自动出月账单和图表，全家随时可看。</blockquote>
+  <figure>
+   <img src="images/excel账单表格（流水）.png" alt="流水表（总表）截图" data-cap="流水表（总表）（点图可放大）">
+   <figcaption>▲ 流水表（总表）：AI 或轻识记账识别出的账单，按"年 / 月 / 日 / 金额 / 详细 / 账户 / 用途 / 备注"一行行入库，表头带筛选按钮，只记录、不加工</figcaption>
+  </figure>
+  <figure>
+   <img src="images/excel账单表格（月账单）.png" alt="月账本分析表截图" data-cap="月账本（分析表）（点图可放大）">
+   <figcaption>▲ 月账本（分析表）：左侧当月流水自动生成，中间支出饼图 + 每月收支汇总趋势，右侧自动出收支汇总报表、分类明细和信用卡欠款情况</figcaption>
+  </figure>
+  <figure>
+   <img src="images/excel账单表格（年账单）.png" alt="年账本汇总表截图" data-cap="年账本（点图可放大）">
+   <figcaption>▲ 年账本：全年收入-支出汇总表，按月铺开 12 列。特别设计了"男 / 女"分栏和<strong>内部转账收支</strong>对账列——夫妻间转账一边记支出、一边记收入，汇总时自动抵消，家庭真实结余一目了然（2026 年 1~9 月总结余 52387.97 元），下方配每月收支与结余趋势图</figcaption>
+  </figure>
+  <p>这里有个小设计值得单独说：<strong>内部转账的对账思路</strong>。我转给家属的钱，在我的消费支出里记一笔"支出"，同时在她的"内部转账收入"里记一笔——年账本汇总时两边对照，一眼就能核对出有没有记漏。家庭账本最容易乱的就是"转来转去的钱"，把它单独拉出来对账，账就再也乱不了。</p>
+  <p>每一步都用最顺手的工具，每一环都不给"坚持"制造障碍。记录归记录，分析归分析，各干各的活。</p>
+
+  <h2>坚持记账，家里发生了什么变化</h2>
+  <ul>
+   <li><strong>🕊️ 争吵变少了</strong>——"钱去哪了"从争吵导火索变成了一起翻账本的日常。账目摆在那里，猜测和指责就没有生存空间。</li>
+   <li><strong>🔍 财务全透明</strong>——房贷、转账、日常开销，两人都看得见。家庭财务不再是"黑箱"，做任何大额决定都有数据支撑。</li>
+   <li><strong>💰 乱花钱变少了</strong>——很多支出在"记下来"的那个瞬间就被重新审视过一遍。记账本身就是一道冷静期。</li>
+   <li><strong>🧒 给孩子做榜样</strong>——女儿看着爸妈认真记每一笔账，压岁钱也开始自己动手管理。身教胜过一百句大道理。</li>
+   <li><strong>📅 复盘有了依据</strong>——月账单自动生成后，每月花十分钟回顾：哪些是固定开销、哪些可省、下月怎么优化。越记越有掌控感。</li>
+   <li><strong>🌱 攒钱有了抓手</strong>——结余看得见，储蓄目标就能拆到每月。钱不是靠"省出来的焦虑"，而是靠"看得见的路径"。</li>
+  </ul>
+  <blockquote>记账能缓和家庭矛盾，原理其实很朴素：<strong>矛盾大多来自信息不对称，而账本是对称信息的最大来源。</strong>公开、透明、可追溯——这三点做到了，信任就有了地基。</blockquote>
+
+  <h2>如果你想开始：几条踩过坑的建议</h2>
+  <p>折腾了这么多年，如果只让你带走几句话，我想是这些：</p>
+  <ul>
+   <li><strong>先选"最低成本"的工具，而不是"最好"的工具。</strong>记事本都行，能坚持的才是好工具。</li>
+   <li><strong>固定一个极简格式。</strong>比如"日期#事项金额"，格式越固定，以后越容易被程序识别、被自己检索。</li>
+   <li><strong>记录和整理分开。</strong>当场只记一行字，归类汇总留给月底的十分钟。</li>
+   <li><strong>一定要共享。</strong>一个人记账是自律，两个人看同一本账才是透明。</li>
+   <li><strong>漏记别补焦虑。</strong>漏了一天、一周都正常，接着记就好，中断不是失败，放弃才是。</li>
+   <li><strong>让数据自己说话。</strong>坚持三个月，回头看月账单，你会感谢当初的自己。</li>
+  </ul>
+
+  <h2>轻识记账：我自己开发的辅助工具</h2>
+  <p>「轻识记账」是我为自己家的记账痛点开发的小程序，现在开放给同样想记账的你。它的定位很克制：<strong>做记账体系里的"随手记+自动识别"助手</strong>，不替你做决定，只帮你把记录成本降到最低。</p>
+  <figure>
+   <img src="images/轻识记账二维码.jpg" alt="轻识记账小程序码" data-cap="微信扫码，或搜索「轻识记账」（点图可放大）">
+   <figcaption>▲ 微信扫码，或搜索「轻识记账」：粘贴文字自动识别日期、金额、分类；记账 / 明细 / 统计 / 设置四页轻装上阵；数据本地存储，支持导出导入，换机不丢账<br>微信 → 发现 → 小程序 → 搜索「轻识记账」</figcaption>
+  </figure>
+  <p>如果你也在用"记事本+Excel/WPS"这套组合，轻识记账几乎可以无缝接入你的流程。</p>
+
+  <p><strong>坚持，才能做好记账。</strong></p>
+  <p>工具会过时，格式会升级，但每一笔认真记下的账，都是在为家庭的信任和安心添砖加瓦。从 <span class="fmt">1#吃饭20</span> 开始，今天就是最好的日子。</p>
+ </div>
+
+ <!-- 页脚：长分隔线 + 一行落款 -->
+ <footer class="article-footer" data-page-node-id="V8VtpgsEXEz29KuCcPKISH">
+  <div class="footer-rule" data-page-node-id="3mSRhC9BvYTjoJ8vFkQyIF"></div>
+  <div class="colophon" data-page-node-id="hYxeLEhSeVi1wXudlMdzMk">
+   <span class="dash" data-page-node-id="DSG9AqLIg2Nb7Fef4oIFNQ">—</span>&nbsp;<span class="co-name" data-page-node-id="40san0UbCGAw2fVssCMmQC">沙溪子</span>&nbsp;·&nbsp;<a class="co-mail" href="mailto:Chears77@163.com" data-page-node-id="yjx2zwif7CHEguoTIqdfG7">Chears77@163.com</a>&nbsp;<span class="dash" data-page-node-id="VUoaW6yROFGAfeUDVjgxj9">—</span>
+  </div>
+ </footer>
+</article>
+
+<!-- 灯箱：点击放大，之后滚轮/按钮缩放、按住拖动、双击复位（保留即可不用改）-->
+<div class="lightbox" id="lightbox">
+ <div class="lb-close" onclick="closeLb()" title="关闭">×</div>
+ <div class="lb-stage" id="lbStage">
+  <img id="lbImg" src="" alt="" draggable="false">
+ </div>
+ <div class="lb-cap" id="lbCap"></div>
+ <div class="lb-tools">
+  <button type="button" id="lbZo" title="缩小（或滚轮向下）">−</button>
+  <span class="lb-scale" id="lbScale">100%</span>
+  <button type="button" id="lbZi" title="放大（或滚轮向上）">+</button>
+  <button type="button" id="lbR" title="复位（双击也可）">⟲</button>
+ </div>
+</div>
+
+<!-- ═══════ 左右悬浮导航:左侧文章目录 / 右侧本文大纲(模板v7.1)═══════ -->
+<aside class="rpanel pL" id="panelL" aria-label="全部文章">
+ <div class="rph">
+  <span class="rph-t">全部文章</span><span class="rph-c" id="cntL">0</span>
+  <button class="rph-b" id="pinL" type="button" title="停靠：让面板常驻">钉</button>
+  <button class="rph-x" id="xL" type="button" title="关闭">×</button>
+ </div>
+ <ul class="rpl" id="listL"></ul>
+</aside>
+
+<aside class="rpanel pR" id="panelR" aria-label="本文大纲">
+ <div class="rph">
+  <span class="rph-t">本文大纲</span>
+  <span class="rph-gap"></span>
+  <button class="rph-b wide" id="expR" type="button" title="展开全部子标题">全展</button>
+  <button class="rph-b" id="pinR" type="button" title="停靠：让面板常驻">钉</button>
+  <button class="rph-x" id="xR" type="button" title="关闭">×</button>
+ </div>
+ <nav class="rpt" id="tocR"></nav>
+</aside>
+
+<div class="rail-edge eL" id="edgeL" title="全部文章"></div>
+<div class="rail-edge eR" id="edgeR" title="本文大纲"></div>
+<button class="rfab fL" id="fabL" type="button" title="全部文章">☰</button>
+<button class="rfab fR" id="fabR" type="button" title="本文大纲">≡</button>
+<div class="rscrim" id="scrimRails"></div>
+<div class="rail-prog" id="railProg"></div>
+
+<script>
+/* 主题切换（色点）：存 localStorage，默认蓝白 */
+(function(){
+ var KEY='axjf-note-theme-v5', VALID=['blue','book','dark'];
+ var NAME={blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var dots=document.querySelectorAll('.ts-dot');
+ var nameEl=document.getElementById('tsName');
+ function apply(t){
+  if(VALID.indexOf(t)<0)t='blue';
+  document.documentElement.setAttribute('data-theme',t);
+  if(nameEl) nameEl.textContent=NAME[t];
+  dots.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t);});
+  try{localStorage.setItem(KEY,t);}catch(e){}
+ }
+ dots.forEach(function(d){d.addEventListener('click',function(){apply(d.getAttribute('data-t'));});});
+ var saved='blue';
+ try{saved=localStorage.getItem(KEY)||'blue';}catch(e){}
+ apply(saved);
+})();
+
+/* 滚动吸顶标题：正文标题滚出可视区后，淡入顶栏中间显示（取自 h1） */
+(function(){
+ var bar=document.getElementById('topTitle'); if(!bar)return;
+ var h1=document.querySelector('.article-title');
+ var head=document.querySelector('.article-head');
+ if(h1 && h1.textContent.trim()) bar.textContent=h1.textContent.trim();
+ function upd(){
+  if(!head) return;
+  var limit=head.offsetTop+head.offsetHeight-70; /* 标题区底部接近顶栏下缘时显示 */
+  document.body.classList.toggle('scrolled-title', window.scrollY>limit);
+ }
+ var ticking=false;
+ function onScroll(){ if(ticking)return; ticking=true;
+  requestAnimationFrame(function(){ upd(); ticking=false; }); }
+ window.addEventListener('scroll', onScroll, {passive:true});
+ window.addEventListener('resize', upd);
+ upd();
+})();
+
+/* 灯箱增强：点击放大 · 滚轮/按钮缩放（以指针为中心）· 按住拖动平移 · 双击复位 */
+(function(){
+ var lb=document.getElementById('lightbox');
+ var stage=document.getElementById('lbStage');
+ var img=document.getElementById('lbImg');
+ var cap=document.getElementById('lbCap');
+ var scEl=document.getElementById('lbScale');
+ var MIN=.5, MAX=5, s=1, tx=0, ty=0;
+
+ function applyT(anim){
+  img.style.transition=anim?'transform .2s cubic-bezier(.22,.8,.36,1)':'none';
+  img.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s.toFixed(3)+')';
+  if(scEl) scEl.textContent=Math.round(s*100)+'%';
+ }
+ function bound(){
+  var w=stage.clientWidth, h=stage.clientHeight;
+  if(s<=1.0001){ tx=0; ty=0; return; }
+  var mx=Math.max((img.clientWidth*s-w)/2,0)+40;
+  var my=Math.max((img.clientHeight*s-h)/2,0)+40;
+  tx=Math.max(-mx,Math.min(mx,tx));
+  ty=Math.max(-my,Math.min(my,ty));
+ }
+ function reset(){ s=1; tx=0; ty=0; applyT(true); }
+ function zoomBy(f,px,py,anim){
+  if(typeof px!=='number'){ px=0; py=0; }
+  var ns=Math.max(MIN,Math.min(MAX,s*f));
+  if(ns===s){ applyT(anim); return; }
+  var k=ns/s; s=ns;
+  tx=px-(px-tx)*k; ty=py-(py-ty)*k; /* 保持指针下的画面不动 */
+  bound(); applyT(anim);
+ }
+ function openLb(src,alt){
+  reset(); img.src=src; cap.textContent=alt||'';
+  lb.classList.add('active'); document.body.style.overflow='hidden';
+ }
+ window.closeLb=function(){
+  lb.classList.remove('active'); document.body.style.overflow='';
+  img.classList.remove('panning');
+ };
+ document.querySelectorAll('.article-body figure img').forEach(function(im){
+  im.addEventListener('click',function(){
+   openLb(im.src, im.getAttribute('data-cap')||im.alt||'');
+  });
+ });
+
+ /* 滚轮缩放（以鼠标位置为中心） */
+ stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var r=stage.getBoundingClientRect();
+  zoomBy(Math.exp(-e.deltaY*0.0016), e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, false);
+ }, {passive:false});
+
+ /* 鼠标拖动平移 */
+ var down=null;
+ img.addEventListener('mousedown',function(e){
+  if(e.button!==0)return;
+  e.preventDefault();
+  down={x:e.clientX,y:e.clientY,tx:tx,ty:ty};
+  img.classList.add('panning');
+ });
+ window.addEventListener('mousemove',function(e){
+  if(!down)return;
+  tx=down.tx+e.clientX-down.x; ty=down.ty+e.clientY-down.y;
+  bound(); applyT(false);
+ });
+ window.addEventListener('mouseup',function(){ down=null; img.classList.remove('panning'); });
+
+ /* 双击：放大 / 复位 */
+ img.addEventListener('dblclick',function(e){
+  if(s>1.01){ reset(); return; }
+  var r=stage.getBoundingClientRect();
+  zoomBy(2.2, e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, true);
+ });
+
+ /* 工具按钮 */
+ document.getElementById('lbZi').addEventListener('click',function(){ zoomBy(1.4,0,0,true); });
+ document.getElementById('lbZo').addEventListener('click',function(){ zoomBy(1/1.4,0,0,true); });
+ document.getElementById('lbR').addEventListener('click',reset);
+
+ /* 触屏：单指平移 · 双指捏合缩放 */
+ var touch=null;
+ stage.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  if(e.touches.length===1){
+   touch={mode:'p',x:e.touches[0].clientX,y:e.touches[0].clientY,tx:tx,ty:ty};
+  } else if(e.touches.length===2){
+   var a=e.touches[0],b=e.touches[1];
+   touch={mode:'z',d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),
+    mx:(a.clientX+b.clientX)/2,my:(a.clientY+b.clientY)/2,s:s,tx:tx,ty:ty};
+  }
+ }, {passive:false});
+ stage.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  if(!touch)return;
+  if(touch.mode==='z' && e.touches.length>=2){
+   var a=e.touches[0],b=e.touches[1];
+   var d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;
+   var mx=(a.clientX+b.clientX)/2, my=(a.clientY+b.clientY)/2;
+   var ns=Math.max(MIN,Math.min(MAX, touch.s*d/touch.d));
+   var k=ns/touch.s;
+   var r=stage.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+   s=ns;
+   /* 以两指中点为中心缩放，缩放后中点仍对准原位置 */
+   tx=(mx-cx)*(1-k)+k*touch.tx;
+   ty=(my-cy)*(1-k)+k*touch.ty;
+   bound(); applyT(false);
+  } else if(touch.mode==='p' && e.touches.length===1){
+   var t=e.touches[0];
+   tx=touch.tx+(t.clientX-touch.x); ty=touch.ty+(t.clientY-touch.y);
+   bound(); applyT(false);
+  }
+ }, {passive:false});
+ function touchEnd(){ touch=null; }
+ stage.addEventListener('touchend',touchEnd);
+ stage.addEventListener('touchcancel',touchEnd);
+
+ /* 点击图片周边空白关闭 · 键盘快捷键 */
+ lb.addEventListener('click',function(e){
+  if(e.target===stage || e.target===lb) closeLb();
+ });
+ document.addEventListener('keydown',function(e){
+  if(!lb.classList.contains('active'))return;
+  if(e.key==='Escape') closeLb();
+  else if(e.key==='+'||e.key==='=') zoomBy(1.4,0,0,true);
+  else if(e.key==='-'||e.key==='_') zoomBy(1/1.4,0,0,true);
+  else if(e.key==='0') reset();
+ });
+ window.addEventListener('resize',function(){ bound(); applyT(false); });
+})();
+</script>
+<script src="../articles.data.js"></script>
+
+<script>
+/* ═══════════ 左右悬浮导航逻辑(模板v7.1)═══════════ */
+(function(){
+ if(!window.__AXJF) window.__AXJF=[];
+ var edgeL=document.getElementById('edgeL'),edgeR=document.getElementById('edgeR');
+ var pL=document.getElementById('panelL'),pR=document.getElementById('panelR');
+ var fabL=document.getElementById('fabL'),fabR=document.getElementById('fabR');
+ var scrim=document.getElementById('scrimRails');
+ var prog=document.getElementById('railProg');
+ var pinL=document.getElementById('pinL'),pinR=document.getElementById('pinR');
+ var rp=document.documentElement.getAttribute('data-rp')||'../';
+ var isMob=function(){return window.innerWidth<=900;};
+ var t1=t2=null;
+  function savePins(){try{localStorage.setItem('axjf-rail-pin',JSON.stringify({L:pL.classList.contains('pin'),R:pR.classList.contains('pin')}))}catch(e){}}
+ function clearT(){clearTimeout(t1);clearTimeout(t2);}
+ function syncPin(btn,p){
+  if(!btn)return;
+  var on=p.classList.contains('pin');
+  btn.classList.toggle('on',on);
+  btn.textContent=on?'浮':'钉';
+  btn.title=on?'取消停靠（恢复悬浮自动隐藏）':'停靠：让面板常驻';
+ }
+ function showL(){clearT();pL.classList.add('open');if(scrim)scrim.classList.add('show');setFab(false);}
+ function showR(){clearT();pR.classList.add('open');if(scrim)scrim.classList.add('show');setFab(false);}
+ function hideL(force){if(!force&&pL.classList.contains('pin'))return;clearT();pL.classList.remove('open','pin');syncPin(pinL,pL);savePins();if(!isMob()&&scrim)scrim.classList.remove('show');setFab(true);}
+ function hideR(force){if(!force&&pR.classList.contains('pin'))return;clearT();pR.classList.remove('open','pin');syncPin(pinR,pR);savePins();if(!isMob()&&scrim)scrim.classList.remove('show');setFab(true);}
+ function closeAll(){clearT();hideL(true);hideR(true);}
+ function setFab(show){
+  var h=show?'':'hide';
+  if(fabL)fabL.classList.toggle('hide',!show&&!pL.classList.contains('open'));
+  if(fabR)fabR.classList.toggle('hide',!show&&!pR.classList.contains('open'));
+ }
+ function togglePin(p,pin){
+  if(!p.classList.contains('open'))p.classList.add('open');
+  p.classList.toggle('pin');
+  savePins();
+  syncPin(pin,p);
+ }
+ /* 边缘感应(桌面) */
+ if(edgeL&&edgeR){
+  edgeL.addEventListener('mouseenter',function(){if(isMob())return;showL();});
+  edgeL.addEventListener('mouseleave',function(){if(isMob())return;t2=setTimeout(function(){hideL();},220);});
+  edgeR.addEventListener('mouseenter',function(){if(isMob())return;showR();});
+  edgeR.addEventListener('mouseleave',function(){if(isMob())return;t2=setTimeout(function(){hideR();},220);});
+  pL.addEventListener('mouseenter',function(){clearT();});
+  pL.addEventListener('mouseleave',function(){if(isMob())return;t1=setTimeout(function(){hideL();},220);});
+  pR.addEventListener('mouseenter',function(){clearT();});
+  pR.addEventListener('mouseleave',function(){if(isMob())return;t1=setTimeout(function(){hideR();},220);});
+ }
+ /* 停靠 / 浮钮 / 关闭 / 蒙层 */
+ if(pinL)pinL.addEventListener('click',function(){togglePin(pL,pinL);});
+ if(pinR)pinR.addEventListener('click',function(){togglePin(pR,pinR);});
+ if(fabL)fabL.addEventListener('click',function(){if(pL.classList.contains('open'))hideL(true);else showL();});
+ if(fabR)fabR.addEventListener('click',function(){if(pR.classList.contains('open'))hideR(true);else showR();});
+ if(scrim)scrim.addEventListener('click',closeAll);
+ var xL=document.getElementById('xL'),xR=document.getElementById('xR');
+
+ /* 恢复上次钉住状态（仅桌面端） */
+ try{var _pin=JSON.parse(localStorage.getItem('axjf-rail-pin')||'{}');
+  if(!isMob()){
+   if(_pin.L&&pL){pL.classList.add('open','pin');syncPin(pinL,pL);}
+   if(_pin.R&&pR){pR.classList.add('open','pin');syncPin(pinR,pR);}
+  }
+ }catch(e){}
+if(xL)xL.addEventListener('click',function(){hideL(true);});
+ if(xR)xR.addEventListener('click',function(){hideR(true);});
+ document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAll();});
+ /* 左侧 · 全部文章（无日期，紧凑标题行） */
+ (function(){
+  var ul=document.getElementById('listL'),cnt=document.getElementById('cntL');
+  if(!ul)return;
+  var loc=decodeURIComponent(location.pathname).split('/');
+  var curDir=loc.length?loc[loc.length-2]:'';
+  var html='';__AXJF.forEach(function(x){
+   var dir=(x.p||'').split('/')[0];
+   var isCur=dir&&dir===curDir;
+   html+='<li class="it'+(isCur?' cur':'')+'"><a href="'+rp+(x.p||'')+'" title="'+x.t+'">'+
+    '<span class="t">'+x.t+'</span></a></li>';
+  });
+  ul.innerHTML=html||'<li style="color:var(--ink-mute);font-size:12px;padding:8px">暂无文章</li>';
+  if(cnt)cnt.textContent=__AXJF.length;
+ })();
+ /* 右侧 · 本文大纲：带子标题的 h2 三角折叠（默认收起） */
+ var tocR=document.getElementById('tocR');
+ (function(){
+  if(!tocR)return;
+  var body=document.querySelector('.article-body');
+  var heads=[];if(body){
+   body.querySelectorAll('h2,h3,h4').forEach(function(h,i){
+    if(h.querySelector('.article-title'))return;
+    if(!h.id)h.id='sec-'+i;
+    heads.push({el:h,lvl:parseInt(h.tagName.charAt(1),10)});
+   });
+  }
+  if(!heads.length){tocR.innerHTML='<div class="tempty">本篇未设置小节标题</div>';return;}
+  var minLvl=4;heads.forEach(function(x){if(x.lvl<minLvl)minLvl=x.lvl;});
+  var roots=[],cur=-1;
+  heads.forEach(function(x,idx){
+   if(x.lvl===minLvl||cur<0){roots.push({idx:idx,children:[]});cur=roots.length-1;}
+   else roots[cur].children.push(idx);
+  });
+  function dLvl(lvl){var v=lvl-minLvl+2;return v<2?2:(v>4?4:v);}
+  function paint(){
+   var html='';
+   roots.forEach(function(r,ri){
+    var h0=heads[r.idx],kids=r.children;
+    if(!kids.length){
+     html+='<a class="ti l2" href="#'+h0.el.id+'" data-i="'+r.idx+'">'+h0.el.textContent+'</a>';
+    }else{
+     html+='<div class="tg" data-g="'+ri+'"><button class="tg-arr" type="button" title="展开/折叠子标题" aria-label="展开/折叠">▶</button>'+
+      '<a class="ti l2" href="#'+h0.el.id+'" data-i="'+r.idx+'">'+h0.el.textContent+'</a><div class="tg-c">';
+     kids.forEach(function(k){
+      var h=heads[k];
+      html+='<a class="ti l'+dLvl(h.lvl)+'" href="#'+h.el.id+'" data-i="'+k+'">'+h.el.textContent+'</a>';
+     });
+     html+='</div></div>';
+    }
+   });
+   tocR.innerHTML=html;
+  }
+  paint();
+  var anchors={};
+  [].slice.call(tocR.querySelectorAll('.ti')).forEach(function(a){anchors[a.getAttribute('data-i')]=a;});
+  var groups={};
+  [].slice.call(tocR.querySelectorAll('.tg')).forEach(function(box){var g=+box.getAttribute('data-g');groups[g]={box:box,anchor:box.querySelector('.ti')};});
+  var grpOf={};
+  roots.forEach(function(r,ri){r.children.forEach(function(k){grpOf[k]=ri;});});
+  /* 全部展开/收起（无分组时隐藏按钮） */
+  var expR=document.getElementById('expR');
+  function expEls(){return [].slice.call(tocR.querySelectorAll('.tg'));}
+  function syncExp(){
+   if(!expR)return;
+   var gs=expEls();
+   if(!gs.length){expR.style.display='none';return;}
+   expR.style.display='';
+   var allOpen=gs.every(function(b){return b.classList.contains('open');});
+   expR.textContent=allOpen?'全收':'全展';
+   expR.title=allOpen?'收起全部子标题':'展开全部子标题';
+  }
+  if(expR)expR.addEventListener('click',function(){
+   var gs=expEls();if(!gs.length)return;
+   var allOpen=gs.every(function(b){return b.classList.contains('open');});
+   gs.forEach(function(b){b.classList.toggle('open',!allOpen);});
+   syncExp();
+  });
+  function anchorFor(h){
+   var g=grpOf[h];
+   if(g!==undefined&&groups[g]&&!groups[g].box.classList.contains('open'))return groups[g].anchor;
+   return anchors[h];
+  }
+  function setCur(h){
+   [].slice.call(tocR.querySelectorAll('.ti')).forEach(function(a){a.classList.remove('cur');});
+   var a=anchorFor(h);if(a)a.classList.add('cur');
+  }
+  function locate(){
+   var y=window.scrollY+140,idx=-1;
+   heads.forEach(function(x,i){if(x.el.offsetTop<=y)idx=i;});
+   setCur(idx);
+  }
+  tocR.addEventListener('click',function(e){
+   var arr=e.target.closest?e.target.closest('.tg-arr'):null;
+   if(arr){var box=arr.closest('.tg');box.classList.toggle('open');syncExp();return;}
+   var a=e.target.closest?e.target.closest('.ti'):null;if(!a)return;
+   var h=heads[+a.getAttribute('data-i')];if(!h)return;
+   clearT();
+   if(h.el.scrollIntoView){h.el.scrollIntoView({behavior:'smooth',block:'start'});}
+   if(isMob())hideR(true);
+  });
+  var rAF=false;
+  function onSc(){if(rAF)return;rAF=true;requestAnimationFrame(function(){locate();rAF=false;});}
+  window.addEventListener('scroll',onSc,{passive:true});
+  window.addEventListener('resize',onSc);
+  locate();syncExp();
+ })();
+ /* 顶部阅读进度 */
+ (function(){
+  var body=document.body,dEl=document.documentElement;
+  function upd(){
+   var h=Math.max(body.scrollHeight,dEl.scrollHeight,body.offsetHeight)-window.innerHeight;
+   var p=h>0?Math.min(1,window.scrollY/h):0;
+   if(prog){prog.style.width=(p*100).toFixed(2)+'%';
+    prog.classList.toggle('on',window.scrollY>80);}
+  }
+  var rAF=false;
+  function onSc(){if(rAF)return;rAF=true;requestAnimationFrame(function(){upd();rAF=false;});}
+  window.addEventListener('scroll',onSc,{passive:true});
+  window.addEventListener('resize',upd);upd();
+ })();
+ /* 调试/直达:?rail=right 打开大纲,?rail=left 打开文章列表 */
+ (function(){var m=(location.search||'').match(/[?&]rail=(right|left)/);
+  if(m){if(m[1]==='right')showR();else showL();}})();
+})();
+</script>
+
+</body>
+</html>

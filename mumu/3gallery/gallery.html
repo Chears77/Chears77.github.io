@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>相册画廊 · Alisa</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- ========== Top Bar ========== -->
+<nav class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="topbar-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回首页
+    </a>
+    <span class="topbar-title">相册画廊</span>
+    <span style="width:80px"></span>
+  </div>
+</nav>
+
+<!-- ========== Content ========== -->
+<div class="page-content">
+  <!-- Year Filter -->
+  <div class="year-filter" id="yearFilter">
+    <button class="year-filter-btn active" data-year="all">全部</button>
+  </div>
+
+  <!-- Photo Grid -->
+  <section class="honor-photo-section">
+    <div class="honor-photo-grid" id="galleryGrid"></div>
+  </section>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">&times;</div>
+  <div class="lightbox-nav lightbox-prev" id="lightboxPrev">&#10094;</div>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-nav lightbox-next" id="lightboxNext">&#10095;</div>
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<!-- ========== Footer ========== -->
+<footer class="footer">
+  <div class="footer-hearts">&#10084; &#10084; &#10084;</div>
+  <p class="footer-quote">"最好的相机，是父母的眼睛"</p>
+  <p class="footer-copy">&copy; 2015 &mdash; 2026 Alisa 成长纪念册</p>
+</footer>
+
+<script src="../js/main.js"></script>
+<script src="gallery-photos.js?v=639233800000000000"></script>
+<script>
+(function build() {
+  var container = document.getElementById('galleryGrid');
+  if (typeof galleryPhotos === 'undefined' || !galleryPhotos) return;
+
+  function render(filter) {
+    container.innerHTML = '';
+    var list = (filter === 'all')
+      ? galleryPhotos
+      : galleryPhotos.filter(function(p) { return p.year === filter; });
+
+    if (list.length === 0) {
+      container.innerHTML = '<p style="text-align:center;color:var(--text-light);grid-column:1/-1;padding:var(--space-xl) 0;">该年份暂无照片</p>';
+      return;
+    }
+
+    list.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'honor-photo-card fade-in';
+      div.id = 'g' + galleryPhotos.indexOf(item);
+      div.setAttribute('data-full', item.src);
+      div.setAttribute('data-caption', item.caption || '');
+      div.setAttribute('data-date', formatDate(item.date || ''));
+      div.innerHTML =
+        '<div class="honor-photo-frame">' +
+          '<img src="' + item.src + '" alt="' + (item.caption || '') + '" loading="lazy">' +
+        '</div>' +
+        '<div class="honor-photo-info">' +
+          '<div class="honor-photo-title-row">' +
+            '<span class="honor-photo-date">' + formatDate(item.date || '') + '</span>' +
+            '<p class="honor-photo-titletext">' + (item.caption || '') + '</p>' +
+          '</div>' +
+        '</div>';
+      container.appendChild(div);
+    });
+  }
+
+  function renderAll(filter) {
+    render(filter);
+    setTimeout(function() {
+      document.querySelectorAll('.fade-in').forEach(function(el) { el.classList.add('visible'); });
+    }, 50);
+  }
+
+  // Year filter
+  document.getElementById('yearFilter').addEventListener('click', function(e) {
+    if (!e.target.classList.contains('year-filter-btn')) return;
+    document.querySelectorAll('.year-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+    e.target.classList.add('active');
+    renderAll(e.target.dataset.year);
+  });
+
+  // 自动生成年份按钮（仅现有年份）
+  (function buildYearButtons() {
+    var yf = document.getElementById('yearFilter');
+    var years = [];
+    galleryPhotos.forEach(function(p) {
+      if (p.year && years.indexOf(p.year) === -1) years.push(p.year);
+    });
+    years.sort(function(a, b) { return String(b).localeCompare(String(a)); });
+    years.forEach(function(y) {
+      var b = document.createElement('button');
+      b.className = 'year-filter-btn';
+      b.setAttribute('data-year', y);
+      b.textContent = y;
+      yf.appendChild(b);
+    });
+  })();
+
+  renderAll('all');
+
+  // 首页“相册画廊”预览点击带 #g索引 锚点 → 定位年份并高亮对应照片
+  function handleDeepLink() {
+    var id = (location.hash || '').replace(/^#/, '');
+    if (!/^g\d+$/.test(id)) return;
+    var target = galleryPhotos[parseInt(id.slice(1), 10)];
+    if (!target) return;
+    var btn = document.querySelector('.year-filter-btn[data-year="' + target.year + '"]');
+    function doScroll() {
+      var el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.classList.add('card-highlight');
+        setTimeout(function(){ el.classList.remove('card-highlight'); }, 2400);
+      }
+    }
+    if (btn) { btn.click(); setTimeout(doScroll, 180); }
+    else { setTimeout(doScroll, 120); }
+  }
+  window.addEventListener('load', handleDeepLink);
+})();
+</script>
+</body>
+</html>

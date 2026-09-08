@@ -1,0 +1,11 @@
+# 部署时把本文件复制到 gongchengfagui/_headers（站点发布根目录）
+# GitHub Pages 支持 _headers，用于设置 Cache-Control，避免 manifest/search/laws 被 CDN/浏览器长期缓存
+# 同时 app.js 内 fetch 已改用 cache:'no-cache'，双保险
+/data/manifest.json
+  Cache-Control: no-cache
+
+/data/search.json
+  Cache-Control: no-cache
+
+/laws/*
+  Cache-Control: no-cache

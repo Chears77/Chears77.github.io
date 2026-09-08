@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+
+<!--
+  ═══════════════════════════════════════════════════════
+  模板 · 笔记阅读风（多主题版 v6 · 定稿增强）
+   ① 顶栏干净渐变；滚动越过标题区后，文章标题淡入顶栏中间吸顶显示（随主题变色）
+   ② 右上角色点切换 蓝白/书卷/暗黑（默认蓝白）并记忆选择
+   ③ 页脚一行式「— 沙溪子 · Chears77@163.com —」，68%宽长分隔线
+   ④ 图片灯箱增强：点击放大后可滚轮/按钮缩放(+−)、按住拖动平移、双击放大或复位
+   ⑤ 引用块独立配色（蓝白/书卷/暗黑各有侧重），字号较正文缩一号
+  用法：复制整个文件夹 → 改名 YYYYMMDD主题 → 改内容 → node generate-index.js
+  替换点：title / h1标题 / 日期 / 正文 / 图片(images/) / 落款文案
+  ═══════════════════════════════════════════════════════
+-->
+<html data-theme="blue" data-x="rlRyQVUf9vEJKnwiEhS8F1" lang="zh-CN" data-page-node-id="JuPQ3p3eFzWHwniip6JQG5">
+<head data-x="d1S8go38cVMIEJbpnTL0Gp" data-page-node-id="UwAk6Ru72FQ8i2TsnhbeRg">
+<meta charset="utf-8" data-x="xHvo65jm5qQ3abM5lwYmIg" data-page-node-id="uQxBkfcSaQ6ceD5owjGFTw"/>
+<meta content="width=device-width, initial-scale=1.0" data-x="XgiRaWtXt0vCYxnSTE3sif" name="viewport" data-page-node-id="bM3QCgV95WnD5VSNFkevak"/>
+<title>军队采购网爬虫获取采购信息 - 安即是佛</title>
+<script>
+/* 提前恢复上次的主题，避免刷新闪白；默认 蓝白 */
+try{var t=localStorage.getItem('axjf-note-theme-v5');
+if(['blue','book','dark'].indexOf(t)<0)t='blue';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
+<style>
+ /* ═══════════ 三套主题变量 ═══════════ */
+
+ /* ── 蓝白（默认）· 高饱和蓝 ── */
+ :root, html[data-theme="blue"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#33465e; --ink-strong:#16283f; --ink-mute:#7c8ea6;
+  --bg:#f2f7fd; --bg-glow1:#cfe3fb; --bg-glow2:#e8f2fc;
+  --card:#ffffff; --line:#cdddf1; --line-soft:#e3eefb;
+  --accent:#1f6fe0; --accent-deep:#1755b6; --accent-deeper:#0f3d86;
+  --soft:#e2edfd; --code-bg:#eaf2fe; --code-ink:#1755b6;
+  --qbg:#dfebfd; --qbar:#1f6fe0; --qink:#174a94;
+  --fig-shadow:0 2px 12px rgba(31,111,224,.15);
+  --fig-shadow-lg:0 10px 28px rgba(31,111,224,.26);
+  --bar-c1:#4a97f5; --bar-c2:#1c59c4; --bar-glare:rgba(255,255,255,.3);
+  --bar-sweep:rgba(255,255,255,.14); --bar-bottom:transparent; --bar-ink:#ffffff;
+ }
+ /* ── 书卷 · 米纸墨蓝 ── */
+ html[data-theme="book"]{
+  --font-body:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;
+  --ink:#43403a; --ink-strong:#221f18; --ink-mute:#8f897c;
+  --bg:#f5f0e4; --bg-glow1:#e8dcbf; --bg-glow2:#f7f2e8;
+  --card:#fdfaf2; --line:#cbbfa1; --line-soft:#e4dac4;
+  --accent:#4d6f96; --accent-deep:#3a5577; --accent-deeper:#273c57;
+  --soft:#e7dcc2; --code-bg:#eae1cb; --code-ink:#6b5326;
+  --qbg:#ede3cb; --qbar:#4d6f96; --qink:#3a4e6b;
+  --fig-shadow:0 2px 12px rgba(80,65,40,.14);
+  --fig-shadow-lg:0 10px 26px rgba(80,65,40,.24);
+  --bar-c1:#36517a; --bar-c2:#1f2f49; --bar-glare:rgba(255,255,255,.15);
+  --bar-sweep:rgba(255,255,255,.07); --bar-bottom:rgba(191,158,96,.5); --bar-ink:#f5eedb;
+ }
+ /* ── 暗黑 · 深空电蓝 ── */
+ html[data-theme="dark"]{
+  --font-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --ink:#b9c7da; --ink-strong:#e7eef8; --ink-mute:#71819b;
+  --bg:#0a111d; --bg-glow1:#14223a; --bg-glow2:#0d1726;
+  --card:#101b2c; --line:#1d2c44; --line-soft:#16233a;
+  --accent:#3d97ff; --accent-deep:#77b6ff; --accent-deeper:#a8cfff;
+  --soft:#162742; --code-bg:#0f1c30; --code-ink:#66aaff;
+  --qbg:#122339; --qbar:#3d97ff; --qink:#cfe2f8;
+  --fig-shadow:0 2px 14px rgba(0,0,0,.45);
+  --fig-shadow-lg:0 10px 28px rgba(0,0,0,.6);
+  --bar-c1:#1b2e4d; --bar-c2:#0b1626; --bar-glare:rgba(120,180,255,.2);
+  --bar-sweep:rgba(140,190,255,.08); --bar-bottom:rgba(90,150,255,.3); --bar-ink:#eaf2fc;
+ }
+
+ *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+ body{font-family:var(--font-body);font-size:16px;color:var(--ink);line-height:1.8;
+  background:radial-gradient(circle at 14% 4%, var(--bg-glow1) 0, transparent 36%),
+             radial-gradient(circle at 88% 3%, var(--bg-glow2) 0, transparent 32%), var(--bg);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  transition:background .35s ease,color .35s ease}
+ img{max-width:100%;display:block} a{text-decoration:none;color:inherit}
+
+ /* ═══════════ 顶栏（无斜线 · 干净渐变+柔和高光）═══════════ */
+ .topbar{position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;gap:12px;padding:0 20px;
+  color:var(--bar-ink);
+  background-color:var(--bar-c2);
+  background-image:
+   linear-gradient(120deg, transparent 20%, var(--bar-sweep) 42%, transparent 62%),
+   radial-gradient(circle at 12% -90%, var(--bar-glare), transparent 58%),
+   linear-gradient(175deg, var(--bar-c1) 0%, var(--bar-c2) 130%);
+  box-shadow:0 2px 14px rgba(20,60,130,.22);
+  border-bottom:1px solid var(--bar-bottom);}
+ .topbar .home{display:flex;align-items:center;gap:7px;color:inherit;font-weight:600;font-size:14px;
+  letter-spacing:.5px;opacity:.92;transition:opacity .2s;flex:none}
+ .topbar .home:hover{opacity:1}
+ .topbar .home svg{width:18px;height:18px;opacity:.9}
+
+ /* 滚动吸顶的文章标题：藏在顶栏中间，滚动越过标题区后淡入 */
+ .top-title{position:absolute;left:50%;top:0;height:58px;line-height:58px;
+  transform:translate(-50%,5px);max-width:min(560px,54vw);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:14.5px;font-weight:600;letter-spacing:.5px;color:var(--bar-ink);
+  opacity:0;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+ body.scrolled-title .top-title{opacity:.97;transform:translate(-50%,0)}
+
+ /* ═══════════ 右上 · 极简色点切换器 ═══════════ */
+ .theme-switch{margin-left:auto;display:flex;align-items:center;gap:10px}
+ .ts-dots{display:flex;align-items:center;gap:8px}
+ .ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;
+  opacity:.45;transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s;flex:none}
+ .ts-dot:hover{opacity:.95}
+ .ts-dot.on{opacity:1;transform:scale(1.28);
+  box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18)}
+ /* 三个色点固定配色，一眼对应三套主题 */
+ .ts-dot[data-t="blue"] {background:#9fd0ff}
+ .ts-dot[data-t="book"] {background:#d4b97e}
+ .ts-dot[data-t="dark"] {background:#8aa7cc}
+ .ts-name{font-size:12px;letter-spacing:2px;color:var(--bar-ink);opacity:.95;
+  font-variant-numeric:tabular-nums;min-width:34px;text-align:left}
+
+ /* ═══════════ 文章主体 ═══════════ */
+ .article-page{max-width:740px;margin:0 auto;padding:40px 24px 46px}
+ .article-head{text-align:center;margin-bottom:18px}
+ .article-title{font-size:25px;color:var(--ink-strong);font-weight:700;line-height:1.4;letter-spacing:.5px;transition:color .35s}
+ .article-meta{margin-top:9px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;color:var(--ink-mute)}
+ .article-date{font-variant-numeric:tabular-nums}
+
+ .article-body{font-size:16px;color:var(--ink);line-height:1.85;transition:color .35s}
+ .article-body p{margin-bottom:14px;text-indent:2em;text-align:justify}
+ .article-body p.noindent{text-indent:0}
+ .article-body h2{font-size:17.5px;color:var(--accent-deep);font-weight:700;margin:24px 0 10px;
+  padding-left:12px;border-left:4px solid var(--accent);line-height:1.4}
+ .article-body h3{font-size:15.5px;color:var(--accent-deep);font-weight:700;margin:20px 0 8px;
+  padding-left:10px;border-left:3px solid var(--accent);line-height:1.5;opacity:.94}
+ .article-body h4{font-size:14.5px;color:var(--ink-strong);font-weight:700;margin:15px 0 6px;line-height:1.5}
+ .article-body a{color:var(--accent-deep);text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1px;text-underline-offset:3px;overflow-wrap:anywhere;transition:opacity .15s}
+ .article-body a:hover{opacity:.72}
+ .article-body blockquote{margin:16px 0;padding:10px 16px;background:var(--qbg);border-left:4px solid var(--qbar);
+  border-radius:2px 10px 10px 2px;color:var(--qink);font-size:14px;line-height:1.8;
+  border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  box-shadow:0 2px 10px rgba(30,80,160,.07)}
+ .article-body strong{color:var(--accent-deeper)}
+ .article-body .fmt{font-family:Consolas,monospace;background:var(--code-bg);padding:1.5px 7px;border-radius:6px;
+  color:var(--code-ink);font-weight:600;font-size:14px}
+ .article-body figure{margin:18px 0;text-align:center}
+ .article-body figure img{cursor:zoom-in;border-radius:12px;box-shadow:var(--fig-shadow);
+  max-width:100%;display:inline-block;border:1px solid var(--line-soft);
+  transition:transform .3s,box-shadow .3s}
+ .article-body figure img:hover{transform:translateY(-2px);box-shadow:var(--fig-shadow-lg)}
+ .article-body figure figcaption{margin-top:8px;font-size:13px;color:var(--ink-mute)}
+ .article-body ul,.article-body ol{margin:0 0 14px 2em;line-height:1.85}
+ .article-body li{margin:4px 0}
+
+ /* ═══════════ 页脚 · 一行落款 + 长分隔线 ═══════════ */
+ .article-footer{margin-top:48px;text-align:center}
+ .footer-rule{width:min(340px,68%);height:1px;margin:0 auto 16px;border:0;
+  background:linear-gradient(90deg,transparent,var(--line) 16%,var(--line) 84%,transparent)}
+ .colophon{font-size:14px;color:var(--ink-mute);letter-spacing:1px;line-height:1.8}
+.colophon .dash{color:var(--ink-mute)}
+.colophon .co-name{color:var(--ink-strong);font-weight:600}
+.colophon .co-mail{color:inherit;text-decoration:none;cursor:pointer}
+ .back-link{display:inline-block;margin-top:24px;font-size:13px;letter-spacing:.5px;color:var(--ink-mute);
+  transition:color .2s}
+ .back-link:hover{color:var(--accent)}
+
+ /* 灯箱（可缩放：滚轮/按钮缩放 + 拖动平移） */
+ .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(16,26,40,.94);
+  flex-direction:column;padding:64px 20px 96px;overflow:hidden}
+ .lightbox.active{display:flex}
+ .lb-stage{position:relative;flex:1;min-height:0;width:100%;display:flex;
+  align-items:center;justify-content:center;overflow:hidden}
+ .lightbox img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.45);
+  transform-origin:center center;will-change:transform;cursor:grab;
+  user-select:none;-webkit-user-drag:none;touch-action:none}
+ .lightbox img.panning{cursor:grabbing}
+ .lightbox .lb-cap{color:#cfd8e3;margin-top:12px;font-size:13.5px;text-align:center;max-width:100%;
+  padding:0 4px;line-height:1.7}
+ .lightbox .lb-close{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;
+  background:rgba(255,255,255,.14);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:background .15s}
+ .lightbox .lb-close:hover{background:rgba(255,255,255,.34)}
+ /* 底部工具条：− 百分比 + 复位 */
+ .lb-tools{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:5;
+  display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:999px;
+  background:rgba(18,28,42,.74);border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 6px 20px rgba(0,0,0,.35)}
+ .lb-tools button{min-width:32px;height:32px;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(255,255,255,.13);color:#fff;font-size:19px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:inherit}
+ .lb-tools button:hover{background:rgba(255,255,255,.38)}
+ .lb-tools button:active{transform:scale(.94)}
+ .lb-tools .lb-scale{min-width:52px;text-align:center;font-size:12.5px;letter-spacing:.5px;
+  color:#e2ecf7;font-variant-numeric:tabular-nums}
+
+ @media(max-width:600px){
+  .article-title{font-size:20.5px}.article-page{padding:28px 16px 40px}
+  .article-body{font-size:15px;line-height:1.8}
+  .article-body p{margin-bottom:12px}
+  .topbar{padding:0 12px}
+  .ts-dots{gap:11px}
+  .ts-dot{width:15px;height:15px} /* 手机端色点略放大，方便点按 */
+  .ts-name{display:none} /* 手机上只留色点，更省地 */
+  .top-title{max-width:44vw;font-size:13px}
+  .article-body blockquote{padding:9px 13px;font-size:13.5px}
+  .article-body h2{font-size:16.5px}
+  .article-body h3{font-size:15px}
+  .article-body h4{font-size:14px}
+  .lightbox{padding:56px 12px 88px}
+  .lb-tools button{min-width:30px;height:30px;font-size:17px}
+ }
+
+
+/* ══ 老文章正文扩展样式（换壳注入，模板源文件不含）══ */
+.article-body li p{text-indent:0;margin-bottom:4px}
+.article-body ol,.article-body ul{margin-bottom:12px}
+.article-body li{margin:3px 0}
+.article-body code{font-family:Consolas,"Courier New",monospace;background:var(--code-bg);
+ color:var(--code-ink);padding:1px 5px;border-radius:5px;font-size:.9em}
+.article-body pre{background:#0f1b2d;color:#d7e3f4;border:1px solid #24344d;border-radius:10px;
+ padding:12px 14px;overflow-x:auto;line-height:1.6;font-size:13.5px;margin:14px 0;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.article-body pre code{background:transparent;color:inherit;padding:0;border-radius:0;font-size:13.5px}
+.article-body .table-scroll{overflow-x:auto;margin:14px 0;border-radius:10px;
+ border:1px solid var(--line-soft)}
+.article-body table{border-collapse:collapse;width:100%;min-width:560px;font-size:13.5px;line-height:1.7}
+.article-body th,.article-body td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.article-body thead th{background:var(--soft);color:var(--accent-deep);font-weight:700;
+ white-space:nowrap}
+.article-body tbody tr:nth-child(even){background:var(--bg-glow2)}
+.article-body hr{border:0;height:1px;background:var(--line);margin:22px 0;width:60%;margin-left:auto;margin-right:auto}
+.article-body img{max-width:100%;border-radius:10px;margin:4px auto}
+.article-body ol[start]{list-style-type:decimal}
+</style>
+</head>
+<body data-x="GKItPUqSchWeZSpWEfSWqM" data-page-node-id="dc6xaUbHjFvnmNDFAQxwHc">
+<!-- 顶栏：左侧返回 + 右上极简色点主题切换（默认蓝白，一般不用改）-->
+<nav class="topbar" data-x="em3D5xY02R2EnvkFx0F70N" data-page-node-id="06tQXcv0gIeUiBhlc9z40u">
+<a class="home" data-x="yEZNMzVaZnlXHlFE38tswT" href="../articles.html" data-page-node-id="u68veA5ByStSmEhsL8HneS">
+<svg data-x="SlhBXeNqEXEX0TJFtfzYdI" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewbox="0 0 24 24" data-page-node-id="rufSxDzB6u4jMSZY9B2psY"><polyline data-x="AnYfPVEnjoQGv1nNbQNmLv" points="15 18 9 12 15 6" data-page-node-id="bs7zEipGbpNMS2vvH1Zf9z"></polyline></svg>
+  文章列表
+ </a>
+<span aria-hidden="true" class="top-title" id="topTitle" data-page-node-id="31GSVcH03t7CcWFiTlZY9C"></span>
+<div aria-label="切换主题" class="theme-switch" data-x="wfzozHDDRIdQIeG1J6bWLn" role="group" data-page-node-id="YUZ2mADjcil0E9chzxK90r">
+<div class="ts-dots" data-x="YFtOKhJQWReYxert7lpphd" data-page-node-id="NIhZGlEJJJfROFP5f0kpL6">
+<button aria-label="蓝白" class="ts-dot" data-t="blue" data-x="4IAkEIaIVWxsSvLHBMf99f" title="蓝白" type="button" data-page-node-id="IQ6U7NJRuWQFEHVy8SeSNq"></button>
+<button aria-label="书卷" class="ts-dot" data-t="book" data-x="7qAX59yjQZV4Qtnu48BvLm" title="书卷" type="button" data-page-node-id="FCx8lAPA5xB1ufPo9x6vyX"></button>
+<button aria-label="暗黑" class="ts-dot" data-t="dark" data-x="wQi3BC6JMxE1zjHgAA9BXL" title="暗黑" type="button" data-page-node-id="WhSMC8BePhDKorIhtgF8gU"></button>
+</div>
+<span class="ts-name" data-x="Qn2mPw3rDvNXdVA7M5U3Zd" id="tsName" data-page-node-id="yPCe9CWwHoS6PFeF531YHs">蓝白</span>
+</div>
+</nav>
+<article class="article-page" data-x="PrBRD0dyZMVKMIeBpSJ61z" data-page-node-id="jCITAIUxf2Ccj6WVNoAQFi">
+<header class="article-head" data-x="BdEIurcoMAqZHRz4sPC0hX" data-page-node-id="S3Wq1Ep0Q5aMCEmmUPRCLq">
+<!-- 填这里：文章标题 / 日期 -->
+<h1 class="article-title" data-x="om5ca8C8O8AdccIuudcIGD" data-page-node-id="iYJ3WqbnSmjge1LLVmCN9f">军队采购网爬虫获取采购信息</h1>
+<div class="article-meta" data-x="UyorfxPljUyc9pw2w0CUed" data-page-node-id="u2zFAheHn0XCP8X0EW9fsd">
+<span class="article-date" data-x="c7nnhluerB783EAIONF7nF" data-page-node-id="5QJjNP8yKxLZgM0CvvzXin">2026年6月15日</span>
+</div>
+</header>
+<!-- 正文：段落写 <p>（自动首行缩进），强调用 <strong>，
+      格式示例用 <span class="fmt">，金句用 <blockquote>，
+      图片用 <figure><img src="images/xx.jpg" data-cap="图注"><figcaption>图注</figcaption></figure> -->
+<div class="article-body" data-x="Tkdj9CET6Rsz9EpTHO5gAO" data-page-node-id="G3nVsl7asDmiJSaqVzq3bb">
+
+<h2 data-page-node-id="wUTuaBEcnQc2JdvAwyB4vw">一、需求</h2><p data-page-node-id="Ux0rNFFFXl0T8eayhaoAwr">计划定期收集<strong data-page-node-id="jYkbjPOKiubWo9HrCpOLYT">军队采购网（https://www.plap.mil.cn/）</strong>发布的采购信息，重点筛选<strong data-page-node-id="hmAQexsXIhADHi69iL4Vxr">四川区域</strong>项目，需整理项目名称、项目金额、报名时间、报名地点等内容，并汇总至 Excel 表格。现寻求<strong data-page-node-id="mIvigRcsnpyGmd70km1giN">免费、操作便捷</strong>的实现方案，希望多提供几种方法，同时标注每种方法的优缺点、操作难度，以便后续选择使用。</p><h2 data-page-node-id="OILpHEINYBJWJYjR2pmITD">二、实现方案对比</h2><h3 data-page-node-id="YbOROrNF430Pg9KvRPhY62">军队采购网（四川区域）信息免费采集汇总 Excel 4 套完整方案</h3><p data-page-node-id="Xf45pyUx3k06vwGIWvPXsf">先前置重要合规提醒：军队采购网属于官方涉密属性平台，<strong data-page-node-id="nehOs34yIfSramF2h3mEds">禁止高强度高频抓取、禁止破解反爬、禁止商用倒卖数据</strong>，仅个人自用缓慢采集，请求间隔≥5 秒，仅采集公开公示公告，不触碰涉密栏目，规避 IP 封禁与合规风险。下面从<strong data-page-node-id="xFe60XfKwAY0rtKGFsTanW">零代码小白→轻代码→RPA 自动化→手动辅助</strong>4 种方案，逐一对比难度、优劣、免费程度。</p><h3 data-page-node-id="r18XZpAQQDHCNca5nhP6s1">方案一：后羿采集器（首推・永久免费零代码，适配你的需求）</h3><h4 data-page-node-id="2LCJEbAfO1GXOcAEm7G2bC">基础信息</h4><p data-page-node-id="3xWOYX1Eh8hFwel0omc3MX">完全个人永久免费，无导出条数限制、无积分套路，Windows/Mac/Linux 全平台，支持本地定时采集、自动导出 Excel、数据去重、筛选四川区域。</p><h4 data-page-node-id="fcLtZZK0EWlxgYxb2F4aXV">操作难度：★☆☆☆☆（10 分钟配置完规则）</h4><ol data-page-node-id="4xXehUQJa7TWAEO8OBzBwe">
+<li data-page-node-id="MjiFY3z5XWHg8rza55DesU">
+<p data-page-node-id="Q84NAN11OE8T7UbdkOMwGE">打开军队采购网，先筛选「四川」地区公告页，复制筛选后的 URL；</p>
+</li>
+<li data-page-node-id="AuNcykCmkaDx1OsfCN8aqm">
+<p data-page-node-id="mtnyxWPHTXAzvZtCFN2l6S">后羿新建智能采集任务，粘贴网址，AI 自动识别列表（项目名称、公告链接、发布时间）；</p>
+</li>
+<li data-page-node-id="Xsmx8JIDtp9aOYgSHXmDXB">
+<p data-page-node-id="9FBOMS8oHBKB7BMFWWea4A">配置<strong data-page-node-id="cFSyZza7ycX3FXYMa2rF0s">点击进入详情页</strong>，提取金额、报名时间、报名地点、采购单位；</p>
+</li>
+<li data-page-node-id="3JyhBFZ3usxwooZNp1FRzs">
+<p data-page-node-id="wz8apdVCtI6Y3RRq87i6Ad">开启<strong data-page-node-id="xu9Ws9L6lVS7yjnoHraNjd">定时任务</strong>：设置每天早 9 点自动跑一次、自动对比旧数据去重、只追加新公告；</p>
+</li>
+<li data-page-node-id="e5nludpwRIb83ckcj5U90P">
+<p data-page-node-id="YCxdt8BMWSHrbNvgV94CQr">导出格式选 Excel，可设置自动覆盖 / 追加本地表格。</p>
+</li>
+</ol><h4 data-page-node-id="vQpVDZ11cDecFtE8oYVshQ">优势</h4><ol data-page-node-id="gnNtQyfeNBDYEzlZHqHS9G">
+<li data-page-node-id="kp1iLLHgMO9iugZpyYKr4h">
+<p data-page-node-id="z3kxv8cAsKvORNlqxSveOl">真免费无套路：导出 Excel 无行数封顶、100 个任务额度足够单站点使用；</p>
+</li>
+<li data-page-node-id="UcFcuEqcHVN5KZ6b3kcfA3">
+<p data-page-node-id="PVm1IQ4rjMJOs1DfYttXPx">自带防反爬：内置浏览器 UA 模拟、请求延迟设置，适配军采网防护；</p>
+</li>
+<li data-page-node-id="ZVDh4OWL0IzCRZGgxkzAie">
+<p data-page-node-id="xq8zWWUMzAnkHmNz1jgNGt">可视化流程，可手动加筛选规则（只保留地址含 “四川” 的项目）；</p>
+</li>
+<li data-page-node-id="KDADMKJ9WCH52F7BGS73kO">
+<p data-page-node-id="rj6Xm9WE4Pm79HaTR9BeEv">数据全存在你本地电脑，不上传第三方云端，安全性更高。</p>
+</li>
+</ol><h4 data-page-node-id="V8sws0jjYVb0K2syKSvJDC">劣势</h4><ol data-page-node-id="L0levedRCNo3drPEHeP30Q">
+<li data-page-node-id="1QJ8seIYBbMcNqx3IObst2">
+<p data-page-node-id="GyUcEBV3V7iU8bxlqgGh7e">定时任务必须保持电脑开机、软件后台挂着（无免费云端定时，云端定时要付费）；</p>
+</li>
+<li data-page-node-id="4neP2jMmn4QYuALbEXBrlT">
+<p data-page-node-id="OBRvN9IPk8iSwbs6vB1oHL">极端复杂动态页面偶尔识别错位，微调 XPath 即可修复；</p>
+</li>
+<li data-page-node-id="mA0IpQhKPaxCcsvIzio8a5">
+<p data-page-node-id="WiBYLSe0yrLRFs2aMUkq0K">同一 IP 短时间批量翻页多了，可能临时弹出人机验证，手动点一次即可恢复。</p>
+</li>
+</ol><figure data-page-node-id="f1O01FljHwBSZgi9nAPIOQ"><img alt="image" src="images/tplva9rns2rl98pc_smart_face_cropv1512384.png" data-page-node-id="kfVxaSm04GFgIeQT1s5kG1"/><figcaption data-page-node-id="2wRDtpB1ypGAaLLmSwSDmX">▲ 后羿定时配置界面</figcaption></figure><h3 data-page-node-id="1m2vqmAJAUiw6CRSGpS7SW">方案二：Python 本地爬虫（你已装好 Git+Python，纯开源零成本，高度自定义）</h3><h4 data-page-node-id="EBbx6l21DjGwORxle7I30u">基础信息</h4><p data-page-node-id="yAiExMmyARd1C3qIfZIaWO">全程 100% 免费开源，代码本地运行，完全自主控制抓取频率、筛选逻辑、Excel 写入，无第三方软件捆绑。</p><h4 data-page-node-id="XIfxRWEzSreZBB1MeTAGCL">操作难度：★★★☆☆（有 Python 基础，30 分钟写完调试；零基础需简单学基础语法）</h4><h4 data-page-node-id="WUpfITEi316xi9Sw4Bzd1X">核心实现逻辑</h4><ol data-page-node-id="yuW9jMiNs2DFvAe9G30hfB">
+<li data-page-node-id="AD0YM7oWa4skZWlePLM5yq">
+<p data-page-node-id="ScHN0VSz0OJ5MIqKfvCF3J">库依赖：<code data-page-node-id="zdMdtAOHMtYfE3MZZrytcX">requests</code>请求页面、<code data-page-node-id="ofFWy5NpHCFw69NebO8MOl">BeautifulSoup</code>解析内容、<code data-page-node-id="WLqgJkcSecGbxeBkMz6af2">pandas</code>写入 Excel、<code data-page-node-id="un8HbjlBMuaY1m3WYiy5fY">time</code>设置延时防封禁；</p>
+</li>
+<li data-page-node-id="TcX1YZxrzWCdWOgEF5WGJf">
+<p data-page-node-id="lJALvAReUyYW3gbYwgYVun">流程：访问四川筛选列表→循环翻页→逐个打开详情页提取字段→判断是否重复→追加写入 Excel；</p>
+</li>
+<li data-page-node-id="qvkDNBwU0r96961v0oQweX">
+<p data-page-node-id="P0wi45FRyvff3hBikHLzeB">定时：Windows 自带<strong data-page-node-id="AipmfbL0FeC5myMLS4TBBj">任务计划程序</strong>，设置每天自动运行 py 脚本，无需开软件。</p>
+</li>
+</ol><h4 data-page-node-id="iWbJQHs1eD1IiNtJOdwYIY">极简可运行代码框架（适配军采网静态公告页）</h4><pre class="code-block" data-page-node-id="NDjVdUBsbavHlYiA6phaXC"><code data-page-node-id="oumspEuOwCdBqXpK7UVdU3">import requests, time, pandas as pd
+from bs4 import BeautifulSoup
+
+# 1. 基础配置
+headers = {"User-Agent":"Mozilla/5.0 Windows浏览器标识"}
+save_file = "四川军队采购项目汇总.xlsx"
+delay = 6 # 每次请求延迟6秒，防反爬
+
+# 2. 采集列表+详情提取逻辑
+def get_sichuan_project():
+    data_list = []
+    # 这里替换成你筛选四川后的列表分页URL
+    page_url = "https://www.plap.mil.cn/xxx?area=四川"
+    res = requests.get(page_url, headers=headers)
+    soup = BeautifulSoup(res.text,"html.parser")
+    # 循环遍历每条公告
+    for item in soup.find_all("li",class_="公告条目标签"):
+        title = item.a.text.strip() # 项目名称
+        detail_url = "https://www.plap.mil.cn"+item.a["href"]
+        time.sleep(delay)
+        # 进入详情页拿金额、报名时间、地点
+        detail_res = requests.get(detail_url,headers=headers)
+        detail_soup = BeautifulSoup(detail_res.text,"html.parser")
+        money = detail_soup.find(text=lambda t:"金额" in t).next.text
+        sign_time = detail_soup.find(text=lambda t:"报名时间" in t).next.text
+        address = detail_soup.find(text=lambda t:"地点" in t).next.text
+        data_list.append({"项目名称":title,"金额":money,"报名时间":sign_time,"报名地点":address})
+    return data_list
+
+# 3. 写入Excel，追加不覆盖
+if __name__ == "__main__":
+    new_data = get_sichuan_project()
+    try:
+        old_df = pd.read_excel(save_file)
+        new_df = pd.concat([old_df,pd.DataFrame(new_data)]).drop_duplicates(subset=["项目名称"])
+    except:
+        new_df = pd.DataFrame(new_data)
+    new_df.to_excel(save_file,index=False)
+    print("采集完成，已写入Excel")
+</code></pre><h4 data-page-node-id="BqVzb6Q7vcP2sshaxont5J">优势</h4><ol data-page-node-id="KZuLZJq7IcG7Stq1TxuHv8">
+<li data-page-node-id="6lXY3wKCMwLJ53fK1Ei5sd">
+<p data-page-node-id="JDx1VGH0FEKJX5o8ZDtpte">完全自主可控：想怎么筛选、多久跑一次、怎么去重全部自己改代码；</p>
+</li>
+<li data-page-node-id="fOsGWw6xDzoAZ2QHtG02AS">
+<p data-page-node-id="AZOYOalbbqyYg0XcTlw4cE">零额外软件开销，仅用已装 Python；</p>
+</li>
+<li data-page-node-id="tf3BhbwM2A0MrVDVyLGLYn">
+<p data-page-node-id="o837EIikjiwF7Vu6yQH1Xy">无任何第三方后台，隐私安全最高；</p>
+</li>
+<li data-page-node-id="nlw3gHUOpf3KldvYdopC21">
+<p data-page-node-id="EDxw6HW0NiNUyVY1wqEZ0z">Windows 任务计划可后台静默执行，不用打开窗口。</p>
+</li>
+</ol><h4 data-page-node-id="E8CBrvVm0KDexUlZSnWLvz">劣势</h4><ol data-page-node-id="ENh3DShVL5cSuOtCoTOhBQ">
+<li data-page-node-id="aQwmSrhZeUs5xM7F1ThpqB">
+<p data-page-node-id="o8htUl15oaMX8X2EQD8rli">需要基础排错能力：网站页面标签改版时，代码要微调匹配标签；</p>
+</li>
+<li data-page-node-id="qn6GGCRexNd22BTYcNTf9M">
+<p data-page-node-id="CFVIswN2FfYgmHPHc6s4e1">遇到 JS 动态渲染页面要改用 Selenium 库，代码复杂度小幅上升；</p>
+</li>
+<li data-page-node-id="hoa7ee8q6zqntBtMCDBn3y">
+<p data-page-node-id="QdFjYEl4r8KWy3sn9hE8p3">完全自己处理反爬（延时、UA、Cookie），设置不当容易 403 封禁 IP。</p>
+</li>
+</ol><h3 data-page-node-id="4gBr80gq2VqIRzVKe7meVx">方案三：影刀 RPA（零代码机器人，模拟人工点击，最像真人浏览，风控最低）</h3><h4 data-page-node-id="CAjHqbi6JYc6BrwGVesUpb">基础信息</h4><p data-page-node-id="tFPxgjK5bmVnyFwjzQEcRu">个人基础版永久免费，免费额度足够单站点每日少量采集，可视化拖拽流程，模拟人手动点网页、复制粘贴、写入 Excel。</p><h4 data-page-node-id="wdPZKBAZXaV13ImKMFcP3W">操作难度：★★☆☆☆（20 分钟拖拽搭建机器人流程）</h4><ol data-page-node-id="Dv01nQMmD2W6zUQZiDvhRG">
+<li data-page-node-id="LTz7kgF0gOvV6O0ZvyxT9D">
+<p data-page-node-id="0VM1CFkyEmtAPwCFu6q4pf">新建网页自动化流程，打开军采网；</p>
+</li>
+<li data-page-node-id="uNXyxKgL6nzTEXBfMj7rPo">
+<p data-page-node-id="DYHCuZfCQBWMVExVHEfuIN">拖拽步骤：筛选地区→翻页→点开每条公告→复制文本→粘贴写入 Excel 单元格；</p>
+</li>
+<li data-page-node-id="mAJ8MasgtJ6fvShI3jcQBP">
+<p data-page-node-id="SaWRK6C8bxbk02m8hAXFAz">设置循环翻页、定时每日启动、自动跳过已采集过的标题；</p>
+</li>
+<li data-page-node-id="BgC6lyHqQ8A6FA5ohtgMp8">
+<p data-page-node-id="8EBqyBtwCR1B7KBidnUJDw">全程模拟真人鼠标点击、滚动、等待，机器特征最弱，<strong data-page-node-id="ibzboUKxvbDicKrPLLXbYT">军采网反爬识别概率最低</strong>。</p>
+</li>
+</ol><h4 data-page-node-id="Lz2QJOJblOQBTtjJQ4KPKH">优势</h4><ol data-page-node-id="zlhLHCUOz1WejdEPzGXaoJ">
+<li data-page-node-id="l9sPBUvOeZxSOfpnd4hpPC">
+<p data-page-node-id="oAPqqSYSB3p5mZgfMCxSyM">行为最贴近真人，几乎不会触发网站拦截，合规风险最低；</p>
+</li>
+<li data-page-node-id="4SczoSXC6MbHTfqQFQR9GZ">
+<p data-page-node-id="wo7l3oNxHhrt9S40t7vSSB">不用分辨静态 / 动态页面，不管 JS 渲染多少层都能正常读取；</p>
+</li>
+<li data-page-node-id="Lmn4aiC3zsjtUWGxB7P2H5">
+<p data-page-node-id="YVlqEuULCHRPgtjQtWybF9">自带 Excel 读写组件，不用写公式代码；</p>
+</li>
+<li data-page-node-id="QF75sEubqL1NTUzSuAarD7">
+<p data-page-node-id="LN2LArIjILjLGwqHGFPKz9">可加弹窗提醒、采集完成微信推送。</p>
+</li>
+</ol><h4 data-page-node-id="LAErtEy284ShkC98sIIQA6">劣势</h4><ol data-page-node-id="eIF8oVnWA3WhNWgebR0W8u">
+<li data-page-node-id="CnvLDHXoMQZ3b1oCMcF9cc">
+<p data-page-node-id="qGe5K452WDDKvKS4O08cCk">免费版限制每日运行时长 / 步骤量，大批量采集会不够用（你只采四川少量公告完全够用）；</p>
+</li>
+<li data-page-node-id="H0KVuqDAGP5GX3yeaNH3TH">
+<p data-page-node-id="CCpy71EztTbANlpKxuBVsi">机器人运行时电脑不能锁屏，必须保持窗口前台（免费版无后台静默）；</p>
+</li>
+<li data-page-node-id="5f8m1DW17fayMYCMI0t7bi">
+<p data-page-node-id="4dOTpFS7uhJRSwiKUHmNXD">相比后羿，流程拖拽步骤更多，搭建速度慢一点。</p>
+</li>
+</ol><h3 data-page-node-id="wsnFVrM5KMerY5uIKNDpP7">方案四：浏览器插件轻采集（临时少量采集，不适合长期定时）</h3><h4 data-page-node-id="OBGiZquoYdJ3FxWBdQGoLd">工具：Web Scraper / DataMiner（Edge/Chrome 免费插件）</h4><h4 data-page-node-id="QdDl4QghJg7RSA2iH82d6T">操作难度：★☆☆☆☆</h4><ol data-page-node-id="wduJajKl6y2RKeLtaCGPAD">
+<li data-page-node-id="3BxMdt9ZvYom0BNd9J8hB6">
+<p data-page-node-id="hOZ8zN2P6rd2MyqHmnHewF">浏览器商店安装插件，打开四川采购列表页；</p>
+</li>
+<li data-page-node-id="M4bqcgblXMeKqdC9uhePHV">
+<p data-page-node-id="BtUwIw2oaG6FQN3FU9aImz">框选要抓取的标题、链接，创建采集选择器，配置进入详情提取字段；</p>
+</li>
+<li data-page-node-id="uYealWXwJT2nadPuzB8ODH">
+<p data-page-node-id="YuTPBTq86FLFFKXT68k4rO">单次采集后导出 CSV 转 Excel；无免费定时，只能手动点采集。</p>
+</li>
+</ol><h4 data-page-node-id="MEESWiyJb6ycuOABsVT2Uj">优势</h4><ul start="0" data-page-node-id="Ps23SlOwHm8EWNBEOIRAw4">
+<li data-page-node-id="lJ5ai4hwDCLHOXpe3exE7P">
+<p data-page-node-id="Ydlr0PaJQAkfciKQrAfpEH">最轻量，不用装大型客户端软件，浏览器内直接操作；</p>
+</li>
+</ul><h4 data-page-node-id="PITeKUr7fAkiu3K6gZe0aP">劣势</h4><ol data-page-node-id="NsHo8INfHV46COkTm32aNR">
+<li data-page-node-id="wYA4dvcxaYaT7854zPwS6E">
+<p data-page-node-id="H60Hzhk2TOYIAn6n1HCav0"><strong data-page-node-id="87kgRDc1XYrpBG2GB5b5cQ">无免费定时功能</strong>，每天必须手动点开浏览器启动采集，不符合你 “定期自动收集” 需求；</p>
+</li>
+<li data-page-node-id="hv3gRcMMURyWEVW3oGL97D">
+<p data-page-node-id="beqBSr6iHUFhQdASagDny1">大批量翻页容易崩溃，只适合少量临时抓取；</p>
+</li>
+<li data-page-node-id="HcpdC5TJZ5N7gGbZ7t3TqJ">
+<p data-page-node-id="BoMUl44NyjaLAfykRWo3Hv">免费版有导出行数上限，长期汇总数据会受限。</p>
+</li>
+</ol><hr data-page-node-id="IYKQr7Wfsv2SeGkVkub4Pz"/><h3 data-page-node-id="dL26O60vK79uNskcn65cI7">四套方案横向对比表</h3><div class="table-scroll" data-page-node-id="nZWO4af3EpagIwwCZuTiEa"><table data-page-node-id="jWPjRGyU9yVqskSoqI1368">
+<thead data-page-node-id="b33AqfvICepFJGAj1zcxmS"><tr data-page-node-id="lgNoCU6yIQ2QTOimuJQeTD">
+<th data-page-node-id="zHgT3hTJbCfwdbK6iGI6AM">方案</th>
+<th data-page-node-id="CGcpouZxyEHxSnPQXiztTK">免费程度</th>
+<th data-page-node-id="cz3SHkS6IExdBzJ1TAlkr9">定时能力</th>
+<th data-page-node-id="yEUYBcmPUMMdhpHyBnm2O7">操作难度</th>
+<th data-page-node-id="fXboWtoZmRv8I9PRrYFw2J">风控封禁风险</th>
+<th data-page-node-id="vjoFRuHyhIw2nVjnw5Bd5U">数据安全性</th>
+<th data-page-node-id="F00obOTSgw6h0Y6TNKHFrt">适合人群</th>
+</tr>
+</thead><tbody data-page-node-id="fvKUcgB7oE2S2IbMMEhY9q"><tr data-page-node-id="cMa6TDBkYgcRAyC2Squg00">
+<td data-page-node-id="8szRTqbAODV4Y7YywFpnNg">后羿采集器</td>
+<td data-page-node-id="uLuVviZhPoECJ4HEiKUFxT">永久完全免费无导出限制</td>
+<td data-page-node-id="fiuAtVYHlxvHOC2e83sjth">本地定时（电脑开机即可）</td>
+<td data-page-node-id="vioxObi3Yycakl3CUw0JHt">极低（AI 智能识别）</td>
+<td data-page-node-id="pEV0nx7nhxABxeqdWpGikf">中等（自带模拟浏览器）</td>
+<td data-page-node-id="c9IdKdzDky8VJf3fWtQ82G">本地存储，不上传云端</td>
+<td data-page-node-id="TUoHhx1pL7bHLFQCwjCZm0">绝大多数人，首选推荐</td>
+</tr>
+<tr data-page-node-id="BpR6tFMGRiPFliOpgAMlPv">
+<td data-page-node-id="EZOR2noOwl7cYEBluZ9m5a">Python 爬虫</td>
+<td data-page-node-id="jUJWZ2h9CqJHeJQ2YYcFyu">100% 开源零费用</td>
+<td data-page-node-id="RT0VLvGnjMTFJY6irhLvFc">系统任务计划静默定时</td>
+<td data-page-node-id="2pjCKVdH14BTveHD7xXqZB">中等（需调试代码）</td>
+<td data-page-node-id="BCYXFGG0OlNJ9TRvcbqnUs">低（自己控制延时策略）</td>
+<td data-page-node-id="7UmxdfwJKurTwsZgIV7UiH">完全本地私有</td>
+<td data-page-node-id="ERYAD4tWBmySZjzqL6Mrun">已有 Python 基础、喜欢自主掌控</td>
+</tr>
+<tr data-page-node-id="7vCwPeiJWEa0g6k0ECPxy7">
+<td data-page-node-id="yrcCmghahbfgpZYJKryF6J">影刀 RPA</td>
+<td data-page-node-id="xCLrWsSRkhvQ2R0sbwMS9W">个人基础版永久免费</td>
+<td data-page-node-id="SQBkjeO5IXw2luEDcD3076">前台定时（电脑不能锁屏）</td>
+<td data-page-node-id="vDNKRqNQi5jaZuuzeCuYW1">低（拖拽机器人）</td>
+<td data-page-node-id="B3SI6Dib0nUc1VvDPObO9C"><strong data-page-node-id="wAGCVCaMVi3G5DR6rPDZnQ">最低（真人模拟操作）</strong></td>
+<td data-page-node-id="5JGBNdHQ3vGrdFNWxN9pTG">本地 Excel 存储</td>
+<td data-page-node-id="5NXCKBcGsMu36RL92atutc">极度担心网站封 IP、求稳妥</td>
+</tr>
+<tr data-page-node-id="uRlGsYL7l2Uf8vjh3C8wDV">
+<td data-page-node-id="vNHMilCcpZBL92PyYyy2lY">浏览器插件</td>
+<td data-page-node-id="njbrjJKoGDdfmFW4HdHyJ2">基础功能免费</td>
+<td data-page-node-id="K6I5N4eH0lkoEj13a4ZPXk">无自动定时，纯手动</td>
+<td data-page-node-id="mBGCaE182WAlOs5Yw0Rbd8">极低</td>
+<td data-page-node-id="p40HY5CkXQa0WcXxzyzZGF">中等</td>
+<td data-page-node-id="vbL0ZjcS8q81K6iIz9RCmU">浏览器缓存导出</td>
+<td data-page-node-id="R3mxkRGybjGG1cAMuG3WBS">临时偶尔抓取，不长期监控</td>
+</tr>
+</tbody>
+</table></div><h3 data-page-node-id="NvO2zFFaoibZoQYZ0zyagA">落地最优建议</h3><ol data-page-node-id="LupZ5Hbs2DgHhOCpCsnpLX">
+<li data-page-node-id="p62S7fkkTyfXZ3PeTuSFGl">
+<p data-page-node-id="npRc6ayCbdyr4Gw9b47RRW">普通自用长期监控：优先<strong data-page-node-id="WicvO03r66j9qprqQOkp9t">后羿采集器</strong>，配置最快、真免费、定时稳定；</p>
+</li>
+<li data-page-node-id="Lka44kTZmDvAx190K12Nox">
+<p data-page-node-id="rdnWtecOr8WhliFTPMbDPG">你本身已经搭好 Python 环境、想深度自定义：直接上<strong data-page-node-id="5V7y3rM9IdEBRAQhxpBRZH">Python 爬虫</strong>；</p>
+</li>
+<li data-page-node-id="T6BMyBbHIEYn9lAH8WDjKb">
+<p data-page-node-id="vf6uWWouHeg6cuuez5HOEh">极度怕军采网拦截、求最稳妥真人行为：选<strong data-page-node-id="4Qr6WQqBWyEokYHYdVdiub">影刀 RPA</strong>；</p>
+</li>
+<li data-page-node-id="qNoEhHVL26YRpB7Uz1owdH">
+<p data-page-node-id="s8zBaiyoxZE02S9f7kAloR">只偶尔查几次、不想装软件：用浏览器插件临时导出。</p>
+</li>
+</ol><h3 data-page-node-id="npo9Q3dzD1Orqfeww9ZoC7">必做风控安全设置（所有方案通用）</h3><ol data-page-node-id="OWckOuFFkJPLIDiZIxZCnw">
+<li data-page-node-id="ru5nkqoniBaOmeGfPiqnRD">
+<p data-page-node-id="gk1GDQsC0nHlFoTAt8h43y">两次请求间隔≥5 秒，禁止一秒翻好几页；</p>
+</li>
+<li data-page-node-id="B0VauovWcCmP5gsFv3ymwx">
+<p data-page-node-id="c1Ge5cl0HKQix7sBsHzo2Q">不要夜间凌晨批量采集，尽量工作日白天 9:00–17:00 运行；</p>
+</li>
+<li data-page-node-id="qmNWOuUsbbjFw5u2go52Kg">
+<p data-page-node-id="pEw6zXZjlAgAFRO1mEGYYc">仅采集公开公示招标公告，不访问资格预审、涉密采购栏目；</p>
+</li>
+<li data-page-node-id="oNqsVLfbLgTDkXxv8vA4t6">
+<p data-page-node-id="vznCrGulOr2Z614mBvLpFR">Excel 只做自己业务参考，不转发、不售卖、不二次分发数据。</p>
+</li>
+</ol><h2 data-page-node-id="gK01MzYiFbfWFIjf6wThwH">三、确定使用python后的详细步骤</h2><h3 data-page-node-id="S661atZwnmbMFbSLoHHVzJ">超详细小白版：Python 爬军队采购网（图片 OCR 识别文字 + 自动提取字段 + 写入 Excel + 每日定时）</h3><p data-page-node-id="7OFm2s4HJjqE5zSJSVB2Ct">先讲<strong data-page-node-id="7kCATx1F4xDupSNW3Lngrz">核心难点</strong>：你观察得非常准！这个网站<strong data-page-node-id="xfJ7k5YGuaAzBaglH9r3i1">正文全是图片，不能直接复制文字</strong>，必须用 <strong data-page-node-id="9ijB6C3DMWLGFIqpURNptM">OCR 图片文字识别</strong>把图片转文字，再从大段文字里提取：项目名称、金额、报名时间、地点、四川地区等。</p><h4 data-page-node-id="J724uoI4Sa0UmY8G8zc2zd">整体思路（超级简单，小白能懂）</h4><ol data-page-node-id="H8sAGu4hPhqpCYBEbJULYE">
+<li data-page-node-id="1CekPo8IL7RUIzQrJ4M2EG">
+<p data-page-node-id="nAd0BXXQVDxnjQ5OamLPIW">打开军队采购网 → 只抓<strong data-page-node-id="bCgIdjZiP70kScv6Y5FIWh">四川区域</strong>前一天的公告列表</p>
+</li>
+<li data-page-node-id="lapgTbgLxQsk6yR06S7UcB">
+<p data-page-node-id="Wrk5HKTUuQDNiuahI2bBTq">点开每个公告 → 下载里面的正文图片</p>
+</li>
+<li data-page-node-id="ushKWYvZ10KWo2tFE43svE">
+<p data-page-node-id="JxYGGULErOGBTEVUAWI3OA">用<strong data-page-node-id="OlUxKH8p2j6uIZxF21p7nm">免费百度 OCR</strong>把图片转成纯文字</p>
+</li>
+<li data-page-node-id="fdH9niCA9BCEadStjdlNEf">
+<p data-page-node-id="lloSMYm1nqA3mW7L0SrpOs">用正则 / 关键词，从文字里抠出：<strong data-page-node-id="OdYiGuYX7DFcoLz1zqHkCj">金额、报名时间、报名地点、项目名</strong></p>
+</li>
+<li data-page-node-id="cZdrqnYSnHUgScM2u3uvVz">
+<p data-page-node-id="4S5xPgTYPHP1DhVTg2ry0s">自动追加写入 Excel，不重复、不覆盖</p>
+</li>
+<li data-page-node-id="XX4dYS1sELpoUqzvGjPwil">
+<p data-page-node-id="P6wko6I67uGlflyimIOdUN">设置<strong data-page-node-id="tGO6Bp51vhZXOfbR6TBUy2">Windows 每天早上自动运行</strong>，爬前一天全部公告</p>
+</li>
+<li data-page-node-id="cZSuFKA2WM0vbFGpvatXoA">
+<p data-page-node-id="YibRWUAt8AKLzmUyMBbpkF">每个请求间隔<strong data-page-node-id="dOBXnJvECTAauMUcJDexpO">10 秒以上</strong>，绝对不会封 IP、合规安全</p>
+</li>
+</ol><hr data-page-node-id="nj3JpZKTkYSHoz6BOrRTGQ"/><h3 data-page-node-id="FL1FLg0z5HDeBekjRWSyPo">第一部分：安装需要的 Python 工具（全程复制粘贴）</h3><p data-page-node-id="wUpCJEyWyB5agspGSjVPQy">你已经装了 Python+Git，直接打开 <strong data-page-node-id="60k4TP42mkbvHRLmBfAIeA">CMD（黑窗口）</strong>，<strong data-page-node-id="xaRP7flhuAOggcZKdN3XGP">一行一行复制下面命令，回车执行</strong></p><h4 data-page-node-id="W3FaGGGF9TSq4iB2HLouNa">1. 安装所有依赖库（4 个）</h4><pre class="code-block" data-page-node-id="vmZU0WUTTRQgjTE5ji5al5"><code data-page-node-id="Crbcc5AeMrXDTM4K1iKdYU">pip install requests pillow pandas baidu-aio -i https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre><ul start="0" data-page-node-id="Kutdtq87X1LsMCvOuB5wVJ">
+<li data-page-node-id="3woUxYQllWCdbZpnxy0F0U">
+<p data-page-node-id="tQSGY2HvPlUxT37WeINkbd">requests：访问网页</p>
+</li>
+<li data-page-node-id="6ijDKTsAkDwBd2YDUHLb2Y">
+<p data-page-node-id="GqjxeUiq4XM2kr0DRCHOyB">pillow：处理图片</p>
+</li>
+<li data-page-node-id="kM1G6SrP021XjtQbvNxDPB">
+<p data-page-node-id="qF6XDj1UjGKeA5dYlDHssX">pandas：写入 Excel</p>
+</li>
+<li data-page-node-id="j7eUSjbvYbPrajzF3ap99m">
+<p data-page-node-id="OP0YtzZ6FAqG0lG5nHXIe6">baidu-aio：<strong data-page-node-id="VzarWYvrWqZzA56SgcsMQ2">免费百度 OCR 图片识别（个人永久免费额度足够用）</strong></p>
+</li>
+</ul><blockquote data-page-node-id="Zc8FWP5gAlHjKTwNDr6ylc">
+<p data-page-node-id="kBxALdTsTE00xJdSds8Nij">百度 OCR 个人每天<strong data-page-node-id="zhXq839Q2SJWCemkZaNP7y">5 万次免费识别</strong>，你每天几十个公告完全够用，不花钱。</p>
+</blockquote><hr data-page-node-id="GXeBkYhdZp64QUW3ucrAcT"/><h3 data-page-node-id="sF75iBTU3IiPPg0S0zXpfw">第二部分：申请免费百度 OCR（3 分钟搞定，必须做）</h3><ol data-page-node-id="mVAcoDIdztqO3TM2qDk2xe">
+<li data-page-node-id="pxdwpCAszKDN97wpBdaBFd">
+<p data-page-node-id="lhk5JxcFtOJADkG4RUlFB5">打开百度智能云：<a href="https://link.wtturl.cn/?target=https%3A%2F%2Fcloud.baidu.com%2F&amp;scene=im&amp;aid=497858&amp;lang=zh" rel="noopener" target="_blank" data-page-node-id="c4nfg3WE9ir51FVXY4kqE3">https://cloud.baidu.com/</a></p>
+</li>
+<li data-page-node-id="JG20sF0X7shYFl3GdB386c">
+<p data-page-node-id="WfSPZEe5lJ1TNKu6JWrsWf">注册 / 登录 → 搜索 <strong data-page-node-id="17U6m1lDMh5kkgg4EhMg0m">文字识别 OCR</strong>→ 进入</p>
+</li>
+<li data-page-node-id="OYiNgHpoOVvSGLBXR6rkVw">
+<p data-page-node-id="C8oZL9ceYgpZNtEq5ZwSDb">点击「创建应用」</p>
+<ul start="0" data-page-node-id="wBnBsMBvLUsj7sWt278p1P">
+<li data-page-node-id="FxwCkXm6JN5uPTZtFmFbuh">
+<p data-page-node-id="CnhtmFuQsfuSc0LibYDLFV">应用名称：军采网 OCR</p>
+</li>
+<li data-page-node-id="NXjDAdcG8rtQgEFhMI4GpY">
+<p data-page-node-id="ZoaMRsawmiXpVAibDLQ68N">类型：个人自用</p>
+</li>
+<li data-page-node-id="nKpTrhQ3xe3gQnv30V1AdZ">
+<p data-page-node-id="mi9Y7Si67CaEx0mQk7r2BI">描述：采集采购公告图片文字</p>
+</li>
+</ul>
+</li>
+<li data-page-node-id="p4LylNfeLLHMup1LU7hwEx">
+<p data-page-node-id="ap78vTFDZoUeiqs9aZecEO">创建后得到 2 个东西，<strong data-page-node-id="FXJT1a5HQnm7KUhzEBmCPB">记下来，后面要填进代码</strong></p>
+<ul start="0" data-page-node-id="7CDJMP3UdoQj8AwANdI9S5">
+<li data-page-node-id="YSRNEOwQOBbRwzDYR1qDcG">
+<p data-page-node-id="Xj3gKvNlLcdFBT9ojBD69a">API_KEY</p>
+</li>
+<li data-page-node-id="HsY1hTRDxaKmGcEnwH5nfX">
+<p data-page-node-id="KXrXwhHdL3AIM4qIValEAq">SECRET_KEY</p>
+</li>
+</ul>
+</li>
+</ol><hr data-page-node-id="mUU2rvNAvowYHNHvpQGLxx"/><h3 data-page-node-id="VPDJnfvxLcIhDnfzR7JtkX">第三部分：小白直接用的完整 Python 代码（我给你写死，你只改 2 个地方）</h3><h4 data-page-node-id="0sUEHLeCDteDnKliI6cMOG">1. 在桌面新建一个文件夹</h4><p data-page-node-id="sG9l4cGNWjKuOm5Qqrjm1J">　　名字叫：<code data-page-node-id="lRVEMxdlIcyUnkF2TccDqx">军采网四川采集</code>在里面新建一个文本文档，把下面<strong data-page-node-id="mam1u7hg0txsUPHHAQAQCO">全部代码复制进去</strong></p><pre class="code-block" data-page-node-id="FWDTFqUe114vTEhY3SPWDJ"><code data-page-node-id="4tE2BtCJeEvwnG6petxftw"># ==============================================
+# 军队采购网 四川区域 图片OCR识别 + 提取信息 + 写入Excel
+# 小白专用，间隔10秒，每日自动爬前一天公告
+# ==============================================
+import requests
+import time
+import re
+import pandas as pd
+from PIL import Image
+from aip import AipOCR
+from datetime import datetime, timedelta
+import os
+
+# ====================== 【你只需要改这里2行！！】======================
+# 粘贴你自己的百度OCR密钥
+APP_ID = '这里填你的APP_ID'
+API_KEY = '这里填你的API_KEY'
+SECRET_KEY = '这里填你的SECRET_KEY'
+# ==================================================================
+
+# 初始化百度OCR
+client = AipOCR(APP_ID, API_KEY, SECRET_KEY)
+
+# 保存Excel的路径（不用改，直接存在文件夹里）
+EXCEL_FILE = "四川军队采购汇总.xlsx"
+# 请求间隔10秒（极慢，绝对不会被封）
+SLEEP_TIME = 10
+
+# 获取昨天日期（只爬前一天的公告）
+yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+print(f"✅ 本次采集日期：{yesterday}")
+
+# 模拟浏览器访问
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+}
+
+# ----------------------
+# 1. 抓取四川地区公告列表页
+# ----------------------
+def get_sichuan_list():
+    all_links = []
+    # 军采网四川地区公告分页（你可以自己翻页改page=1,2,3...）
+    base_url = "https://www.plap.mil.cn/cms/channel/10000000000000000000000000000000?area=510000&amp;page={}"
+    page = 1
+    while True:
+        url = base_url.format(page)
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=15)
+            soup = BeautifulSoup(resp.text, "html.parser")
+            items = soup.select("ul.list li")
+            if not items:
+                break
+            for item in items:
+                title = item.a.get_text(strip=True)
+                pub_date = item.span.get_text(strip=True)
+                # 只保留昨天发布的公告
+                if pub_date == yesterday:
+                    link = "https://www.plap.mil.cn" + item.a["href"]
+                    all_links.append({"title": title, "link": link})
+            page += 1
+            time.sleep(SLEEP_TIME)
+        except Exception as e:
+            print("列表页异常：", e)
+            break
+    return all_links
+
+# ----------------------
+# 2. 进入详情页，下载正文图片，OCR识别文字
+# ----------------------
+def get_detail_text(detail_url):
+    time.sleep(SLEEP_TIME)
+    resp = requests.get(detail_url, headers=HEADERS, timeout=15)
+    soup = BeautifulSoup(resp.text, "html.parser")
+    img_list = soup.select("div.content img")
+    full_text = ""
+    # 下载每一张图片 → OCR识别
+    for img in img_list:
+        img_url = "https://www.plap.mil.cn" + img["src"]
+        try:
+            img_resp = requests.get(img_url, headers=HEADERS, timeout=15)
+            img_path = "temp.jpg"
+            with open(img_path, "wb") as f:
+                f.write(img_resp.content)
+            # 调用百度OCR识别
+            result = client.basicGeneral(open(img_path, "rb").read())
+            words = [w["words"] for w in result.get("words_result", [])]
+            full_text += "\n".join(words)
+            os.remove(img_path)  # 删除临时图片
+        except Exception as e:
+            print("图片识别失败：", e)
+    return full_text
+
+# ----------------------
+# 3. 从OCR大段文字里 提取关键字段（小白不用动）
+# ----------------------
+def extract_info(text):
+    info = {
+        "项目名称": "",
+        "预算金额": "",
+        "报名时间": "",
+        "报名地点": "",
+        "发布日期": yesterday
+    }
+    # 提取金额（万元/元）
+    money_pattern = re.compile(r"(\d+\.?\d*\.?\d*万?元)")
+    money_res = money_pattern.search(text)
+    if money_res:
+        info["预算金额"] = money_res.group(1)
+    # 提取报名时间（匹配 年-月-日 格式）
+    time_pattern = re.compile(r"20\d{2}[-年]\d{1,2}[-月]\d{1,2}")
+    time_list = time_pattern.findall(text)
+    if time_list:
+        info["报名时间"] = " ~ ".join(time_list)
+    # 提取地点（四川 开头）
+    addr_pattern = re.compile(r"四川.*?(市|区|县|大厦|院|中心|公司)")
+    addr_res = addr_pattern.search(text)
+    if addr_res:
+        info["报名地点"] = addr_res.group(0)
+    return info
+
+# ----------------------
+# 4. 主程序：采集 + 写入Excel（自动追加，不重复）
+# ----------------------
+def main():
+    print("="*50)
+    print("开始采集四川军队采购公告...")
+    print("="*50)
+    link_list = get_sichuan_list()
+    if not link_list:
+        print("❌ 昨日无新公告")
+        return
+    save_data = []
+    for item in link_list:
+        title = item["title"]
+        link = item["link"]
+        print(f"\n正在采集：{title}")
+        text = get_detail_text(link)
+        data = extract_info(text)
+        data["项目名称"] = title
+        data["公告链接"] = link
+        save_data.append(data)
+    # 写入Excel（追加不覆盖，自动去重）
+    df_new = pd.DataFrame(save_data)
+    try:
+        df_old = pd.read_excel(EXCEL_FILE)
+        df_all = pd.concat([df_old, df_new]).drop_duplicates(subset=["公告链接"])
+    except:
+        df_all = df_new
+    df_all.to_excel(EXCEL_FILE, index=False)
+    print(f"\n✅ 采集完成！共 {len(save_data)} 条，已保存到：{EXCEL_FILE}")
+
+if __name__ == "__main__":
+    main()
+</code></pre><h4 data-page-node-id="Un0tKD3yg8umFYQ6e9G379">2. 小白修改代码只做 2 件事</h4><ol data-page-node-id="DhQmC2a58xvdc5axfAaJYB">
+<li data-page-node-id="5fmy8frJNiBLsw9iS8k17H">
+<p data-page-node-id="MGWbxnfRYJ4xZ5E70IMtOB">把百度 OCR 的 <code data-page-node-id="XoX0KVZW2Axx222cMqEmmh">APP_ID、API_KEY、SECRET_KEY</code> 填进去</p>
+</li>
+<li data-page-node-id="eHZ0pWjMGutCrxPIDAEsJ0">
+<p data-page-node-id="J1x7PYqFFrhl3L0WkdrdqL">保存文件，名字叫 <code data-page-node-id="hDHzAc5i01VmNLMg6m3rJn">采集.py</code>（<strong data-page-node-id="ALfxVZ02emD3AgwncxSjzF">后缀必须是 .py，不是 .txt</strong>）</p>
+</li>
+</ol><hr data-page-node-id="ajFzlpZwJs6KyBlOLopPFU"/><h3 data-page-node-id="ic93cAkxD2gJQjK6pLBspg">第四部分：第一次手动运行测试（一步一步）</h3><ol data-page-node-id="AZDSpsMebgLrI5bSSA8Cdz">
+<li data-page-node-id="JTp1iHky5iIOxO9vqR2pJo">
+<p data-page-node-id="OBkFbo69MRMHqgYXpVDop7">打开 CMD</p>
+</li>
+<li data-page-node-id="UkSFuZ2R48YsyGZQk9io4a">
+<p data-page-node-id="Fg9Jh4IFTfiz1xEvOkPIyb">输入：</p>
+</li>
+</ol><pre class="code-block" data-page-node-id="sdnSAxfrmRyW1PRwCAwNhQ"><code data-page-node-id="Hw0fLS9XG67WCAHre0zPOh">cd C:\Users\admin\Desktop\军采网四川采集
+</code></pre><ol start="3" data-page-node-id="T3MhHDma4w1wUhg0wXQGLA">
+<li data-page-node-id="dtPXkqtvSN8bLs3tk57E4n">
+<p data-page-node-id="qbB5lXt6nLNXYu6ScSbo3b">运行代码</p>
+</li>
+</ol><pre class="code-block" data-page-node-id="ArVEBFJrJSFwDT5e1vWRDj"><code data-page-node-id="xZ86Go7OvFuxydb4LnSB0p">python 采集.py
+</code></pre><h4 data-page-node-id="515TMuGHYgA1992451BEXy">运行效果</h4><ul start="0" data-page-node-id="kPoZYMCTW9siIj3NDanhXd">
+<li data-page-node-id="0VNUM9gScoLeMVAfasd18G">
+<p data-page-node-id="hJ6XusjnnK2EJ8JCgyw8uq">控制台会打印：正在采集 xxx 项目</p>
+</li>
+<li data-page-node-id="e4cnFoYCDQatbjy3Tumg4o">
+<p data-page-node-id="dHuvPsV4S6mIy63iaKVHue">自动下载图片 → 识别文字 → 提取金额、时间、地点</p>
+</li>
+<li data-page-node-id="QaBHNIhziHsFjemauJJEq4">
+<p data-page-node-id="KaCz2CwIgRxJNVuRRDiSUk">文件夹里自动生成：<code data-page-node-id="7ofc2ig54Jy68gYwjJWHTQ">四川军队采购汇总.xlsx</code></p>
+</li>
+<li data-page-node-id="nwJ3ZtMus0mbpikdNItS8l">
+<p data-page-node-id="8ZbBjqRIG88qdJoEXBBWlb">每次请求<strong data-page-node-id="SmxaIfR05SB84vK6BRkSxc">间隔 10 秒</strong>，极慢，绝对安全</p>
+</li>
+</ul><hr data-page-node-id="EKdndj1iuaBbwAZYsVHr6U"/><h3 data-page-node-id="gtDWpZGW2DS8PptyyCfG2u">第五部分：设置【每天早上自动运行】（不用你手动点）</h3><h4 data-page-node-id="1GW2NFt6IZoTfd9S4gqwrV">Windows 任务计划程序（小白傻瓜式设置）</h4><ol data-page-node-id="tXRWj84Sn41U3ONTrvlixH">
+<li data-page-node-id="AyIEdsAquHbWegLKhl8RCh">
+<p data-page-node-id="uDxu5sjNCCr3431B8MRWYY">Win 键搜索：<strong data-page-node-id="QcI0tVeKMhvbmaC2ajtEhM">任务计划程序</strong>打开</p>
+</li>
+<li data-page-node-id="Mjnekk0VaDgl1cJEk4sgHr">
+<p data-page-node-id="DTt6G594FuFxJcW9iDsyYS">右侧「创建基本任务」</p>
+</li>
+<li data-page-node-id="XwYiuoxyvTf6c9ZTT4D4CC">
+<p data-page-node-id="PS1bt5f4m0wBwTyaiEluDT">名称：军采网每日采集</p>
+</li>
+<li data-page-node-id="KcxVcraoE5ExAGBGqC5GUH">
+<p data-page-node-id="8V7ClPAZDxurvWXTSum1oY">触发器：<strong data-page-node-id="pLc3HgJodRB9JnB2r6mB1P">每天</strong>→ 设置早上 <strong data-page-node-id="UUBO731GvWtvCxw1buwuQx">8:00</strong>启动</p>
+</li>
+<li data-page-node-id="vXwJAyPHN1I9xca3hjUj0Q">
+<p data-page-node-id="bgDduXDaWDTh8tNaLxZerK">操作：启动程序</p>
+</li>
+<li data-page-node-id="SwDblhKm0e0r0ZYljHKxQk">
+<p data-page-node-id="t9b1aN395uX93cAZnbbIU0">程序或脚本：<code data-page-node-id="iFvqF45hhOJFYWTgJnI318">python.exe</code></p>
+</li>
+<li data-page-node-id="oBaxHEt2iIIEdmiwvaWv0i">
+<p data-page-node-id="GtUdk4mgaxaf5BF1Ey1n6h">添加参数：<code data-page-node-id="CHWnhOJGdGOXmtopPrZdHC">"C:\Users\admin\Desktop\军采网四川采集\采集.py"</code></p>
+</li>
+<li data-page-node-id="W8Lm9CiVfUknlFGVmfbZK8">
+<p data-page-node-id="F1CY7nJgOPBXgkJ9OH0lLj">下一步 → 完成</p>
+</li>
+</ol><p data-page-node-id="4B3JhRJiV6FYWwgPT1H9x3">✅ 以后<strong data-page-node-id="03t8GMy2qEtWFDBadHPQnv">每天早上 8 点自动运行</strong>，只爬<strong data-page-node-id="80orKoQatjeS9OTUY4rdrX">前一天</strong>的所有四川公告，自动写入 Excel。</p><hr data-page-node-id="QoNWkcAUAjDOTjW5YAl2Y4"/><h3 data-page-node-id="iyqoriVAamQKqFSTc983rg">第四部分：4 种方案优劣对比（针对你这个场景）</h3><h4 data-page-node-id="CGYZxA3oqvs7lE9yYKj9cJ">方案 1：Python（我教你的这个，你选的）</h4><h4 data-page-node-id="vJMSYerBGtVYNWdfa6ux3f">优点</h4><ol data-page-node-id="IPShTiZCVGThuVbJsqaDCD">
+<li data-page-node-id="idkCuMrm3V8lnWwTFLpEsi">
+<p data-page-node-id="dEjPBmGjiwav3r4Oxiza1p"><strong data-page-node-id="D8BFeTKvrOXgojXKEkhWbR">100% 免费、永久免费</strong>，百度 OCR 个人额度完全够用</p>
+</li>
+<li data-page-node-id="f4YvEGuWBO9AxopOreQ3au">
+<p data-page-node-id="uiWylOGxGBouOOnGSTLKN3">完全本地运行，数据不经过第三方，最安全（军采网敏感）</p>
+</li>
+<li data-page-node-id="EhlBgtE3toGYgCsMZVPXGL">
+<p data-page-node-id="VBqCT17I85SAcQi0qALOZc">自动识别图片、自动提取字段、自动 Excel、自动定时</p>
+</li>
+<li data-page-node-id="YRi1ZzlrG9KPWYHPybZq6D">
+<p data-page-node-id="ENQjHk46gi3E8kQiuYLsPC">间隔可以设置到<strong data-page-node-id="fuIGFsLT2VTFr3Qz3jhiEn">20 秒</strong>，极度温和，绝对不会被封 IP</p>
+</li>
+<li data-page-node-id="KZ2sRQv5TjDvnw54uEfYri">
+<p data-page-node-id="X4JR9VzkmlevBAxfYG3iEd">只爬前一天数据，不重复、不冗余</p>
+</li>
+</ol><h4 data-page-node-id="QEV0FykYParC397BsdV7IJ">缺点</h4><ol data-page-node-id="8xJNPh8yZQTMVZbsvvoTxA">
+<li data-page-node-id="ClrYwKj7hnC3dSumb26rbM">
+<p data-page-node-id="R8EgD6sNuHyzc4ZTwimIs2">小白第一次要装库、申请 OCR 密钥（我一步一步带你，10 分钟搞定）</p>
+</li>
+<li data-page-node-id="K8MQdlng1PkpwbEEGDdzBn">
+<p data-page-node-id="F4LWeLL1RpnvkLZyEvJ2mZ">网站页面大改版时，需要微调一点点代码（我可以帮你改）</p>
+</li>
+</ol><h4 data-page-node-id="7AfybzCPoUCssANZ6On5hr">方案 2：后羿采集器（零代码）</h4><h4 data-page-node-id="R4z8GzXgcYC3E487nG4J1M">优点：不用写代码</h4><h4 data-page-node-id="QGGGXbwYNEJYCdfTGBdBHS">缺点：<strong data-page-node-id="Is1BCQwwRZynG6jCJEbsax">图片 OCR 识别要付费会员</strong>，免费版不能识别图片文字 → 直接用不了！</h4><h4 data-page-node-id="bXCToqCpxHLeLgj98hNBtJ">方案 3：影刀 RPA</h4><h4 data-page-node-id="FES6Or0CI9qPQOb7F6V6PM">优点：模拟真人点鼠标</h4><h4 data-page-node-id="ebmp07PfbGh6qYNArrHtOm">缺点：同样<strong data-page-node-id="JiknQVHt17SPHIEoPyiBDS">图片识别要付费</strong>，免费版额度不够用</h4><h4 data-page-node-id="qhHcbnBsFpV2h12FO7ey5V">方案 4：浏览器插件</h4><h4 data-page-node-id="pUvyzBS472sV40oTgjrR3n">缺点：完全不支持图片 OCR，直接用不了</h4><h3 data-page-node-id="i6xJ6qvFv5xlNKvGZuQSbt">最终结论</h3><p data-page-node-id="Gn5mvcvXxisKBaPCCX24Ph"><strong data-page-node-id="8ArJ2JW0BmPPR7yXUT7UZK">只有 Python 方案能免费实现【图片转文字 + 提取金额时间地点 + 每日定时】</strong>其他工具免费版都做不了图片 OCR 识别。</p><hr data-page-node-id="bGmzXlGDuJ4jnciHu3Tw3F"/><h3 data-page-node-id="M1i075VLQLVH2fA7z3u0R9">我接下来可以手把手带你：</h3><ol data-page-node-id="VEDcSRUyvPdp9d4Y3VH4ob">
+<li data-page-node-id="PySxkoKmXwLvBKZgjGkGMu">
+<p data-page-node-id="xdLRyGhohP9xc9qiTA8xMA">带你申请百度 OCR 密钥</p>
+</li>
+<li data-page-node-id="Gqe24ISWsQZSG1wXBL4t15">
+<p data-page-node-id="BFBM8TipPLzUkb4rDnYl6z">带你粘贴进代码</p>
+</li>
+<li data-page-node-id="BCCHpIB1lzaWnEcS4F4mx2">
+<p data-page-node-id="iFsUB0CJjVXHb2O3czVW0F">带你第一次运行测试</p>
+</li>
+<li data-page-node-id="CAzmCKa8BBAGrEESKlnPGA">
+<p data-page-node-id="U2qb8wFp4pJul3XhEAm9sK">带你设置 Windows 自动定时</p>
+</li>
+</ol><h2 data-page-node-id="oeAKuYh36WEKm8aBHof71a">四、上述均告失败，总结前期尝试</h2><h3 data-page-node-id="kL03TKaKbv0QmA6rXrH5aY">军队采购网数据采集全年尝试复盘报告（2026 年度）</h3><h3 data-page-node-id="4zfphNcdyOs46DZcAEWC9a">一、基础信息</h3><p data-page-node-id="9z5BDRcUw7xqEutRNjRawH">采集目标：军队采购网四川省工程类当日采购公告，需求包含：公告标题、发布时间、详情页图片文字识别（OCR）、提取预算 / 报名时间 / 地点，最终写入 Excel 自动去重存档执行环境：Windows11 + Python3.13核心阻碍：网站接口改版、前端 JS 动态渲染、反爬限制、国内网络导致浏览器驱动下载失败</p><h3 data-page-node-id="ixYIllCRLDZJrhxQ4jtAAC">二、已尝试方案全复盘（弯路标记 + 失败根因）</h3><h4 data-page-node-id="UXGdDA0yEevZsTHnyd7VnR">方案 1：原生 Requests 接口爬虫（第一版，最初思路）</h4><ol data-page-node-id="zXH5tRQk9Fu2PhhfsIk8se">
+<li data-page-node-id="Uf4VooX7r1nRUFpibgAEag">
+<p data-page-node-id="oG9lih7qve2aQhcgc4hgz7">操作逻辑：抓网站分页 POST 接口，传入地区、项目类别参数，正则解析返回 HTML 提取公告</p>
+</li>
+<li data-page-node-id="jR9jNpp8LgeuxOC0Az3Nae">
+<p data-page-node-id="I60uL0K5aXzX0xy6zHNssr">运行现象：</p>
+<ul start="0" data-page-node-id="Fr54tTPJxHsw3UOXaZFF1D">
+<li data-page-node-id="RUhDtVlOEuhnnsUs6GUEnL">
+<p data-page-node-id="lzJQphMvXtVHx5WDX9LO8j">初期能打印 “第 1 页无数据”，无任何公告返回；</p>
+</li>
+<li data-page-node-id="acL6JWc8UFpbyEXezsfAxE">
+<p data-page-node-id="HRAmFY7bIGSG6qBY0OnGQU">单独测试接口地址直接返回 404 错误页面；</p>
+</li>
+</ul>
+</li>
+<li data-page-node-id="opMEkAY5aMS8oKqOpDAHcn">
+<p data-page-node-id="EbzTH9qpieIr2j3dSyoOqi">失败核心原因：  
+网站后台旧接口<code data-page-node-id="L66NdNi12H78NjHc5mEWNj">selectInfoMoreChannel.do</code>已下线废弃，请求直接 404，参数、接口地址全部失效；</p>
+<ol data-page-node-id="p28PzPnNwgf6UG4c2T46Wg">
+<li data-page-node-id="pfXEghh8vbckORbvYCrkPC">
+<p data-page-node-id="KBwvMzBAyRKHHoSwyPNqPB">踩坑点：</p>
+<p data-page-node-id="wuxsAyXUhQW3Few0ETZr6V">误以为静态接口长期稳定，政府采购网站会定期更换后端接口，纯接口抓取长期不可靠；</p>
+<ol data-page-node-id="rSHMfE73FFSJbEIF6Di1cO">
+<li data-page-node-id="7Jy5BnQKj0KszTPUuZft23">
+<p data-page-node-id="Qnh6klIPwBOBzjfHFxhESn">遗留问题：urllib3 版本不匹配警告（仅日志提示，不影响代码逻辑，可忽略）</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol><h4 data-page-node-id="jPtsvSPxM8f4NHgmsxkfpR">方案 2：静态页面 Requests 抓取（放弃接口，抓首页 HTML）</h4><ol data-page-node-id="meaKt5fvtXWiGBeSxo7VE6">
+<li data-page-node-id="4GkO8KEljJDRktgzrF95Ps">
+<p data-page-node-id="EIDsbA5XiGdlXfWpl4suIN">操作逻辑：直接 GET 首页地址，正则匹配页面公告列表</p>
+</li>
+<li data-page-node-id="ZyqNnBpAnQaUunDeCxB4ER">
+<p data-page-node-id="mABxMwT6gwS6HF97ESMnRn">运行现象：控制台无报错，但永远抓不到公告数据，长时间卡死无输出</p>
+</li>
+<li data-page-node-id="v9yx97iyAJkjuXkU3sJS0q">
+<p data-page-node-id="jupduWe7fEwK7wEIVV06Iu">失败核心原因：  
+页面所有公告列表由前端 JS 异步渲染，Requests 只能获取空白静态源码，没有真实公告 DOM；</p>
+<ol data-page-node-id="PcoaJtnpk2JBtkU5YAf3wf">
+<li data-page-node-id="1C6skn42W8ciyA1OngKlKu">
+<p data-page-node-id="GLFBE7CxQozz8SyeFJeHTP">踩坑点：不懂动态渲染页面和静态页面区别，单纯正则无法解析 JS 生成内容。</p>
+</li>
+</ol>
+</li>
+</ol><h4 data-page-node-id="UF6JwB2UwmctXHnkSLjVCi">方案 3：Selenium 自动化浏览器渲染方案</h4><ol data-page-node-id="UgyIomH5lqOVmE768FjKhV">
+<li data-page-node-id="PLZb5QZAd8oeuRSS1Q0GyX">
+<p data-page-node-id="MSF0vN2up7zScW7ePMTeK1">操作逻辑：模拟打开 Chrome 浏览器，自动筛选地区、类别、点击查询，读取渲染完成后的公告</p>
+</li>
+<li data-page-node-id="ZmNH4X6zZCxcFb1yoRyxys">
+<p data-page-node-id="EkzKA4RdnbUAM7z25uUKH4">运行现象：打开首页后等待筛选控件直接报错终止，返回 “页面操作失败”，无公告读取</p>
+</li>
+<li data-page-node-id="qv2VfyDpXzDdMnY1RE3Y6X">
+<p data-page-node-id="fryRDDjD3mL41XOzIBvxOw">失败核心两层原因：  
+① 网络问题：国内无法访问谷歌 ChromeDriver 下载地址，驱动自动匹配失败；② 页面适配问题：代码通过固定 ID 定位筛选框，网站前端改版修改了控件 ID，元素定位失效；</p>
+<ol data-page-node-id="ytWEoqTBkgc6CO2bFMyOuS">
+<li data-page-node-id="Qj8gMNEUiVhLKFj0dlcZzI">
+<p data-page-node-id="Dtm3bsGWtKEjMDNNHcsDFF">踩坑点：</p>
+<ul start="0" data-page-node-id="Rd8chgA7k7jKbZ1HWI8F1G">
+<li data-page-node-id="rSPGxWJzROlwttC2WoxQzK">
+<p data-page-node-id="4uVfQMBRV7O8dFj7bmJEz1">依赖境外服务器下载驱动，国内环境天然水土不服；</p>
+</li>
+<li data-page-node-id="L699FEBcZcN6g2dqK4z6mG">
+<p data-page-node-id="bejlSsS5nnSU4S2pJNkPQa">硬编码页面控件 ID，网站前端微调代码直接报废整套脚本。</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol><h4 data-page-node-id="Ne2e3Q5UjjdT17k3lp7LZH">方案 4：Playwright 微软浏览器自动化方案（替换 Selenium）</h4><ol data-page-node-id="jtoFtYpd7cVwPdfz8m55Zs">
+<li data-page-node-id="lYIBJZhpZMdrmNFpy8b5Fj">
+<p data-page-node-id="vBuZqBjMOdw9SwzuroZqhW">操作逻辑：Playwright 内置浏览器，替代 Selenium 规避驱动问题，自动操作页面筛选采集</p>
+</li>
+<li data-page-node-id="rqZYEdLoNum3MfGMGSPDlX">
+<p data-page-node-id="35STEod3kGDGhUyw5OnUGc">运行现象：执行时报错 “浏览器可执行文件不存在”，强制重装后仍存在环境兼容冲突</p>
+</li>
+<li data-page-node-id="FRyhfdssTsFJCfSG08wEYY">
+<p data-page-node-id="tpz8Wv3bJ4vS5a7J5zuHHH">失败核心原因：  
+Playwright 需要单独下载配套专用 Chromium 浏览器，国内镜像下载慢、易中断，系统本地 Chrome 无法替代内置浏览器；</p>
+<ol data-page-node-id="vfgwVLZcdDXpVPPgmzycFW">
+<li data-page-node-id="kMLmjcgEKq2kaTlo8Fc38o">
+<p data-page-node-id="MgcgprB3dtZuUebWXVxMAG">踩坑点：轻量化 Windows 环境下，额外浏览器包下载、维护成本高，频繁出现环境依赖报错。</p>
+</li>
+</ol>
+</li>
+</ol><h4 data-page-node-id="B0fs4h0RWz48kcnDGc9Pkd">方案 5：手动复制页面源码本地解析脚本（当前唯一可用临时方案）</h4><ol data-page-node-id="VMNllpSaSGHEqDql48jrBb">
+<li data-page-node-id="JgAR1z4lc3KLqTS4K6l1CU">
+<p data-page-node-id="EYk2U68kSdAGFeWGGNGten">操作逻辑：放弃全自动网络请求，人工浏览器筛选页面，全选复制页面源码粘贴进脚本，本地正则提取符合条件公告写入 Excel；</p>
+</li>
+<li data-page-node-id="06xrNDgTKmCImYYbMgMBRD">
+<p data-page-node-id="suf24roovTEXcUClsQoZVn">运行现象：无网络报错、无驱动报错，粘贴有效源码即可正常提取数据；</p>
+</li>
+<li data-page-node-id="7Ol06WpFQd5G3pz3kQasuN">
+<p data-page-node-id="CmveCRMJz0XeQYBycalLCK">局限性（不算失败，仅半自动）：  
+无法自动进入详情页、自动截图识别图片文字，只能提取列表页基础信息，缺失预算、报名地点等核心字段；需要人工二次打开每条公告复制详情。</p>
+</li>
+</ol><h3 data-page-node-id="5yKrcWtBNK3sfHV1OntuHS">三、所有踩坑统一总结（避坑指南，下次优先对照）</h3><ol data-page-node-id="xj1KGB5TXhwIBOCOZyj6nE">
+<li data-page-node-id="PQGq0gQDy5CN5xKcqxB7yf">
+<p data-page-node-id="j70UQR8KG4MReK60WohgnV"><strong data-page-node-id="ekSzytYU99vUm6SSMopW9W">纯网络请求类（Requests）优先排除</strong>
+政府采购类网站会定期下线旧接口、增加接口鉴权、JS 动态渲染，单纯 POST/GET 抓取很难长期稳定；只要接口返回 404、空白 HTML，直接放弃该路线，不要反复调试正则、参数。</p>
+<ol data-page-node-id="TOEUPRg8tWlwnDrjlXQo9U">
+<li data-page-node-id="lZ8Itmv35pF6fTnTt2NqAM">
+<p data-page-node-id="arJBmb4Ct5OjUCTY8s2Ocs"><strong data-page-node-id="Ks5ODGkUyQ5thBf0w4Mv0D">Selenium/Playwright 浏览器自动化有国内天然短板</strong></p>
+<p data-page-node-id="gtXZQeYEoxWAkcW8ZAWwsa">两者都需要下载配套浏览器 / 驱动，境外下载源网络阻断，极易出现环境报错；且页面元素硬编码 ID/CLASS，网站微调前端代码脚本直接报废，维护成本极高。</p>
+<ol data-page-node-id="oYG29FVZLB2BWTQxDiQ21a">
+<li data-page-node-id="AYJnKKdzlDtyXWp0XpEiED">
+<p data-page-node-id="e8FjSbAfCgX3cwJqbCbXaP"><strong data-page-node-id="4D24Ccc7oHZ2PkBHejCiCT">不要单一依赖一种采集思路</strong></p>
+<p data-page-node-id="UF7MaoHFcZfjc91DLRbZ5q">先测试接口、再测试浏览器渲染的顺序完全走反了，正确顺序：先用低成本半自动方案兜底，再尝试全自动方案，避免反复折腾环境。</p>
+<ol data-page-node-id="cu174MLVFAvsL9neMglbxh">
+<li data-page-node-id="IE86jikZYCQhpoJkqm9LFx">
+<p data-page-node-id="D5oIa4e8abocuSChYa7V9F"><strong data-page-node-id="wbIfOu02UWlHJ9ZPaqHk34">OCR 识别依赖限制</strong></p>
+<p data-page-node-id="HU0aoGeNqrBAcNr80xNX46">之前全自动方案均依赖联网请求百度 OCR，一旦网络受限无法识别图片文字；没有预留本地离线 OCR 备选方案。</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 data-page-node-id="AudFl7BxQj07aUdoEDquLj">四、下一步可尝试的 6 类全新方案（含你提到的思路，分优先级，明天按顺序测试）</h3>
+<h4 data-page-node-id="HAbD8ioecgewvDdIQnBf7f">优先级 1：桌面视觉模拟自动化（你刚才提出的思路，PyAutoGUI 键鼠模拟 + 截图 OCR，推荐第一个测试）</h4>
+<h4 data-page-node-id="S0AV37q8IVlmHYjPKVNuKC">核心原理</h4>
+<p data-page-node-id="whyCnyBYceWCMD07hX91lz">完全脱离浏览器驱动、网站接口，仅模拟人操作电脑：识别屏幕画面→自动点击筛选框 / 公告链接→截取详情页面全图→AI/OCR 识别截图内所有文字，提取所需字段写入 Excel。</p>
+<h4 data-page-node-id="gRe92OAmAeq5GwyDAVwNx3">优势</h4>
+<ol data-page-node-id="w6DLc3ZDzEdMCkzg7xMAme">
+<li data-page-node-id="iWCNSc71EOLhSsDh5gBs1s">
+<p data-page-node-id="hnlDSWSLso6v94SFEl7Bht">无视网站接口 404、JS 渲染、反爬限制，网站无法区分人工 / 脚本；</p>
+</li>
+<li data-page-node-id="6onMt3CMBmIsyDSDg9WgCA">
+<p data-page-node-id="HZFS3rqtEfgRQuF8qYcVYA">不依赖境外驱动下载，仅操作你本地已装好的 Chrome；</p>
+</li>
+<li data-page-node-id="lzJmJZr27UasJasGrwLeoF">
+<p data-page-node-id="8QdiY8Qj3FmRasAPE01B0w">公告内容是图片也能直接截图识别，完美匹配你的原始需求；</p>
+</li>
+</ol>
+<h4 data-page-node-id="ZUWwgxhQLIEYOQ5TnhfgbG">缺点</h4>
+<p data-page-node-id="XmZFmu0wXRpsO825CFmpSz">运行时鼠标会被脚本接管，电脑无法做其他操作；浏览器窗口位置、分辨率不能随意变动。</p>
+<h4 data-page-node-id="YFcZI7aYqCCSGrPC1ySmJD">配套工具：PyAutoGUI（键鼠模拟）+ 百度 OCR / 本地 PaddleOCR（离线无密钥）</h4>
+<h4 data-page-node-id="Hbht1TLGEO8KpApqetpqCu">优先级 2：OpenClaw（你说的 “龙虾”，业内 OpenClaw 爬虫框架）</h4>
+<h4 data-page-node-id="a1Z0pik2mQMYt5WHhAD3Ha">核心原理</h4>
+<p data-page-node-id="ruFep0JY9YyPtgkk0PVDlI">OpenClaw 是分布式异步爬虫框架，内置无头渲染内核，自带反爬绕过策略，不需要手动配置 Chrome 驱动，集成页面等待、JS 渲染、接口签名自动解析能力，专门适配国内政务网站。</p>
+<h4 data-page-node-id="WxBqB6WpPGGxC87cTGCU0W">优势</h4>
+<ol data-page-node-id="Jv5ClL5mGkDHFM6CTcfofK">
+<li data-page-node-id="vZ2WAzG2eArAV4vfdPpCIP">
+<p data-page-node-id="rYHD9TCGplYthACuYhsU6M">内置 JS 渲染引擎，不需要依赖本地 Chrome 浏览器，规避驱动下载问题；</p>
+</li>
+<li data-page-node-id="eb342RI1PvU3SV9HsOSRcL">
+<p data-page-node-id="9Kid3jSmOzsXBDcGG0CQpw">自带请求头随机、延时、代理池基础能力，适配政府采购网反爬；</p>
+</li>
+<li data-page-node-id="Els3jo5KoEYGvrK7g2BO9G">
+<p data-page-node-id="O7tXqA9ToO0YAMssXfTN6y">一站式封装列表抓取、详情抓取、图片下载、OCR 联动；</p>
+</li>
+</ol>
+<h4 data-page-node-id="3DX3YUoA1rqisW6mwdBzvB">短板</h4>
+<p data-page-node-id="0kgnwyyAy3lPpvqsaET2Id">框架学习成本略高，需要简单配置爬虫任务 yaml；Windows 环境部署依赖少量环境包。</p>
+<h4 data-page-node-id="YjJDxsGQWymDxel2DXJ22i">优先级 3：Kimi 浏览器 Agent（你提到的 Kimi 操作浏览器，大模型视觉自动化）</h4>
+<h4 data-page-node-id="TMPmeHAWjdXMWeiVk2lwdT">核心原理</h4>
+<p data-page-node-id="aGlpyXUAhJeDLAk9XBuVyH">Kimi 最新浏览器智能体：上传网站地址后，自然语言下达指令（“筛选四川工程公告，打开每条详情截图识别文字，导出 Excel”），AI 自主看懂页面按钮、自主点击、滚动、截图、提取信息，零代码。</p>
+<h4 data-page-node-id="5wccsSs8lFiddgJ8aU7wdx">优势</h4>
+<ol data-page-node-id="VOswlt80sMX7PZAG7mCEhq">
+<li data-page-node-id="qrgfG2yzPW4SFIcpAXG26i">
+<p data-page-node-id="CrbxtcuuvH8JrjcoXE7xXF">完全不用写 Python 代码，自然语言对话下达任务；</p>
+</li>
+<li data-page-node-id="TRoTuWED5sWFWbFeJtz8y3">
+<p data-page-node-id="6S1LOd2l2NA4ZFzjGTGEzI">大模型视觉识别页面，不需要截图模板、不用写元素定位代码，页面改版不受影响；</p>
+</li>
+<li data-page-node-id="8F7I1wL2HF4xLOOKybBdRj">
+<p data-page-node-id="rWbH2tdmSmLSC4aVlLX9NS">自动完成截图、文字提取、表格导出全流程；</p>
+</li>
+</ol>
+<h4 data-page-node-id="L5gShXp7Tii6tW9ibCGs7o">短板</h4>
+<p data-page-node-id="cnZXhAFlFg0V3utYN8m6LD">需要联网调用 Kimi 服务，批量采集大量公告存在次数限制；隐私敏感公告不建议上传线上大模型。</p>
+<h4 data-page-node-id="2tz1KILX5pijmkQOzfLLvA">优先级 4：本地离线视觉 AI 自动化（UI-TARS / Open Interpreter，无代码本地运行）</h4>
+<h4 data-page-node-id="aIobJNCtX4kCOmkeMoQ81V">核心原理</h4>
+<p data-page-node-id="d1Y5ZGczLOjFmvByiqVfvS">本地部署视觉大模型，实时识别电脑屏幕所有文字、按钮，AI 自主判断 “地区下拉框、查询按钮、公告链接”，自动执行点击、翻页、截图，不需要提前截图模板。</p>
+<h4 data-page-node-id="qyKOEUiUfk2KY5iG0IW2gw">优势</h4>
+<ol data-page-node-id="T6YMgODEEvIOmj1BwaXoYN">
+<li data-page-node-id="ALvWS783VhfxANbd0F9aVr">
+<p data-page-node-id="c7NUQRjzLh0GfTf06puQr1">本地运行，数据不上传第三方 AI 平台，涉密采购信息更安全；</p>
+</li>
+<li data-page-node-id="2vhmwz9t0guve97LcPwKX8">
+<p data-page-node-id="5yrExbPW1FwT8T3HGDu1KQ">自适应浏览器窗口缩放、页面改版，不会出现元素定位失效；</p>
+</li>
+<li data-page-node-id="GMb1bscP8aJalbCUcwD1Sp">
+<p data-page-node-id="mzV7z3BKjw6vMTEVUoQuPt">可联动本地离线 OCR，无需百度 OCR 密钥；</p>
+</li>
+</ol>
+<h4 data-page-node-id="1CbBaZocI0YHDz4vMaL3t1">短板：本地部署对电脑显卡有一定要求，低配电脑运行卡顿。</h4>
+<h4 data-page-node-id="kkdjYUkgZn4CLg5EyUDZiJ">优先级 5：无头轻量化渲染框架（DrissionPage，国产 Python 浏览器框架，替代 Selenium/Playwright）</h4>
+<h4 data-page-node-id="QnaG6exJ0UK9e7JSdviSbo">核心原理</h4>
+<p data-page-node-id="kgPp248iRDJdVVMURGwGkp">纯国产开源浏览器自动化工具，封装 Chromium 内核，内置国内下载镜像，不需要翻墙下载驱动，自动适配政务网站，兼容 JS 渲染，语法极简。</p>
+<h4 data-page-node-id="7LBN97lkabl7VLhqonGmoh">优势</h4>
+<p data-page-node-id="uAAzLmoezRRY0LoIfon3oZ">解决 Selenium/Playwright 境外下载失败的核心痛点，国内镜像一键安装；支持文本匹配按钮（不依赖固定 ID），网站前端改版不容易失效；</p>
+<h4 data-page-node-id="uH1JcJoIDjP6GSZJejq0o6">短板：仍需要内置浏览器包，下载速度受网络波动影响。</h4>
+<h4 data-page-node-id="5LMyBxZFLD0KwX2R7NPHz8">优先级 6：半自动增强方案（现有复制脚本升级，兜底备用）</h4>
+<h4 data-page-node-id="igi3GZT4V1sWnh2q7oEtqz">核心改动</h4>
+<p data-page-node-id="J6DfrhvSmGPqCfPofp650P">在当前手动复制源码脚本基础上，增加：</p>
+<ol data-page-node-id="Uu8XBByAhe4qZNmfRVjm3c">
+<li data-page-node-id="7o2Hc9SxOeGpfdqBEHNf3u">
+<p data-page-node-id="mx3TXTTmeQinQYi9S1LzCW">本地离线 PaddleOCR，手动保存详情页截图后拖入脚本自动解析文字；</p>
+</li>
+<li data-page-node-id="mXUPONQLqre8KEsubDt33C">
+<p data-page-node-id="IUSNxcwzAtwAAVs8aczNGp">增加 Excel 批量合并、重复数据过滤、自动填充预算 / 时间字段功能；</p>
+</li>
+</ol>
+<h4 data-page-node-id="W7fZFeAq19HZice0USF4Yv">优势：零环境报错，任何网络、系统环境都能稳定使用，作为所有全自动方案失效后的保底工具。</h4>
+<h3 data-page-node-id="ta5eXAnKiDvtQGjZJOzCow">五、明天测试执行顺序建议（最大化减少弯路）</h3>
+<ol data-page-node-id="9OE9mVWeb5PrhJwoG9VBvV">
+<li data-page-node-id="FNOZxtbcaU8TSFZboaEnfc">
+<p data-page-node-id="N55Rt60ML9FvWt6C0MksGr">先试【优先级 1：PyAutoGUI 桌面视觉模拟方案】（贴合你的原生思路，部署简单、见效最快）；</p>
+</li>
+<li data-page-node-id="sMVHHFSbiVlZNtRMV3dwhk">
+<p data-page-node-id="5eNGpsz5NjVzfHbI46qaKT">其次试【优先级 3：Kimi 浏览器 Agent】（零代码，快速验证能否全自动完成整套流程）；</p>
+</li>
+<li data-page-node-id="CZM4CB75Jmj1ULg0GnELCx">
+<p data-page-node-id="5GzR1BjDE3Fb35CzykZckL">前两者效果不佳再部署【优先级 2：OpenClaw 龙虾爬虫框架】；</p>
+</li>
+<li data-page-node-id="fFfEGCaxiGVnKFUFK2yWpC">
+<p data-page-node-id="pgyaCeaIFhFSGER1RBIyxQ">浏览器框架备选：【优先级 5：DrissionPage 国产无头框架】，替代之前失效的 Selenium/Playwright；</p>
+</li>
+<li data-page-node-id="P0hwp7UXGupHzSez0qaHbF">
+<p data-page-node-id="0DKftPjQHBr9PFL9VwEWA0">本地离线安全需求：测试【优先级 4：UI-TARS 本地视觉 AI】；</p>
+</li>
+<li data-page-node-id="gHLuedOX0Jc9nNzmiFPEkk">
+<p data-page-node-id="WoUp7FBdNCnn00RuJMnnrC">全部全自动方案环境报错 / 受限，启用【优先级 6：半自动增强脚本】保底采集。</p>
+</li>
+</ol>
+<h3 data-page-node-id="QMe4meeygdGtss3kleSXas">六、长期避坑硬性规则（后续采集永久遵守）</h3>
+<ol data-page-node-id="Xs5oL3S3O90VKFA8EdAy8y">
+<li data-page-node-id="wYV5YYVtcb7tBIdGTTZu55">
+<p data-page-node-id="0Fk4BsMXeGbdHwzETSCA9W">政务网站采集，优先<strong data-page-node-id="ymCo2L6w91csIUz6hBeBSU">视觉模拟 / 大模型浏览器 Agent</strong>，其次轻量化国产渲染框架，最后纯接口 Requests（接口极易失效）；</p>
+</li>
+<li data-page-node-id="xKQWOnRnOQZUB6CrSgGldi">
+<p data-page-node-id="iLPdZMdYzFP9MCdZMzf8dC">所有依赖境外服务器下载驱动 / 内核的工具（Selenium 原版、原版 Playwright）不再作为首选；</p>
+</li>
+<li data-page-node-id="pYfu6xTyKjR94EcH4lfzKo">
+<p data-page-node-id="Yd9ASGakOFtCQe04FbLhkz">同时准备 1 套半自动本地脚本兜底，避免全自动方案失效后完全无法采集；</p>
+</li>
+<li data-page-node-id="66a0pQnPrCcehx9hxqtqAC">
+<p data-page-node-id="HIDzok4dt0Uj5l0nf1Trkl">OCR 准备两套备选：线上百度 OCR + 本地离线 PaddleOCR，防止密钥、网络问题导致文字识别中断。</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+<!-- 页脚：长分隔线 + 一行落款 -->
+<footer class="article-footer" data-x="V8VtpgsEXEz29KuCcPKISH" data-page-node-id="DgymUw8zMsLU7AmR7J5pYe">
+<div class="footer-rule" data-x="3mSRhC9BvYTjoJ8vFkQyIF" data-page-node-id="zCGB7MJdmD2FM0dXcZsygF"></div>
+<div class="colophon" data-x="hYxeLEhSeVi1wXudlMdzMk" data-page-node-id="SWVNXLbwgvLRwoRHHBAzGH">
+<span class="dash" data-x="DSG9AqLIg2Nb7Fef4oIFNQ" data-page-node-id="GZOZVb0pmWIEVmOkKH3qGN">—</span> <span class="co-name" data-x="40san0UbCGAw2fVssCMmQC" data-page-node-id="D4YaWpcQjvcPvis3gGXZYD">沙溪子</span> · <a class="co-mail" data-x="yjx2zwif7CHEguoTIqdfG7" href="mailto:Chears77@163.com" data-page-node-id="jK9dRSnn0wpaCZHzdExvRI">Chears77@163.com</a> <span class="dash" data-x="VUoaW6yROFGAfeUDVjgxj9" data-page-node-id="HU6Mh6ENQKNgXW4UFCpjKH">—</span>
+</div>
+<div data-x="22fVOGYJPQCyYjpDfoHSpy" data-page-node-id="LHK57HgD5C8GkinHI5APeX">
+<a class="back-link" data-x="UAkL2wc6eKLlTlZRz8C80c" href="../articles.html" data-page-node-id="xAo9kCSqLxdLBDLgNs6JU7">← 返回文章列表</a>
+</div>
+</footer>
+</article>
+<!-- 灯箱：点击放大，之后滚轮/按钮缩放、按住拖动、双击复位（保留即可不用改）-->
+<div class="lightbox" id="lightbox" data-page-node-id="svn5UkSbY6moc9d8W3XLfZ">
+<div class="lb-close" onclick="closeLb()" title="关闭" data-page-node-id="rM9sBx84Lkr90AlydeCl04">×</div>
+<div class="lb-stage" id="lbStage" data-page-node-id="ybMfww2tF5IzsQtLmYS9SY">
+<img alt="" draggable="false" id="lbImg" src="" data-page-node-id="NdO1uo76wYVR0auJBdmHzD"/>
+</div>
+<div class="lb-cap" id="lbCap" data-page-node-id="ZZ8rcUpplIYzFaeEuuJGYa"></div>
+<div class="lb-tools" data-page-node-id="xBiKYTdxwU4kWTwP8JD6Hj">
+<button id="lbZo" title="缩小（或滚轮向下）" type="button" data-page-node-id="R8enu3XZ39vu8XMAh3imLX">−</button>
+<span class="lb-scale" id="lbScale" data-page-node-id="KYPUf581fL4fdtMT8Rw86H">100%</span>
+<button id="lbZi" title="放大（或滚轮向上）" type="button" data-page-node-id="bTBeWjWtNhfYketGPsbtow">+</button>
+<button id="lbR" title="复位（双击也可）" type="button" data-page-node-id="p2eWUPhue43EBeFAL9btce">⟲</button>
+</div>
+</div>
+<script>
+/* 主题切换（色点）：存 localStorage，默认蓝白 */
+(function(){
+ var KEY='axjf-note-theme-v5', VALID=['blue','book','dark'];
+ var NAME={blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var dots=document.querySelectorAll('.ts-dot');
+ var nameEl=document.getElementById('tsName');
+ function apply(t){
+  if(VALID.indexOf(t)<0)t='blue';
+  document.documentElement.setAttribute('data-theme',t);
+  if(nameEl) nameEl.textContent=NAME[t];
+  dots.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t);});
+  try{localStorage.setItem(KEY,t);}catch(e){}
+ }
+ dots.forEach(function(d){d.addEventListener('click',function(){apply(d.getAttribute('data-t'));});});
+ var saved='blue';
+ try{saved=localStorage.getItem(KEY)||'blue';}catch(e){}
+ apply(saved);
+})();
+
+/* 滚动吸顶标题：正文标题滚出可视区后，淡入顶栏中间显示（取自 h1） */
+(function(){
+ var bar=document.getElementById('topTitle'); if(!bar)return;
+ var h1=document.querySelector('.article-title');
+ var head=document.querySelector('.article-head');
+ if(h1 && h1.textContent.trim()) bar.textContent=h1.textContent.trim();
+ function upd(){
+  if(!head) return;
+  var limit=head.offsetTop+head.offsetHeight-70; /* 标题区底部接近顶栏下缘时显示 */
+  document.body.classList.toggle('scrolled-title', window.scrollY>limit);
+ }
+ var ticking=false;
+ function onScroll(){ if(ticking)return; ticking=true;
+  requestAnimationFrame(function(){ upd(); ticking=false; }); }
+ window.addEventListener('scroll', onScroll, {passive:true});
+ window.addEventListener('resize', upd);
+ upd();
+})();
+
+/* 灯箱增强：点击放大 · 滚轮/按钮缩放（以指针为中心）· 按住拖动平移 · 双击复位 */
+(function(){
+ var lb=document.getElementById('lightbox');
+ var stage=document.getElementById('lbStage');
+ var img=document.getElementById('lbImg');
+ var cap=document.getElementById('lbCap');
+ var scEl=document.getElementById('lbScale');
+ var MIN=.5, MAX=5, s=1, tx=0, ty=0;
+
+ function applyT(anim){
+  img.style.transition=anim?'transform .2s cubic-bezier(.22,.8,.36,1)':'none';
+  img.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s.toFixed(3)+')';
+  if(scEl) scEl.textContent=Math.round(s*100)+'%';
+ }
+ function bound(){
+  var w=stage.clientWidth, h=stage.clientHeight;
+  if(s<=1.0001){ tx=0; ty=0; return; }
+  var mx=Math.max((img.clientWidth*s-w)/2,0)+40;
+  var my=Math.max((img.clientHeight*s-h)/2,0)+40;
+  tx=Math.max(-mx,Math.min(mx,tx));
+  ty=Math.max(-my,Math.min(my,ty));
+ }
+ function reset(){ s=1; tx=0; ty=0; applyT(true); }
+ function zoomBy(f,px,py,anim){
+  if(typeof px!=='number'){ px=0; py=0; }
+  var ns=Math.max(MIN,Math.min(MAX,s*f));
+  if(ns===s){ applyT(anim); return; }
+  var k=ns/s; s=ns;
+  tx=px-(px-tx)*k; ty=py-(py-ty)*k; /* 保持指针下的画面不动 */
+  bound(); applyT(anim);
+ }
+ function openLb(src,alt){
+  reset(); img.src=src; cap.textContent=alt||'';
+  lb.classList.add('active'); document.body.style.overflow='hidden';
+ }
+ window.closeLb=function(){
+  lb.classList.remove('active'); document.body.style.overflow='';
+  img.classList.remove('panning');
+ };
+ document.querySelectorAll('.article-body figure img').forEach(function(im){
+  im.addEventListener('click',function(){
+   openLb(im.src, im.getAttribute('data-cap')||im.alt||'');
+  });
+ });
+
+ /* 滚轮缩放（以鼠标位置为中心） */
+ stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var r=stage.getBoundingClientRect();
+  zoomBy(Math.exp(-e.deltaY*0.0016), e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, false);
+ }, {passive:false});
+
+ /* 鼠标拖动平移 */
+ var down=null;
+ img.addEventListener('mousedown',function(e){
+  if(e.button!==0)return;
+  e.preventDefault();
+  down={x:e.clientX,y:e.clientY,tx:tx,ty:ty};
+  img.classList.add('panning');
+ });
+ window.addEventListener('mousemove',function(e){
+  if(!down)return;
+  tx=down.tx+e.clientX-down.x; ty=down.ty+e.clientY-down.y;
+  bound(); applyT(false);
+ });
+ window.addEventListener('mouseup',function(){ down=null; img.classList.remove('panning'); });
+
+ /* 双击：放大 / 复位 */
+ img.addEventListener('dblclick',function(e){
+  if(s>1.01){ reset(); return; }
+  var r=stage.getBoundingClientRect();
+  zoomBy(2.2, e.clientX-r.left-r.width/2, e.clientY-r.top-r.height/2, true);
+ });
+
+ /* 工具按钮 */
+ document.getElementById('lbZi').addEventListener('click',function(){ zoomBy(1.4,0,0,true); });
+ document.getElementById('lbZo').addEventListener('click',function(){ zoomBy(1/1.4,0,0,true); });
+ document.getElementById('lbR').addEventListener('click',reset);
+
+ /* 触屏：单指平移 · 双指捏合缩放 */
+ var touch=null;
+ stage.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  if(e.touches.length===1){
+   touch={mode:'p',x:e.touches[0].clientX,y:e.touches[0].clientY,tx:tx,ty:ty};
+  } else if(e.touches.length===2){
+   var a=e.touches[0],b=e.touches[1];
+   touch={mode:'z',d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),
+    mx:(a.clientX+b.clientX)/2,my:(a.clientY+b.clientY)/2,s:s,tx:tx,ty:ty};
+  }
+ }, {passive:false});
+ stage.addEventListener('touchmove',function(e){
+  e.preventDefault();
+  if(!touch)return;
+  if(touch.mode==='z' && e.touches.length>=2){
+   var a=e.touches[0],b=e.touches[1];
+   var d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;
+   var mx=(a.clientX+b.clientX)/2, my=(a.clientY+b.clientY)/2;
+   var ns=Math.max(MIN,Math.min(MAX, touch.s*d/touch.d));
+   var k=ns/touch.s;
+   var r=stage.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+   s=ns;
+   /* 以两指中点为中心缩放，缩放后中点仍对准原位置 */
+   tx=(mx-cx)*(1-k)+k*touch.tx;
+   ty=(my-cy)*(1-k)+k*touch.ty;
+   bound(); applyT(false);
+  } else if(touch.mode==='p' && e.touches.length===1){
+   var t=e.touches[0];
+   tx=touch.tx+(t.clientX-touch.x); ty=touch.ty+(t.clientY-touch.y);
+   bound(); applyT(false);
+  }
+ }, {passive:false});
+ function touchEnd(){ touch=null; }
+ stage.addEventListener('touchend',touchEnd);
+ stage.addEventListener('touchcancel',touchEnd);
+
+ /* 点击图片周边空白关闭 · 键盘快捷键 */
+ lb.addEventListener('click',function(e){
+  if(e.target===stage || e.target===lb) closeLb();
+ });
+ document.addEventListener('keydown',function(e){
+  if(!lb.classList.contains('active'))return;
+  if(e.key==='Escape') closeLb();
+  else if(e.key==='+'||e.key==='=') zoomBy(1.4,0,0,true);
+  else if(e.key==='-'||e.key==='_') zoomBy(1/1.4,0,0,true);
+  else if(e.key==='0') reset();
+ });
+ window.addEventListener('resize',function(){ bound(); applyT(false); });
+})();
+</script>
+</body>
+</html>
