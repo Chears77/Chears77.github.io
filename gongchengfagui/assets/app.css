@@ -382,9 +382,9 @@
   .tnode.lv.active{color:#1677ff;background:#e6f4ff;border-radius:6px;font-weight:600}
   .tnode.lv.active .tw{color:#1677ff}
   /* 打开某法规时，其所属层级 / 地区分类主题也加底纹，便于折叠态快速定位 */
-  .tnode.lv.lv-sel,.tnode.lv.rg-sel{background:#fff7e6;border-left:3px solid #fa8c16;border-radius:0 6px 6px 0}
-  .tnode.lv.lv-sel .lv-label,.tnode.lv.rg-sel{color:#ad4e00;font-weight:600}
-  .tnode.lv.lv-sel .tw,.tnode.lv.rg-sel .tw{color:#ad4e00}
+  .tnode.lv.lv-sel,.tnode.lv.rg-sel{background:#e6f4ff;border-left:3px solid #1677ff;border-radius:0 6px 6px 0}
+  .tnode.lv.lv-sel .lv-label,.tnode.lv.rg-sel{color:#1677ff;font-weight:600}
+  .tnode.lv.lv-sel .tw,.tnode.lv.rg-sel .tw{color:#1677ff}
   .lv-label{cursor:pointer}
   .lp-root{cursor:pointer;user-select:none}
   .lp-root:hover{color:#1677ff}
