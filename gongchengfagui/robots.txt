@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /laws/
+Disallow: /data/
+Allow: /
+Sitemap: https://chears77.github.io/gongchengfagui/sitemap.xml
