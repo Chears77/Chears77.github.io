@@ -1,5 +1,5 @@
 User-agent: *
-Disallow: /laws/
-Disallow: /data/
 Allow: /
+Disallow: /gongchengfagui/laws/
+Disallow: /gongchengfagui/data/
 Sitemap: https://chears77.github.io/gongchengfagui/sitemap.xml

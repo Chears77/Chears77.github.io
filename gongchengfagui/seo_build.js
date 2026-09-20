@@ -143,7 +143,7 @@ function lawDescription(law){
   return parts.join('｜');
 }
 
-function renderLawPage(law, parsed){
+function renderLawPage(law, parsed, siblings){
   const m = {
     doc_number: law.doc_number, publisher: law.publisher, publish_date: law.publish_date,
     effective_date: law.effective_date, revise_date: law.revise_date, status: law.status, source_url: law.source_url
@@ -212,6 +212,14 @@ function renderLawPage(law, parsed){
     ]
   });
 
+  let related = '';
+  if (siblings && siblings.length){
+    const items = siblings.slice(0, 24).map(s =>
+      '<li><a href="../law/' + s.id + '/">' + esc(s.title) + '</a></li>').join('');
+    related = '<div class="rel-block"><h3>「' + esc(law.level) + '」类其他法规（延伸阅读）</h3>' +
+      '<ul class="rel-list">' + items + '</ul></div>\n';
+  }
+
   return '<!DOCTYPE html>\n' +
 '<html lang="zh-CN">\n' +
 '<head>\n' +
@@ -241,6 +249,7 @@ ld + '\n' +
 infoTable + '\n' +
 '<div class="read-body">' + body + '</div>\n' +
 '<div class="doc-end">📄 本文约 <b>' + words + '</b> 字 · 共 <b>' + arts + '</b> 条</div>\n' +
+related +
 '<a class="back-home" href="../../">← 返回工程建设法规库首页</a>\n' +
 '</div>\n' +
 '<footer style="max-width:880px;margin:0 auto;padding:18px;color:#888;font-size:12px;">本站法规条文整理自互联网公开信息，仅供学习与研究参考，不构成正式法律意见。具体以政府公报、主管部门官网原文为准。</footer>\n' +
@@ -324,7 +333,8 @@ function main(){
     try { md = fs.readFileSync(mdPath, 'utf8'); }
     catch (e){ console.warn('[skip] 找不到正文：' + law.file + ' (' + law.title + ')'); skip++; continue; }
     const parsed = parseMd(md);
-    const html = renderLawPage(law, parsed);
+    const siblings = byLevel[law.level].filter(l => l.id !== law.id);
+    const html = renderLawPage(law, parsed, siblings);
     const outDir = path.join(ROOT, 'law', law.id);
     fs.mkdirSync(outDir, {recursive: true});
     fs.writeFileSync(path.join(outDir, 'index.html'), html, 'utf8');
@@ -351,9 +361,9 @@ function main(){
 
   const robots =
     'User-agent: *\n' +
-    'Disallow: /laws/\n' +
-    'Disallow: /data/\n' +
     'Allow: /\n' +
+    'Disallow: /gongchengfagui/laws/\n' +
+    'Disallow: /gongchengfagui/data/\n' +
     'Sitemap: ' + BASE + 'sitemap.xml\n';
   fs.writeFileSync(path.join(ROOT, 'robots.txt'), robots, 'utf8');
 
