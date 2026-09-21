@@ -9,6 +9,21 @@
   header{position:sticky;top:0;z-index:50;background:#fff;color:#262626;padding:0 22px;height:58px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #f0f0f0;will-change:transform}
   header .logo{font-weight:800;font-size:17px;cursor:pointer;white-space:nowrap;color:#1677ff}
   header .logo small{font-weight:400;color:#8c8c8c;font-size:11px;display:block;margin-top:-2px}
+  /* 顶栏左侧：微信小程序码 + 联系作者 */
+  .hdr-brand{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+  .qr-entry{position:relative;display:flex;align-items:center;outline:none}
+  .qr-thumb{width:34px;height:34px;border-radius:6px;border:1px solid #f0f0f0;background:#fff;object-fit:contain;display:block;cursor:zoom-in;transition:.14s}
+  .qr-entry:hover .qr-thumb,.qr-entry:focus .qr-thumb{border-color:#1677ff;box-shadow:0 0 0 2px rgba(22,119,255,.15)}
+  .qr-pop{position:absolute;top:calc(100% + 10px);left:50%;width:184px;padding:12px 12px 10px;background:#fff;border:1px solid #f0f0f0;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);text-align:center;z-index:70;opacity:0;visibility:hidden;pointer-events:none;transform:translateX(-50%) translateY(-6px);transition:.16s}
+  .qr-entry:hover .qr-pop,.qr-entry:focus .qr-pop{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+  .qr-pop::before{content:"";position:absolute;top:-6px;left:50%;width:10px;height:10px;background:#fff;border-left:1px solid #f0f0f0;border-top:1px solid #f0f0f0;transform:translateX(-50%) rotate(45deg)}
+  .qr-big{width:158px;height:158px;display:block;margin:0 auto;border-radius:6px}
+  .qr-tip{margin-top:8px;font-size:12px;color:#595959;line-height:1.5}
+  .hdr-mail{font-size:13px;color:#595959;white-space:nowrap;transition:.12s}
+  .hdr-mail:hover{color:#1677ff}
+  @media(max-width:1240px){.hdr-brand .mail-label{display:none}}
+  @media(max-width:1040px){.hdr-brand .hdr-mail{display:none}}
+  @media(max-width:820px){.hdr-brand{display:none}}
   /* 顶栏右侧：搜索框 + 原文检索 / AI问答 按钮 */
   .hdr-search{margin-left:auto;display:flex;align-items:center;gap:8px;flex:0 0 auto}
   .hs-input{position:relative}

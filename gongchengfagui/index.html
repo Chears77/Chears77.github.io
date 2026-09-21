@@ -22,6 +22,16 @@
 <body>
 <header>
   <div class="logo" onclick="location.reload()" title="刷新">工建法研<small>工程建设法规库</small></div>
+  <div class="hdr-brand">
+    <div class="qr-entry" tabindex="0" aria-label="工建法研微信小程序码">
+      <img class="qr-thumb" src="./assets/miniapp-qr.jpg" alt="工建法研 微信小程序码">
+      <div class="qr-pop">
+        <img class="qr-big" src="./assets/miniapp-qr.jpg" alt="工建法研 微信小程序码">
+        <div class="qr-tip">微信扫码 · 打开「工建法研」小程序</div>
+      </div>
+    </div>
+    <a class="hdr-mail" href="mailto:chears77@163.com" title="联系作者 · 点击发送邮件"><span class="mail-label">联系作者：</span>chears77@163.com</a>
+  </div>
   <div class="hdr-search">
     <div class="hs-input"><span class="hs-ico">🔍</span><input id="topq" placeholder="搜索法规、条文、关键词…" onkeydown="if(event.key==='Enter')doSearch()"></div>
     <button class="hdr-btn ghost" id="hdrSearch" onclick="doSearch()">原文检索</button>
