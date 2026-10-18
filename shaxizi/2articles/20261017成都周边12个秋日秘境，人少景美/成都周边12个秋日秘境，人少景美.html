@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="card">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>秋日秘境推广第四版 - 安即是佛</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23C2571A'/%3E%3Cpath d='M16 6c-4.4 0-8 3.2-8 7.5 0 5 5.5 9.5 8 11.5 2.5-2 8-6.5 8-11.5C24 9.2 20.4 6 16 6z' fill='%23ffffff'/%3E%3Ccircle cx='16' cy='13.5' r='2.6' fill='%23C2571A'/%3E%3C/svg%3E">
+<script>
+/* 提前恢复主题，避免刷新闪白；默认卡片风 */
+try{var t=localStorage.getItem('cd-autumn-theme-v1');
+var _q=new URLSearchParams(location.search).get('theme');
+if(_q)t=_q;
+if(['card','blue','book','dark'].indexOf(t)<0)t='card';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}
+</script>
+<style>
+  /* ═══════════ 四套主题变量 ═══════════ */
+  :root, html[data-theme="card"]{
+    --paper:#FAF7F2; --ink:#2B2620; --muted:#7A6F60; --line:#E8E0D5; --card:#FFFFFF;
+    --orange:#C2571A; --amber:#D97706; --green:#3F5B4C; --gold:#E7A94B; --num-c:#8a5a29;
+    --desc:#524a40; --chip:#5a5044;
+    --sh-card:rgba(60,40,20,.10); --sh-hero:rgba(60,40,20,.22); --sh-cta:rgba(40,60,50,.25);
+    --cta-from:#2f4a3e; --cta-to:#3f5b4c;
+    --bar-c1:#C2571A; --bar-c2:#8a3f12;
+    --font-body:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  }
+  html[data-theme="blue"]{
+    --paper:#f2f7fd; --ink:#33465e; --muted:#7c8ea6; --line:#cdddf1; --card:#ffffff;
+    --orange:#1f6fe0; --amber:#4a97f5; --green:#1755b6; --gold:#9fd0ff; --num-c:#1c59c4;
+    --desc:#46566b; --chip:#5a6b80;
+    --sh-card:rgba(31,111,224,.10); --sh-hero:rgba(31,111,224,.22); --sh-cta:rgba(20,60,130,.25);
+    --cta-from:#16407e; --cta-to:#1f6fe0;
+    --bar-c1:#4a97f5; --bar-c2:#1c59c4;
+  }
+  html[data-theme="book"]{
+    --paper:#f5f0e4; --ink:#43403a; --muted:#8f897c; --line:#cbbfa1; --card:#fdfaf2;
+    --orange:#8a5a2b; --amber:#b07a2e; --green:#4d6f96; --gold:#bf9e60; --num-c:#6b5326;
+    --desc:#565147; --chip:#6a6355;
+    --sh-card:rgba(80,65,40,.12); --sh-hero:rgba(80,65,40,.22); --sh-cta:rgba(54,81,122,.25);
+    --cta-from:#36517a; --cta-to:#1f2f49;
+    --bar-c1:#36517a; --bar-c2:#1f2f49;
+    --font-body:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
+  }
+  html[data-theme="dark"]{
+    --paper:#0a111d; --ink:#c4d0e0; --muted:#71819b; --line:#1d2c44; --card:#101b2c;
+    --orange:#5aa2ff; --amber:#ff9e4a; --green:#7fc0a0; --gold:#5a9cff; --num-c:#66aaff;
+    --desc:#9fb0c6; --chip:#a8b6c9;
+    --sh-card:rgba(0,0,0,.42); --sh-hero:rgba(0,0,0,.5); --sh-cta:rgba(0,0,0,.55);
+    --cta-from:#0f1e33; --cta-to:#16294a;
+    --bar-c1:#1b2e4d; --bar-c2:#0b1626;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.85;font-size:16px;
+    transition:background .35s ease,color .35s ease;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px;}
+  .serif{font-family:"Noto Serif SC","Songti SC","STSong","SimSun",serif;}
+
+  /* ═══════════ 顶栏 ═══════════ */
+  .topbar{position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;gap:12px;
+    padding:0 20px;color:#fff;
+    background:linear-gradient(175deg,var(--bar-c1) 0%,var(--bar-c2) 130%);
+    box-shadow:0 2px 14px rgba(20,40,80,.18);}
+  .topbar .home{display:flex;align-items:center;gap:7px;color:#fff;font-weight:600;font-size:14px;
+    letter-spacing:.5px;opacity:.92;transition:opacity .2s;flex:none;}
+  .topbar .home:hover{opacity:1;}
+  .topbar .home svg{width:18px;height:18px;opacity:.9;}
+  .top-title{position:absolute;left:50%;top:0;height:58px;line-height:58px;
+    transform:translate(-50%,5px);max-width:min(560px,54vw);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    font-size:14.5px;font-weight:600;letter-spacing:.5px;color:#fff;
+    opacity:0;pointer-events:none;transition:opacity .35s,transform .35s ease;}
+  body.scrolled-title .top-title{opacity:.97;transform:translate(-50%,0);}
+
+  /* 主题切换圆点 */
+  .theme-switch{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .ts-dots{display:flex;align-items:center;gap:8px;}
+  .ts-dot{width:12px;height:12px;border-radius:50%;border:0;padding:0;cursor:pointer;
+    opacity:.5;transform:scale(1);transition:opacity .2s,transform .2s,box-shadow .2s;flex:none;}
+  .ts-dot:hover{opacity:.95;}
+  .ts-dot.on{opacity:1;transform:scale(1.28);
+    box-shadow:0 0 0 1.5px rgba(255,255,255,.95),0 1px 4px rgba(0,0,0,.18);}
+  .ts-dot[data-t="card"]{background:#f0b98c;}
+  .ts-dot[data-t="blue"]{background:#9fd0ff;}
+  .ts-dot[data-t="book"]{background:#d4b97e;}
+  .ts-dot[data-t="dark"]{background:#8aa7cc;}
+  .ts-name{font-size:12px;letter-spacing:2px;color:#fff;opacity:.95;
+    font-variant-numeric:tabular-nums;min-width:34px;text-align:left;}
+
+  /* ===== Hero ===== */
+  .hero{
+    display:grid;grid-template-columns:380px 1fr;gap:36px;align-items:center;
+    padding:56px 0 40px;
+  }
+  .hero-cover{
+    border-radius:14px;overflow:hidden;box-shadow:0 24px 60px var(--sh-hero);
+    background:var(--line);
+  }
+  .hero-cover img{display:block;width:100%;height:auto;cursor:zoom-in;}
+  .hero-kicker{
+    display:inline-block;font-size:13px;letter-spacing:.18em;color:var(--orange);
+    border:1px solid var(--orange);border-radius:999px;padding:4px 14px;margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:37px;line-height:1.28;margin:0 0 14px;font-weight:800;letter-spacing:.01em;
+  }
+  .hero h1 .accent{color:var(--orange);}
+  .hero-sub{color:var(--muted);font-size:16px;margin:0 0 22px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;}
+  .meta-chip{
+    font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:5px 14px;color:var(--chip);
+  }
+  .meta-chip.hot{background:var(--orange);color:#fff;border-color:var(--orange);}
+
+  /* ===== Intro ===== */
+  .intro{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:28px 32px;margin:10px 0 44px;position:relative;
+  }
+  .intro p{margin:0;font-size:16.5px;}
+  .intro p+p{margin-top:12px;}
+  .intro .lead{font-size:18px;font-weight:600;margin-bottom:10px;}
+  .intro .save{color:var(--orange);font-weight:600;}
+  .intro b{color:var(--orange);font-weight:600;}
+
+  /* ===== Section ===== */
+  .group{margin:0 0 52px;}
+  .group-banner{
+    position:relative;border-radius:16px;overflow:hidden;margin-bottom:26px;
+    height:230px;background:var(--line);
+  }
+  .group-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in;}
+  .group-banner:after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(30,20,10,.05),rgba(30,20,10,.55));
+  }
+  .group-head{
+    position:absolute;left:26px;right:26px;bottom:20px;z-index:2;color:#fff;
+    display:flex;align-items:baseline;gap:14px;
+  }
+  .group-no{font-size:14px;letter-spacing:.15em;opacity:.9;}
+  .group-title{font-size:26px;font-weight:800;letter-spacing:.02em;}
+  .group-line{
+    width:54px;height:3px;background:var(--gold);border-radius:2px;margin-bottom:18px;
+  }
+
+  /* ===== Points ===== */
+  .points{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .point{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;position:relative;transition:transform .2s,box-shadow .2s;
+  }
+  .point:hover{transform:translateY(-3px);box-shadow:0 14px 34px var(--sh-card);}
+  .point-top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .point-num{
+    flex:none;width:34px;height:34px;border-radius:50%;
+    background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,serif;font-size:16px;font-weight:700;
+  }
+  .group-a .point-num{background:var(--amber);}
+  .group-b .point-num{background:var(--orange);}
+  .group-c .point-num{background:var(--num-c);}
+  .group-d .point-num{background:var(--green);}
+  .point-name{font-size:18px;font-weight:700;line-height:1.4;}
+  .point-time{font-size:12px;color:var(--muted);margin-left:auto;white-space:nowrap;}
+  .point-desc{margin:0;color:var(--desc);font-size:14.5px;line-height:1.8;}
+  .point-desc b{color:var(--orange);font-weight:600;}
+
+  /* ===== CTA ===== */
+  .cta{
+    background:linear-gradient(135deg,var(--cta-from),var(--cta-to));
+    border-radius:20px;overflow:hidden;display:grid;grid-template-columns:280px 1fr;
+    margin:8px 0 50px;box-shadow:0 24px 60px var(--sh-cta);
+  }
+  .cta-img{position:relative;min-height:100%;}
+  .cta-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;cursor:zoom-in;}
+  .cta-body{padding:36px 38px;color:#fff;}
+  .cta-label{font-size:13px;letter-spacing:.18em;opacity:.85;}
+  .cta-name{font-size:34px;font-weight:800;margin:6px 0 4px;letter-spacing:.06em;}
+  .cta-line{width:48px;height:3px;background:var(--gold);border-radius:2px;margin:12px 0 18px;}
+  .cta-body p{margin:0 0 16px;font-size:15.5px;opacity:.94;}
+  .cta-feats{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px;}
+  .feat{font-size:13px;background:rgba(255,255,255,.12);border-radius:999px;padding:5px 14px;}
+  .cta-search{
+    display:inline-block;background:#fff;color:var(--green);font-weight:700;
+    border-radius:999px;padding:11px 26px;font-size:15px;
+  }
+
+  /* ===== Tags ===== */
+  .tags{margin-bottom:40px;}
+  .tags h3{font-size:15px;letter-spacing:.1em;color:var(--muted);margin:0 0 14px;font-weight:600;}
+  .tag-list{display:flex;flex-wrap:wrap;gap:10px;}
+  .tag{
+    font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:6px 15px;color:var(--chip);
+  }
+  .tag.brand{background:var(--orange);color:#fff;border-color:var(--orange);}
+
+  /* ===== Footer ===== */
+  footer{
+    border-top:1px solid var(--line);padding:30px 0 46px;color:var(--muted);
+    font-size:13px;text-align:center;
+  }
+  footer a{color:var(--green);text-decoration:none;}
+
+  /* ═══════════ 图片灯箱 ═══════════ */
+  .lightbox{display:none;position:fixed;inset:0;z-index:2000;background:rgba(16,26,40,.94);
+    flex-direction:column;padding:64px 20px 96px;overflow:hidden;}
+  .lightbox.active{display:flex;}
+  .lb-stage{position:relative;flex:1;min-height:0;width:100%;display:flex;
+    align-items:center;justify-content:center;overflow:hidden;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.45);
+    transform-origin:center center;will-change:transform;cursor:grab;
+    user-select:none;-webkit-user-drag:none;touch-action:none;}
+  .lightbox img.panning{cursor:grabbing;}
+  .lightbox .lb-cap{color:#cfd8e3;margin-top:12px;font-size:13.5px;text-align:center;max-width:100%;
+    padding:0 4px;line-height:1.7;}
+  .lightbox .lb-close{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;
+    background:rgba(255,255,255,.14);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:5;transition:background .15s;border:0;}
+  .lightbox .lb-close:hover{background:rgba(255,255,255,.34);}
+  .lb-tools{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:5;
+    display:flex;align-items:center;gap:4px;padding:5px 9px;border-radius:999px;
+    background:rgba(18,28,42,.74);border:1px solid rgba(255,255,255,.16);
+    box-shadow:0 6px 20px rgba(0,0,0,.35);}
+  .lb-tools button{min-width:32px;height:32px;border:0;border-radius:50%;cursor:pointer;
+    background:rgba(255,255,255,.13);color:#fff;font-size:19px;line-height:1;
+    display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:inherit;}
+  .lb-tools button:hover{background:rgba(255,255,255,.38);}
+  .lb-tools button:active{transform:scale(.94);}
+  .lb-tools .lb-scale{min-width:52px;text-align:center;font-size:12.5px;letter-spacing:.5px;
+    color:#e2ecf7;font-variant-numeric:tabular-nums;}
+
+  /* ===== Responsive ===== */
+  @media (max-width:760px){
+    .hero{grid-template-columns:1fr;gap:26px;padding:36px 0 28px;}
+    .hero-cover{max-width:320px;margin:0 auto;}
+    .hero h1{font-size:31px;}
+    .intro{padding:22px 22px;}
+    .points{grid-template-columns:1fr;}
+    .group-banner{height:180px;}
+    .group-title{font-size:21px;}
+    .cta{grid-template-columns:1fr;}
+    .cta-img{height:180px;}
+    .cta-body{padding:28px 24px;}
+    .topbar{padding:0 12px;}
+    .ts-dots{gap:10px;}
+    .ts-dot{width:15px;height:15px;}
+    .ts-name{display:none;}
+    .top-title{max-width:44vw;font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶栏：返回主页 + 滚动标题 + 主题切换 -->
+<nav class="topbar">
+  <a class="home" href="../articles.html" title="文章列表">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    文章列表
+  </a>
+  <span class="top-title" id="topTitle" aria-hidden="true">成都周边12个秋日秘境 · 名字都没听过</span>
+  <div class="theme-switch" role="group" aria-label="切换主题">
+    <div class="ts-dots">
+      <button type="button" class="ts-dot" data-t="card" title="卡片" aria-label="卡片"></button>
+      <button type="button" class="ts-dot" data-t="blue" title="蓝白" aria-label="蓝白"></button>
+      <button type="button" class="ts-dot" data-t="book" title="书卷" aria-label="书卷"></button>
+      <button type="button" class="ts-dot" data-t="dark" title="暗黑" aria-label="暗黑"></button>
+    </div>
+    <span class="ts-name" id="tsName">卡片</span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-cover">
+      <img src="images/01封面-成都周边秋日秘境.png" alt="成都周边12个秋日秘境封面" data-cap="成都周边12个秋日秘境">
+    </div>
+    <div>
+      <span class="hero-kicker">秋日 · 周末一日游清单</span>
+      <h1 class="serif">成都周边<span class="accent">12个秋日秘境</span><br>名字都没听过，人少绝美</h1>
+      <p class="hero-sub">避开人从众，整理了12个本地人才知道的冷门秋景，古寺银杏、原始彩林、雪山海子、高山草甸全齐了，车程1.5–3.5h。</p>
+      <div class="hero-meta">
+        <span class="meta-chip hot">12个点位</span>
+        <span class="meta-chip">古寺银杏</span>
+        <span class="meta-chip">彩林雪山</span>
+        <span class="meta-chip">高山草甸</span>
+        <span class="meta-chip">徒步露营</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro -->
+  <section class="intro">
+    <p class="lead">成都的秋天，真的不必挤网红景区。</p>
+    <p>名字小众到打车师傅都不一定听过，先<span class="save">收藏</span>，秋天的周末一个个去。整个秋天，周末都不愁去哪儿。</p>
+    <p>选这12个只看三点：<b>单程1.5–3.5小时</b>当天能来回、彩林配水配古建画面耐看、网上攻略还很少人不多。银杏、彩林、雪山、草甸，按类型分成四组，照着挑就行。</p>
+  </section>
+
+  <!-- Group A 古寺银杏 -->
+  <section class="group group-a">
+    <div class="group-banner">
+      <img src="images/02古寺银杏.png" alt="古寺银杏" data-cap="古寺银杏 · 禅意秋山">
+      <div class="group-head">
+        <span class="group-no">PART 01</span>
+        <span class="group-title serif">古寺银杏 · 禅意秋山</span>
+      </div>
+    </div>
+    <div class="group-line"></div>
+    <div class="points">
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">1</span>
+          <span class="point-name">白岩寺</span>
+          <span class="point-time">1.5h · 大邑</span>
+        </div>
+        <p class="point-desc">藏在深山的藏传佛教古寺，一棵千年银杏<b>“九株同根”</b>，秋天金黄铺满石阶，红墙、石洞、古树，清净到能听见落叶，拍照不用等机位。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">2</span>
+          <span class="point-name">云顶山</span>
+          <span class="point-time">1.5h · 金堂</span>
+        </div>
+        <p class="point-desc">冷门宝藏，唐代慈云寺，两棵千年银杏，山门下俯瞰沱江，还有宋蒙战争留下的<b>云顶石城遗址</b>，爬山看银杏一路没几个人。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">3</span>
+          <span class="point-name">钟鼎寺</span>
+          <span class="point-time">2h · 什邡</span>
+        </div>
+        <p class="point-desc">山里的无名小寺，<b>无门票</b>。松林、古银杏、山雾，秋天层次特别美，沿石阶慢慢走，安静得只听见松涛。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">4</span>
+          <span class="point-name">灵岩山</span>
+          <span class="point-time">1.5h · 都江堰</span>
+        </div>
+        <p class="point-desc">和青城山齐名却几乎没有游客，灵岩寺依山而建，山门长梯配古银杏，秋天<b>彩林绕着红墙</b>，山风一吹禅意拉满。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Group B 山野彩林 -->
+  <section class="group group-b">
+    <div class="group-banner">
+      <img src="images/03山野彩林.png" alt="山野彩林" data-cap="山野彩林 · 徒步露营">
+      <div class="group-head">
+        <span class="group-no">PART 02</span>
+        <span class="group-title serif">山野彩林 · 徒步露营</span>
+      </div>
+    </div>
+    <div class="group-line"></div>
+    <div class="points">
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">5</span>
+          <span class="point-name">琉璃坝</span>
+          <span class="point-time">1.5h · 崇州</span>
+        </div>
+        <p class="point-desc">名字就很好听，藏在深山的坝子，金黄火红的彩林围着小海子，<b>无门票、无开发</b>，徒步露营都很舒服，很多成都人都没听过。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">6</span>
+          <span class="point-name">神瀑沟</span>
+          <span class="point-time">2h · 什邡</span>
+        </div>
+        <p class="point-desc">蓥华山深处的小众秘境，一条环线木栈道串起<b>好几道瀑布</b>，彩林、溪水、青苔，难度很低，老人小孩都能慢慢走。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">7</span>
+          <span class="point-name">蟠龙谷</span>
+          <span class="point-time">2h · 彭州</span>
+        </div>
+        <p class="point-desc">小鱼洞的野趣山谷，瀑布群藏在原始森林里，秋天彩林倒映水潭，踩石板路、听水声，<b>人少到像包场</b>。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Group C 川西彩林 -->
+  <section class="group group-c">
+    <div class="group-banner">
+      <img src="images/04雪山彩林.png" alt="雪山彩林" data-cap="雪山彩林 · 川西秘境">
+      <div class="group-head">
+        <span class="group-no">PART 03</span>
+        <span class="group-title serif">雪山彩林 · 川西秘境</span>
+      </div>
+    </div>
+    <div class="group-line"></div>
+    <div class="points">
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">8</span>
+          <span class="point-name">凉台沟</span>
+          <span class="point-time">3h · 理县</span>
+        </div>
+        <p class="point-desc">毕棚沟隔壁少有人知的原始沟谷，<b>无门票</b>，雪山、红石滩、彩林、海子同框，比毕棚沟清净，彩林却一点不输。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">9</span>
+          <span class="point-name">孟屯河谷</span>
+          <span class="point-time">3h · 理县</span>
+        </div>
+        <p class="point-desc">上孟乡的原始山谷，高桥沟、玉匹沟，藏寨、雪山、溪流、彩林，秋天色彩浓到化不开，游客却很少，适合轻徒步、露营、发呆。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Group D 草甸与湿地 -->
+  <section class="group group-d">
+    <div class="group-banner">
+      <img src="images/05高山草甸.png" alt="高山草甸" data-cap="高山草甸 · 湿地秘境">
+      <div class="group-head">
+        <span class="group-no">PART 04</span>
+        <span class="group-title serif">高山草甸 · 湿地秘境</span>
+      </div>
+    </div>
+    <div class="group-line"></div>
+    <div class="points">
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">10</span>
+          <span class="point-name">神木垒</span>
+          <span class="point-time">3h · 宝兴</span>
+        </div>
+        <p class="point-desc">硗碛藏寨旁的高山草甸，红杉、云杉、牛羊、远山，秋天像打翻调色盘，原木栈道慢慢走，<b>川西小瑞士</b>般松弛。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">11</span>
+          <span class="point-name">邓池沟</span>
+          <span class="point-time">3h · 宝兴</span>
+        </div>
+        <p class="point-desc">世界第一只大熊猫科学发现地，一座中西合璧的<b>百年天主教堂</b>藏在楠木林里，秋天彩林、溪流、熊猫新村，故事感拉满，极其冷门。</p>
+      </div>
+
+      <div class="point">
+        <div class="point-top">
+          <span class="point-num">12</span>
+          <span class="point-name">马里冷旧</span>
+          <span class="point-time">3.5h · 峨边</span>
+        </div>
+        <p class="point-desc">黑竹沟深处的彝语秘境，意为“铺满鲜花的草地”，高山湿地、草甸、彩林、牛羊、远山，走进去像到了新疆，云雾一绕更美。</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta-img">
+      <img src="images/07尾页-觅点寻迹.png" alt="觅点寻迹" data-cap="觅点寻迹 · 一键导入 · 自动生成路线">
+    </div>
+    <div class="cta-body">
+      <div class="cta-label">点位太散 · 一键存好</div>
+      <div class="cta-name serif">觅点寻迹</div>
+      <div class="cta-line"></div>
+      <p>专治“景点收藏乱、找不到、路线乱”。这12个秋日秘境点位都已整理好，一键导入、点图标注、按顺序自动生成路线，存在自己手机里，随时看、离线也能看，整个秋天的周末行程一个小程序搞定。</p>
+      <div class="cta-feats">
+        <span class="feat">一键导入</span>
+        <span class="feat">自动生成路线</span>
+        <span class="feat">离线可看</span>
+        <span class="feat">免费</span>
+      </div>
+      <span class="cta-search">微信搜索：觅点寻迹</span>
+    </div>
+  </section>
+
+  <!-- Tags -->
+  <section class="tags">
+    <h3>话题标签</h3>
+    <div class="tag-list">
+      <span class="tag brand">#觅点寻迹</span>
+      <span class="tag">#成都周边游</span>
+      <span class="tag">#成都秋天</span>
+      <span class="tag">#秋日旅行</span>
+      <span class="tag">#成都小众打卡地</span>
+      <span class="tag">#川西自驾</span>
+      <span class="tag">#周末去哪儿</span>
+      <span class="tag">#成都徒步</span>
+      <span class="tag">#成都一日游</span>
+      <span class="tag">#冷门宝藏景点</span>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div>联系：<a href="mailto:chears77@163.com">chears77@163.com</a></div>
+</footer>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-close" onclick="closeLb()" title="关闭">×</div>
+  <div class="lb-stage" id="lbStage">
+    <img id="lbImg" src="" alt="" draggable="false">
+  </div>
+  <div class="lb-cap" id="lbCap"></div>
+  <div class="lb-tools">
+    <button type="button" id="lbZo" title="缩小">−</button>
+    <span class="lb-scale" id="lbScale">100%</span>
+    <button type="button" id="lbZi" title="放大">+</button>
+    <button type="button" id="lbR" title="复位">⟲</button>
+  </div>
+</div>
+
+<script>
+/* 主题切换 */
+(function(){
+ var KEY='cd-autumn-theme-v1', VALID=['card','blue','book','dark'];
+ var NAME={card:'卡片',blue:'蓝白',book:'书卷',dark:'暗黑'};
+ var dots=document.querySelectorAll('.ts-dot');
+ var nameEl=document.getElementById('tsName');
+ function apply(t){
+  if(VALID.indexOf(t)<0)t='card';
+  document.documentElement.setAttribute('data-theme',t);
+  if(nameEl)nameEl.textContent=NAME[t];
+  dots.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-t')===t);});
+  try{localStorage.setItem(KEY,t);}catch(e){}
+ }
+ dots.forEach(function(d){d.addEventListener('click',function(){apply(d.getAttribute('data-t'));});});
+ var saved='card';
+ try{saved=localStorage.getItem(KEY)||'card';}catch(e){}
+ apply(saved);
+})();
+
+/* 滚动吸顶标题 */
+(function(){
+ var bar=document.getElementById('topTitle'); if(!bar)return;
+ var h1=document.querySelector('.hero h1');
+ function upd(){
+  var hh=h1?h1.getBoundingClientRect().top:999;
+  document.body.classList.toggle('scrolled-title',hh<70);
+ }
+ var ticking=false;
+ function onScroll(){if(ticking)return;ticking=true;
+  requestAnimationFrame(function(){upd();ticking=false;});}
+ window.addEventListener('scroll',onScroll,{passive:true});
+ window.addEventListener('resize',upd);
+ upd();
+})();
+
+/* 图片灯箱 */
+(function(){
+ var lb=document.getElementById('lightbox');
+ var stage=document.getElementById('lbStage');
+ var img=document.getElementById('lbImg');
+ var cap=document.getElementById('lbCap');
+ var scEl=document.getElementById('lbScale');
+ var MIN=.5,MAX=5,s=1,tx=0,ty=0;
+ function applyT(anim){
+  img.style.transition=anim?'transform .2s cubic-bezier(.22,.8,.36,1)':'none';
+  img.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s.toFixed(3)+')';
+  if(scEl)scEl.textContent=Math.round(s*100)+'%';
+ }
+ function bound(){
+  var w=stage.clientWidth,h=stage.clientHeight;
+  if(s<=1.0001){tx=0;ty=0;return;}
+  var mx=Math.max((img.clientWidth*s-w)/2,0)+40;
+  var my=Math.max((img.clientHeight*s-h)/2,0)+40;
+  tx=Math.max(-mx,Math.min(mx,tx));
+  ty=Math.max(-my,Math.min(my,ty));
+ }
+ function reset(){s=1;tx=0;ty=0;applyT(true);}
+ function zoomBy(f,px,py,anim){
+  if(typeof px!=='number'){px=0;py=0;}
+  var ns=Math.max(MIN,Math.min(MAX,s*f));
+  if(ns===s){applyT(anim);return;}
+  var k=ns/s;s=ns;
+  tx=px-(px-tx)*k;ty=py-(py-ty)*k;
+  bound();applyT(anim);
+ }
+ function openLb(src,alt){reset();img.src=src;cap.textContent=alt||'';
+  lb.classList.add('active');document.body.style.overflow='hidden';}
+ window.closeLb=function(){lb.classList.remove('active');document.body.style.overflow='';
+  img.classList.remove('panning');};
+ document.querySelectorAll('.wrap img').forEach(function(im){
+  im.addEventListener('click',function(){openLb(im.src,im.getAttribute('data-cap')||im.alt||'');});
+ });
+ stage.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var r=stage.getBoundingClientRect();
+  zoomBy(Math.exp(-e.deltaY*0.0016),e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2,false);
+ },{passive:false});
+ var down=null;
+ img.addEventListener('mousedown',function(e){if(e.button!==0)return;e.preventDefault();
+  down={x:e.clientX,y:e.clientY,tx:tx,ty:ty};img.classList.add('panning');});
+ window.addEventListener('mousemove',function(e){if(!down)return;
+  tx=down.tx+e.clientX-down.x;ty=down.ty+e.clientY-down.y;bound();applyT(false);});
+ window.addEventListener('mouseup',function(){down=null;img.classList.remove('panning');});
+ img.addEventListener('dblclick',function(e){
+  if(s>1.01){reset();return;}
+  var r=stage.getBoundingClientRect();
+  zoomBy(2.2,e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2,true);
+ });
+ document.getElementById('lbZi').addEventListener('click',function(){zoomBy(1.4,0,0,true);});
+ document.getElementById('lbZo').addEventListener('click',function(){zoomBy(1/1.4,0,0,true);});
+ document.getElementById('lbR').addEventListener('click',reset);
+ var touch=null;
+ stage.addEventListener('touchstart',function(e){
+  e.preventDefault();
+  if(e.touches.length===1){touch={mode:'p',x:e.touches[0].clientX,y:e.touches[0].clientY,tx:tx,ty:ty};}
+  else if(e.touches.length===2){var a=e.touches[0],b=e.touches[1];
+   touch={mode:'z',d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),s:s,tx:tx,ty:ty};}
+ },{passive:false});
+ stage.addEventListener('touchmove',function(e){
+  e.preventDefault();if(!touch)return;
+  if(touch.mode==='z'&&e.touches.length>=2){
+   var a=e.touches[0],b=e.touches[1],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;
+   var ns=Math.max(MIN,Math.min(MAX,touch.s*d/touch.d)),k=ns/touch.s;
+   var r=stage.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+   var mx=(a.clientX+b.clientX)/2,my=(a.clientY+b.clientY)/2;
+   s=ns;tx=(mx-cx)*(1-k)+k*touch.tx;ty=(my-cy)*(1-k)+k*touch.ty;
+   bound();applyT(false);
+  }else if(touch.mode==='p'&&e.touches.length===1){
+   var t=e.touches[0];tx=touch.tx+(t.clientX-touch.x);ty=touch.ty+(t.clientY-touch.y);
+   bound();applyT(false);
+  }
+ },{passive:false});
+ function te(){touch=null;}
+ stage.addEventListener('touchend',te);stage.addEventListener('touchcancel',te);
+ lb.addEventListener('click',function(e){if(e.target===stage||e.target===lb)closeLb();});
+ document.addEventListener('keydown',function(e){
+  if(!lb.classList.contains('active'))return;
+  if(e.key==='Escape')closeLb();
+  else if(e.key==='+'||e.key==='=')zoomBy(1.4,0,0,true);
+  else if(e.key==='-'||e.key==='_')zoomBy(1/1.4,0,0,true);
+  else if(e.key==='0')reset();
+ });
+ window.addEventListener('resize',function(){bound();applyT(false);});
+})();
+</script>
+
+</body>
+</html>
